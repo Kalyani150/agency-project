@@ -441,6 +441,53 @@
    Accessibility
    --------------------------------------------------------- */
 
+/* ---------------------------------------------------------
+   Icon flip (service cards) and gentle sway
+   --------------------------------------------------------- */
+
+@keyframes gratechIconFlip {
+  from {
+    transform: rotateY(0deg);
+  }
+
+  to {
+    transform: rotateY(360deg);
+  }
+}
+
+.gratech-icon-flip:hover,
+.group:hover .gratech-icon-flip {
+  animation: gratechIconFlip 0.8s ease-in-out;
+}
+
+@keyframes gratechSway {
+  from {
+    transform: translateX(-20px);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+.gratech-sway {
+  animation: gratechSway 3s linear infinite alternate;
+}
+
+/* ---------------------------------------------------------
+   Sticky header
+   --------------------------------------------------------- */
+
+.gratech-header {
+  transition:
+    box-shadow 0.3s ease-in-out,
+    background-color 0.3s ease-in-out;
+}
+
+.gratech-header-scrolled {
+  box-shadow: 0 4px 25px rgba(15, 23, 42, 0.08);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

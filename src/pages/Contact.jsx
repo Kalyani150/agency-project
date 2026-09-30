@@ -105,7 +105,7 @@ function Contact({
 
               <div className="flex gap-4">
 
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                <div className="gratech-icon-flip flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
                   <Mail size={21} />
                 </div>
 
@@ -123,7 +123,7 @@ function Contact({
 
               <div className="flex gap-4">
 
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                <div className="gratech-icon-flip flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
                   <Phone size={21} />
                 </div>
 
@@ -141,7 +141,7 @@ function Contact({
 
               <div className="flex gap-4">
 
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                <div className="gratech-icon-flip flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
                   <MapPin size={21} />
                 </div>
 

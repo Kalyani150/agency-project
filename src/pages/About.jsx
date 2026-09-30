@@ -153,7 +153,7 @@ function About({ team = [] }) {
                     hover:shadow-xl
                   "
                 >
-                  <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                  <div className="gratech-icon-flip flex h-14 w-14 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
                     <Icon size={27} />
                   </div>
 
