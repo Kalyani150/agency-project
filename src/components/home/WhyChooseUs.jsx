@@ -62,7 +62,7 @@ function WhyChooseUs() {
                 className="group rounded-2xl border border-slate-200 bg-white p-7 transition duration-300 hover:-translate-y-2 hover:border-indigo-200 hover:shadow-xl"
               >
 
-                <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 transition group-hover:bg-indigo-600 group-hover:text-white">
+                <div className="gratech-icon-flip flex h-14 w-14 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 transition group-hover:bg-indigo-600 group-hover:text-white">
                   <Icon size={27} />
                 </div>
 

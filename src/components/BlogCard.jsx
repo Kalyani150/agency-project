@@ -18,7 +18,7 @@ function BlogCard({ blog }) {
         <img
           src={blog.image}
           alt={blog.title}
-          className="h-60 w-full object-cover transition duration-700 ease-out group-hover:scale-110"
+          className="h-60 w-full object-cover transition duration-700 ease-out group-hover:rotate-2 group-hover:scale-110 group-hover:brightness-90"
         />
 
         <div className="absolute inset-0 bg-slate-950/0 transition duration-500 group-hover:bg-slate-950/20" />

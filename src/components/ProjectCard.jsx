@@ -10,11 +10,17 @@ function ProjectCard({ project }) {
 
       <div className="relative overflow-hidden">
 
-        <img
-          src={project.image}
-          alt={project.title}
-          className="h-64 w-full object-cover transition duration-700 ease-out group-hover:scale-110"
-        />
+        {project.image ? (
+          <img
+            src={project.image}
+            alt={project.title}
+            className="h-64 w-full object-cover transition duration-700 ease-out group-hover:rotate-2 group-hover:scale-110 group-hover:brightness-90"
+          />
+        ) : (
+          <div className="flex h-64 w-full items-center justify-center bg-gradient-to-br from-indigo-600 to-slate-900 text-5xl font-black text-white/80">
+            {(project.title || "?").charAt(0).toUpperCase()}
+          </div>
+        )}
 
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-60 transition duration-500 group-hover:opacity-90" />
 
@@ -39,7 +45,7 @@ function ProjectCard({ project }) {
         </h3>
 
         <p className="mt-3 leading-7 text-slate-400">
-          {project.description}
+          {project.shortDescription || project.description}
         </p>
 
       </div>

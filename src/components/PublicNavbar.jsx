@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   Menu,
@@ -15,6 +15,8 @@ import {
   NavLink,
 } from "react-router-dom";
 
+const SCROLLED_OFFSET_PX = 40;
+
 function PublicNavbar() {
   const [mobileOpen, setMobileOpen] =
     useState(false);
@@ -24,6 +26,24 @@ function PublicNavbar() {
 
   const [searchOpen, setSearchOpen] =
     useState(false);
+
+  const [scrolled, setScrolled] =
+    useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > SCROLLED_OFFSET_PX);
+    };
+
+    handleScroll();
+
+    window.addEventListener("scroll", handleScroll, {
+      passive: true,
+    });
+
+    return () =>
+      window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const services = [
     {
@@ -114,7 +134,11 @@ function PublicNavbar() {
 
       {/* HEADER */}
 
-      <header className="top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur">
+      <header
+        className={`gratech-header sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur ${
+          scrolled ? "gratech-header-scrolled" : ""
+        }`}
+      >
 
         <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
 

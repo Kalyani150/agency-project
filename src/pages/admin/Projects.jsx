@@ -5,19 +5,65 @@ import {
   Pencil,
   Trash2,
   X,
+  ImagePlus,
 } from "lucide-react";
 import { nextId } from "../../utils";
+
+const MAX_FILE_BYTES = 10 * 1024 * 1024;
+const MAX_IMAGE_DIMENSION = 1200;
+const JPEG_QUALITY = 0.8;
+
+// Shrinks a picked image so it fits comfortably in browser storage.
+function readAndShrinkImage(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onerror = () => reject(new Error("Could not read the file."));
+
+    reader.onload = () => {
+      const image = new Image();
+
+      image.onerror = () =>
+        reject(new Error("This file is not a valid image."));
+
+      image.onload = () => {
+        const scale = Math.min(
+          1,
+          MAX_IMAGE_DIMENSION / Math.max(image.width, image.height)
+        );
+
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(image.width * scale);
+        canvas.height = Math.round(image.height * scale);
+
+        canvas
+          .getContext("2d")
+          .drawImage(image, 0, 0, canvas.width, canvas.height);
+
+        resolve(canvas.toDataURL("image/jpeg", JPEG_QUALITY));
+      };
+
+      image.src = reader.result;
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
 
 function Projects({ projects = [], setProjects }) {
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
+  const [imageError, setImageError] = useState("");
 
   const [form, setForm] = useState({
     title: "",
     category: "",
     description: "",
+    shortDescription: "",
     client: "",
+    year: "",
+    image: "",
     status: "Completed",
   });
 
@@ -43,25 +89,33 @@ function Projects({ projects = [], setProjects }) {
       title: "",
       category: "",
       description: "",
+      shortDescription: "",
       client: "",
+      year: "",
+      image: "",
       status: "Completed",
     });
   };
 
   const openAddModal = () => {
     setEditingProject(null);
+    setImageError("");
     resetForm();
     setShowModal(true);
   };
 
   const openEditModal = (project) => {
     setEditingProject(project);
+    setImageError("");
 
     setForm({
       title: project.title || "",
       category: project.category || "",
       description: project.description || "",
+      shortDescription: project.shortDescription || "",
       client: project.client || "",
+      year: project.year || "",
+      image: project.image || "",
       status: project.status || "Completed",
     });
 
@@ -79,6 +133,34 @@ function Projects({ projects = [], setProjects }) {
       ...form,
       [e.target.name]: e.target.value,
     });
+  };
+
+  const handleImageFile = async (e) => {
+    const file = e.target.files?.[0];
+
+    // Allow picking the same file again later.
+    e.target.value = "";
+
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setImageError("Please choose an image file (JPG, PNG, WebP...).");
+      return;
+    }
+
+    if (file.size > MAX_FILE_BYTES) {
+      setImageError("That picture is too large. Please choose one under 10 MB.");
+      return;
+    }
+
+    try {
+      const dataUrl = await readAndShrinkImage(file);
+
+      setForm((current) => ({ ...current, image: dataUrl }));
+      setImageError("");
+    } catch (error) {
+      setImageError(error.message);
+    }
   };
 
   const handleSubmit = (e) => {
@@ -340,6 +422,22 @@ function Projects({ projects = [], setProjects }) {
                 placeholder="ABC Company"
               />
 
+              <Input
+                label="Year"
+                name="year"
+                value={form.year}
+                onChange={handleChange}
+                placeholder="2026"
+              />
+
+              <Input
+                label="Short Description"
+                name="shortDescription"
+                value={form.shortDescription}
+                onChange={handleChange}
+                placeholder="One-line summary shown on project cards"
+              />
+
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-700">
                   Description
@@ -353,6 +451,86 @@ function Projects({ projects = [], setProjects }) {
                   className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-indigo-500"
                   required
                 />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-medium text-slate-700">
+                  Project Image
+                </label>
+
+                <div className="flex gap-4">
+
+                  <div className="flex h-24 w-32 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-slate-50 text-slate-400">
+                    {form.image ? (
+                      <img
+                        src={form.image}
+                        alt="Preview"
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <ImagePlus size={24} />
+                    )}
+                  </div>
+
+                  <div className="min-w-0 flex-1 space-y-3">
+
+                    <input
+                      type="text"
+                      name="image"
+                      value={
+                        form.image.startsWith("data:")
+                          ? ""
+                          : form.image
+                      }
+                      onChange={handleChange}
+                      placeholder={
+                        form.image.startsWith("data:")
+                          ? "Uploaded from your device"
+                          : "Paste image URL (https://...)"
+                      }
+                      className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-indigo-500"
+                    />
+
+                    <div className="flex flex-wrap items-center gap-3">
+
+                      <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50">
+                        <ImagePlus size={16} />
+                        Choose from device
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageFile}
+                          className="hidden"
+                        />
+                      </label>
+
+                      {form.image && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setForm({ ...form, image: "" })
+                          }
+                          className="text-sm font-semibold text-red-600 hover:text-red-700"
+                        >
+                          Remove image
+                        </button>
+                      )}
+
+                    </div>
+
+                    {imageError && (
+                      <p className="text-sm text-red-600">
+                        {imageError}
+                      </p>
+                    )}
+
+                  </div>
+
+                </div>
+
+                <p className="mt-2 text-xs text-slate-500">
+                  Paste a link, or pick a picture from your computer or phone gallery.
+                </p>
               </div>
 
               <div>

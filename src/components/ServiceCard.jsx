@@ -35,7 +35,7 @@ function ServiceCard({ service }) {
 
       <div className="relative flex items-center justify-between">
 
-        <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 transition-all duration-500 group-hover:rotate-6 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white">
+        <div className="gratech-icon-flip flex h-14 w-14 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 transition-all duration-500 group-hover:rotate-6 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white">
           <Icon size={27} />
         </div>
 
