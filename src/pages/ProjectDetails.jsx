@@ -5,12 +5,8 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
-import { initialProjects } from "../data";
-
-function ProjectDetails() {
+function ProjectDetails({ projects = [] }) {
   const { id } = useParams();
-
-  const projects = initialProjects;
 
   const projectIndex = projects.findIndex(
     (project) => String(project.id) === String(id)
@@ -89,13 +85,15 @@ function ProjectDetails() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
          {/* IMAGE */}
-<div className="overflow-hidden rounded-3xl shadow-xl">
-  <img
-    src={project.image}
-    alt={project.title}
-    className="block h-auto max-h-[700px] w-full object-cover"
-  />
-</div>
+{project.image && (
+  <div className="overflow-hidden rounded-3xl shadow-xl">
+    <img
+      src={project.image}
+      alt={project.title}
+      className="block h-auto max-h-[700px] w-full object-cover"
+    />
+  </div>
+)}
 
           {/* PROJECT INFORMATION */}
           <div className="mt-14 grid gap-10 lg:grid-cols-3">
@@ -164,7 +162,7 @@ function ProjectDetails() {
                   </p>
 
                   <p className="mt-1 font-semibold text-slate-800">
-                    {project.client}
+                    {project.client || "-"}
                   </p>
                 </div>
 
@@ -184,7 +182,7 @@ function ProjectDetails() {
                   </p>
 
                   <p className="mt-1 font-semibold text-slate-800">
-                    {project.year}
+                    {project.year || "-"}
                   </p>
                 </div>
 
