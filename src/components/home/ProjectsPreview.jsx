@@ -1,34 +1,52 @@
+
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
-import SectionTitle from "../SectionTitle";
 import ProjectCard from "../ProjectCard";
 
 function ProjectsPreview({ projects = [] }) {
   return (
-    <section className="bg-slate-950 py-20 sm:py-24">
-
+    <section className="bg-slate-950 py-14 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
-        <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+        {/* ==================================================
+            SECTION HEADER
+        ================================================== */}
 
-          <div>
-            <span className="text-sm font-bold uppercase tracking-widest text-indigo-400">
+        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+
+          <div className="max-w-3xl">
+            <span className="text-xs font-bold uppercase tracking-[0.18em] text-indigo-400 sm:text-sm sm:tracking-widest">
               Our Work
             </span>
 
-            <h2 className="mt-4 text-3xl font-black text-white sm:text-5xl">
+            <h2 className="mt-3 text-3xl font-black leading-tight text-white sm:mt-4 sm:text-5xl lg:text-6xl">
               Featured Case Studies
             </h2>
 
-            <p className="mt-5 max-w-2xl leading-8 text-slate-400">
-              A selection of digital projects we have delivered for growing businesses.
+            <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-400 sm:mt-5 sm:text-lg sm:leading-8 lg:text-xl">
+              A selection of digital projects we have delivered for growing
+              businesses.
             </p>
           </div>
 
           <Link
             to="/projects"
-            className="inline-flex items-center gap-2 text-sm font-bold text-indigo-400 hover:text-white"
+            className="
+              inline-flex
+              min-h-[44px]
+              w-fit
+              items-center
+              gap-2
+              rounded-lg
+              text-sm
+              font-bold
+              text-indigo-400
+              transition
+              duration-300
+              hover:text-white
+              sm:text-base
+            "
           >
             View All Projects
             <ArrowRight size={18} />
@@ -36,19 +54,21 @@ function ProjectsPreview({ projects = [] }) {
 
         </div>
 
-        <div className="mt-14 grid gap-7 md:grid-cols-2 lg:grid-cols-3">
+        {/* ==================================================
+            PROJECT GRID
+        ================================================== */}
+
+        <div className="mt-8 grid grid-cols-1 gap-5 min-[400px]:grid-cols-2 sm:mt-12 sm:gap-6 lg:grid-cols-3 lg:gap-7">
 
           {projects.slice(0, 3).map((project) => (
-            <ProjectCard
-              key={project.id}
-              project={project}
-            />
+            <div key={project.id} className="min-w-0">
+              <ProjectCard project={project} />
+            </div>
           ))}
 
         </div>
 
       </div>
-
     </section>
   );
 }

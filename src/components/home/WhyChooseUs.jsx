@@ -36,7 +36,7 @@ function WhyChooseUs() {
 
         <div className="mx-auto max-w-3xl text-center">
 
-          <span className="text-sm font-bold uppercase tracking-widest text-indigo-600">
+          <span className="text-m font-bold uppercase tracking-widest text-indigo-600">
             Why Choose Us
           </span>
 
@@ -44,14 +44,14 @@ function WhyChooseUs() {
             We focus on results, not just technology
           </h2>
 
-          <p className="mt-5 leading-8 text-slate-600">
+          <p className="mt-5 text-lg leading-8 text-slate-600">
             Our approach combines business understanding, design,
             development and continuous support.
           </p>
 
         </div>
 
-        <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-14 grid gap-6 min-[450px]:grid-cols-2  lg:grid-cols-4">
 
           {items.map((item) => {
             const Icon = item.icon;
@@ -70,7 +70,7 @@ function WhyChooseUs() {
                   {item.title}
                 </h3>
 
-                <p className="mt-3 leading-7 text-slate-600">
+                <p className="mt-3 text-lg leading-7 text-slate-600">
                   {item.text}
                 </p>
 

@@ -40,7 +40,7 @@ function FAQPreview() {
 
         <div className="text-center">
 
-          <span className="text-sm font-bold uppercase tracking-widest text-indigo-600">
+          <span className="text-m font-bold uppercase tracking-widest text-indigo-600">
             FAQ
           </span>
 
@@ -70,7 +70,7 @@ function FAQPreview() {
                   className="flex w-full items-center justify-between px-6 py-5 text-left"
                 >
 
-                  <span className="font-bold text-slate-900">
+                  <span className="font-bold text-xl text-slate-900">
                     {faq.question}
                   </span>
 
@@ -89,7 +89,7 @@ function FAQPreview() {
                 </button>
 
                 {isOpen && (
-  <div className="gratech-faq-answer border-t border-slate-100 px-6 py-5 leading-7 text-slate-600">
+  <div className="gratech-faq-answer text-lg border-t border-slate-100 px-6 py-5 leading-7 text-slate-600">
     {faq.answer}
   </div>
 )}
@@ -104,7 +104,7 @@ function FAQPreview() {
 
           <Link
             to="/faq"
-            className="font-bold text-indigo-600 hover:text-indigo-700"
+            className="font-bold text-xl text-indigo-600 hover:text-indigo-700"
           >
             View All FAQs →
           </Link>

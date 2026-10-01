@@ -17,7 +17,7 @@ function CTA() {
 
             <div>
 
-              <span className="text-sm font-bold uppercase tracking-widest text-indigo-200">
+              <span className="text-m font-bold uppercase tracking-widest text-indigo-200">
                 Let's Work Together
               </span>
 
@@ -25,7 +25,7 @@ function CTA() {
                 Have a project in mind?
               </h2>
 
-              <p className="mt-5 max-w-xl leading-8 text-indigo-100">
+              <p className="mt-5 text-xl max-w-xl leading-8 text-indigo-100">
                 Tell us about your business and project requirements.
                 Our team will help you find the right digital solution.
               </p>
@@ -36,18 +36,18 @@ function CTA() {
 
               <Link
                 to="/get-quote"
-                className="flex items-center gap-2 rounded-lg bg-white px-7 py-4 font-bold text-indigo-700 hover:bg-slate-100"
+                className="flex items-center text-lg gap-2 rounded-lg bg-white px-7 py-4 font-bold text-indigo-700 hover:bg-slate-100"
               >
                 Get Started
-                <ArrowRight size={18} />
+                <ArrowRight size={19} />
               </Link>
 
               <Link
                 to="/contact"
-                className="flex items-center gap-2 rounded-lg border border-white/30 px-7 py-4 font-bold text-white hover:bg-white/10"
+                className="flex items-center text-lg gap-2 rounded-lg border border-white/30 px-7 py-4 font-bold text-white hover:bg-white/10"
               >
                 Contact Us
-                <Phone size={18} />
+                <Phone size={19} />
               </Link>
 
             </div>

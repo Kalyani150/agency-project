@@ -173,7 +173,7 @@ function PublicNavbar() {
             <NavLink
               to="/"
               className={({ isActive }) =>
-                `text-sm font-semibold ${
+                `text-lg font-semibold ${
                   isActive
                     ? "text-indigo-600"
                     : "text-slate-700 hover:text-indigo-600"
@@ -186,7 +186,7 @@ function PublicNavbar() {
             <NavLink
               to="/about"
               className={({ isActive }) =>
-                `text-sm font-semibold ${
+                `text-lg font-semibold ${
                   isActive
                     ? "text-indigo-600"
                     : "text-slate-700 hover:text-indigo-600"
@@ -210,7 +210,7 @@ function PublicNavbar() {
 
               <Link
   to="/services"
-  className="flex items-center gap-1 text-sm font-semibold text-slate-700 hover:text-indigo-600"
+  className="flex items-center gap-1 text-lg font-semibold text-slate-700 hover:text-indigo-600"
 >
   Services
   <ChevronDown size={15} />
@@ -223,7 +223,7 @@ function PublicNavbar() {
                     <Link
                       key={service.path}
                       to={service.path}
-                      className="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-indigo-50 hover:text-indigo-600"
+                      className="block rounded-xl px-4 py-3 text-lg font-medium text-slate-700 hover:bg-indigo-50 hover:text-indigo-600"
                     >
                       {service.name}
                     </Link>
@@ -231,7 +231,7 @@ function PublicNavbar() {
 
                   <Link
                     to="/services"
-                    className="mt-2 block border-t border-slate-100 px-4 pt-3 text-sm font-bold text-indigo-600"
+                    className="mt-2 block border-t border-slate-100 px-4 pt-3 text-lg font-bold text-indigo-600"
                   >
                     View all services →
                   </Link>
@@ -246,7 +246,7 @@ function PublicNavbar() {
                 key={item.path}
                 to={item.path}
                 className={({ isActive }) =>
-                  `text-sm font-semibold ${
+                  `text-lg font-semibold ${
                     isActive
                       ? "text-indigo-600"
                       : "text-slate-700 hover:text-indigo-600"
@@ -259,20 +259,13 @@ function PublicNavbar() {
 
             {/* SEARCH */}
 
-            <button
-              onClick={() =>
-                setSearchOpen(true)
-              }
-              className="text-slate-700 hover:text-indigo-600"
-            >
-              <Search size={19} />
-            </button>
+            
 
             {/* CTA */}
 
             <Link
               to="/get-quote"
-              className="flex items-center gap-2 rounded-lg bg-indigo-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-indigo-700"
+              className="flex items-center gap-2 rounded-lg bg-indigo-600 px-5 py-3 text-m font-bold text-white transition hover:bg-indigo-700"
             >
               Get Quote
               <ArrowRight size={16} />

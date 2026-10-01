@@ -1,3 +1,4 @@
+
 import {
   Facebook,
   Instagram,
@@ -6,7 +7,6 @@ import {
   Mail,
   Phone,
   MapPin,
-  ArrowUpRight,
 } from "lucide-react";
 
 import { Link } from "react-router-dom";
@@ -33,50 +33,104 @@ function PublicFooter() {
   ];
 
   const socialLinks = [
-    { name: "Facebook", icon: Facebook, href: "https://facebook.com" },
-    { name: "Instagram", icon: Instagram, href: "https://instagram.com" },
-    { name: "Twitter", icon: Twitter, href: "https://twitter.com" },
-    { name: "LinkedIn", icon: Linkedin, href: "https://linkedin.com" },
+    {
+      name: "Facebook",
+      icon: Facebook,
+      href: "https://facebook.com",
+    },
+    {
+      name: "Instagram",
+      icon: Instagram,
+      href: "https://instagram.com",
+    },
+    {
+      name: "Twitter",
+      icon: Twitter,
+      href: "https://twitter.com",
+    },
+    {
+      name: "LinkedIn",
+      icon: Linkedin,
+      href: "https://linkedin.com",
+    },
   ];
 
   return (
-    <footer className="bg-slate-950 text-white">
+    <footer className="overflow-hidden bg-slate-950 text-white">
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
+      {/* ==================================================
+          MAIN FOOTER
+      ================================================== */}
 
-        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
+      <div className="mx-auto max-w-7xl px-5 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
 
-          {/* COMPANY */}
+        <div
+          className="
+            grid
+            grid-cols-1
+            gap-12
+            sm:gap-14
+            lg:grid-cols-4
+            lg:gap-10
+          "
+        >
 
-          <div>
+          {/* ==================================================
+              COMPANY
+          ================================================== */}
+
+          <div className="min-w-0">
 
             <Link
               to="/"
-              className="flex items-center gap-3"
+              className="inline-flex items-center gap-3"
             >
-
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-600 font-black">
+              <div
+                className="
+                  flex
+                  h-10
+                  w-10
+                  shrink-0
+                  items-center
+                  justify-center
+                  rounded-xl
+                  bg-indigo-600
+                  text-lg
+                  font-black
+                  sm:h-11
+                  sm:w-11
+                "
+              >
                 N
               </div>
 
               <div>
-                <p className="text-xl font-black">
+                <p className="text-lg font-black sm:text-xl">
                   Nova
                 </p>
 
-                <p className="text-[10px] uppercase tracking-widest text-indigo-400">
+                <p className="text-[10px] uppercase tracking-[0.18em] text-indigo-400 sm:text-[11px] sm:tracking-widest">
                   Digital Agency
                 </p>
               </div>
-
             </Link>
 
-            <p className="mt-6 leading-7 text-slate-400">
-              We create modern digital experiences that help businesses grow, connect with customers and achieve their goals.
+            <p
+              className="
+                mt-5
+                max-w-md
+                text-sm
+                leading-7
+                text-slate-400
+                sm:mt-6
+                sm:text-base
+              "
+            >
+              We create modern digital experiences that help businesses grow,
+              connect with customers and achieve their goals.
             </p>
 
             <div className="mt-6 flex gap-3">
-
               {socialLinks.map(({ name, icon: Icon, href }) => (
                 <a
                   key={name}
@@ -84,166 +138,257 @@ function PublicFooter() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={name}
-                  className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/10 text-slate-300 transition duration-300 hover:bg-indigo-600 hover:text-white"
+                  className="
+                    flex
+                    h-10
+                    w-10
+                    shrink-0
+                    items-center
+                    justify-center
+                    rounded-lg
+                    bg-white/10
+                    text-slate-300
+                    transition
+                    duration-300
+                    hover:bg-indigo-600
+                    hover:text-white
+                  "
                 >
                   <Icon size={17} />
                 </a>
               ))}
-
             </div>
-
           </div>
 
-          {/* QUICK LINKS */}
+          {/* ==================================================
+              QUICK LINKS
+          ================================================== */}
 
-          <div>
+          <div className="min-w-0">
 
             <h3 className="text-lg font-bold">
               Quick Links
             </h3>
 
-            <div className="mt-6 space-y-3">
-
+            <div className="mt-5 space-y-3">
               {quickLinks.map(({ name, path }) => (
                 <Link
                   key={path}
                   to={path}
-                  className="block text-sm text-slate-400 transition hover:translate-x-1 hover:text-white"
+                  className="
+                    block
+                    text-sm
+                    leading-6
+                    text-slate-400
+                    transition
+                    duration-300
+                    hover:translate-x-1
+                    hover:text-white
+                    sm:text-base
+                  "
                 >
                   {name}
                 </Link>
               ))}
-
             </div>
-
           </div>
 
-          {/* SERVICES */}
+          {/* ==================================================
+              SERVICES
+          ================================================== */}
 
-          <div>
+          <div className="min-w-0">
 
             <h3 className="text-lg font-bold">
               Services
             </h3>
 
-            <div className="mt-6 space-y-3">
-
+            <div className="mt-5 space-y-3">
               {serviceLinks.map(({ name, path }) => (
                 <Link
                   key={path}
                   to={path}
-                  className="block text-sm text-slate-400 transition hover:translate-x-1 hover:text-indigo-400"
+                  className="
+                    block
+                    text-sm
+                    leading-6
+                    text-slate-400
+                    transition
+                    duration-300
+                    hover:translate-x-1
+                    hover:text-indigo-400
+                    sm:text-base
+                  "
                 >
                   {name}
                 </Link>
               ))}
-
-              
             </div>
-
           </div>
 
-          {/* CONTACT */}
+          {/* ==================================================
+              CONTACT
+          ================================================== */}
 
-          <div>
+          <div className="min-w-0">
 
             <h3 className="text-lg font-bold">
               Contact Us
             </h3>
 
-            <div className="mt-6 space-y-5">
+            <div className="mt-5 space-y-5">
 
-              <div className="flex gap-3">
+              {/* ADDRESS */}
+
+              <div className="flex items-start gap-3">
 
                 <MapPin
                   size={19}
-                  className="shrink-0 text-indigo-400"
+                  className="mt-0.5 shrink-0 text-indigo-400"
                 />
 
-               <a
-  href="https://www.google.com/maps/search/?api=1&query=Hyderabad%2C%20Telangana%2C%20India"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="text-sm leading-6 text-slate-400 transition hover:text-white"
->
-  Hyderabad, Telangana, India
-</a>
-
+                <a
+                  href="https://www.google.com/maps/search/?api=1&query=Hyderabad%2C%20Telangana%2C%20India"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="
+                    break-words
+                    text-sm
+                    leading-6
+                    text-slate-400
+                    transition
+                    hover:text-white
+                    sm:text-base
+                  "
+                >
+                  Hyderabad, Telangana, India
+                </a>
               </div>
 
-              <div className="flex gap-3">
+              {/* EMAIL */}
+
+              <div className="flex items-start gap-3">
 
                 <Mail
                   size={19}
-                  className="shrink-0 text-indigo-400"
+                  className="mt-0.5 shrink-0 text-indigo-400"
                 />
 
                 <a
                   href="mailto:hello@novaagency.com"
-                  className="text-sm text-slate-400 transition hover:text-indigo-400"
+                  className="
+                    break-all
+                    text-sm
+                    leading-6
+                    text-slate-400
+                    transition
+                    hover:text-indigo-400
+                    sm:text-base
+                  "
                 >
                   hello@novaagency.com
                 </a>
-
               </div>
 
-              <div className="flex gap-3">
+              {/* PHONE */}
+
+              <div className="flex items-start gap-3">
 
                 <Phone
                   size={19}
-                  className="shrink-0 text-indigo-400"
+                  className="mt-0.5 shrink-0 text-indigo-400"
                 />
 
                 <a
                   href="tel:+919876543210"
-                  className="text-sm text-slate-400 transition hover:text-indigo-400"
+                  className="
+                    text-sm
+                    leading-6
+                    text-slate-400
+                    transition
+                    hover:text-indigo-400
+                    sm:text-base
+                  "
                 >
                   +91 98765 43210
                 </a>
-
               </div>
 
-             
-
             </div>
-
           </div>
 
         </div>
-
       </div>
 
-      {/* BOTTOM BAR */}
+      {/* ==================================================
+          BOTTOM BAR
+      ================================================== */}
 
       <div className="border-t border-white/10">
 
-        <div className="mx-auto flex max-w-7xl flex-col justify-between gap-3 px-4 sm:px-6 lg:px-8 py-6 text-sm text-slate-500 md:flex-row md:items-center">
+        <div
+          className="
+            mx-auto
+            flex
+            max-w-7xl
+            flex-col
+            items-center
+            gap-4
+            px-5
+            py-5
+            text-xs
+            text-slate-500
+            sm:px-6
+            sm:py-6
+            sm:text-sm
+            md:flex-row
+            md:justify-between
+            lg:px-8
+          "
+        >
 
-          <p>
+          <p className="text-center md:text-left">
             © 2026 Nova Digital Agency. All rights reserved.
           </p>
 
-          <div className="flex flex-wrap items-center gap-5">
-
-            <Link to="/about" className="hover:text-white transition">
+          <div
+            className="
+              flex
+              flex-wrap
+              items-center
+              justify-center
+              gap-x-5
+              gap-y-2
+            "
+          >
+            <Link
+              to="/about"
+              className="transition hover:text-white"
+            >
               Privacy Policy
             </Link>
 
-            <Link to="/about" className="hover:text-white transition">
+            <Link
+              to="/about"
+              className="transition hover:text-white"
+            >
               Terms & Conditions
             </Link>
 
             <Link
               to="/login"
-              className="text-xs font-semibold text-slate-400 hover:text-indigo-400 transition"
+              className="
+                font-semibold
+                text-slate-400
+                transition
+                hover:text-indigo-400
+              "
             >
               Admin Portal
             </Link>
-
           </div>
 
         </div>
-
       </div>
 
     </footer>
@@ -251,3 +396,4 @@ function PublicFooter() {
 }
 
 export default PublicFooter;
+

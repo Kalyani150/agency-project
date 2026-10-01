@@ -1,3 +1,4 @@
+
 import { useMemo, useState } from "react";
 import {
   Plus,
@@ -74,21 +75,107 @@ function Team({ team = [], setTeam }) {
     resetForm();
   };
 
+  /*
+   * Allow only specific characters for each field.
+   *
+   * Normal keyboard controls such as:
+   * Backspace, Delete, Tab, Arrow keys,
+   * Ctrl+A, Ctrl+C, Ctrl+V, Home, End
+   * continue to work normally.
+   */
+  const sanitizeValue = (name, value) => {
+    switch (name) {
+      // Name:
+      // Letters, spaces, apostrophe, dot and hyphen
+      case "name":
+        return value.replace(/[^a-zA-Z\s.'-]/g, "");
+
+      // Role:
+      // Letters, numbers, spaces, slash, &, dot and hyphen
+      case "role":
+        return value.replace(/[^a-zA-Z0-9\s/&.-]/g, "");
+
+      // Email:
+      // Standard email characters
+      case "email":
+        return value.replace(/[^a-zA-Z0-9@._%+-]/g, "");
+
+      // Phone:
+      // Numbers and common phone symbols
+      case "phone":
+        return value.replace(/[^0-9+\-()\s]/g, "");
+
+      // Status comes from select
+      case "status":
+        return value;
+
+      default:
+        return value;
+    }
+  };
+
   const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+
+    const sanitizedValue = sanitizeValue(name, value);
+
+    setForm((previous) => ({
+      ...previous,
+      [name]: sanitizedValue,
+    }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    if (!form.name.trim()) {
+      alert("Please enter team member name.");
+      return;
+    }
+
+    if (!form.role.trim()) {
+      alert("Please enter team member role.");
+      return;
+    }
+
+    if (form.email.trim()) {
+      const emailPattern =
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!emailPattern.test(form.email.trim())) {
+        alert("Please enter a valid email address.");
+        return;
+      }
+    }
+
+    if (form.phone.trim()) {
+      const phoneDigits = form.phone.replace(/\D/g, "");
+
+      if (
+        phoneDigits.length < 7 ||
+        phoneDigits.length > 15
+      ) {
+        alert("Please enter a valid phone number.");
+        return;
+      }
+    }
+
+    const cleanMember = {
+      ...form,
+      name: form.name.trim(),
+      role: form.role.trim(),
+      email: form.email.trim(),
+      phone: form.phone.trim(),
+    };
+
     if (editingMember) {
       setTeam(
         team.map((member) =>
-          member.id === editingMember.id
-            ? { ...member, ...form }
+          String(member.id) === String(editingMember.id)
+            ? {
+                ...member,
+                ...cleanMember,
+              }
             : member
         )
       );
@@ -97,7 +184,7 @@ function Team({ team = [], setTeam }) {
         ...team,
         {
           id: nextId(team),
-          ...form,
+          ...cleanMember,
         },
       ]);
     }
@@ -106,16 +193,22 @@ function Team({ team = [], setTeam }) {
   };
 
   const handleDelete = (id) => {
-    if (!window.confirm("Delete this team member?")) return;
+    if (!window.confirm("Delete this team member?")) {
+      return;
+    }
 
     setTeam(
-      team.filter((member) => member.id !== id)
+      team.filter(
+        (member) =>
+          String(member.id) !== String(id)
+      )
     );
   };
 
   return (
     <div className="space-y-6">
 
+      {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 
         <div>
@@ -150,7 +243,9 @@ function Team({ team = [], setTeam }) {
 
           <input
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) =>
+              setSearch(e.target.value)
+            }
             placeholder="Search team members..."
             className="w-full rounded-xl border border-slate-200 py-3 pl-10 pr-4 outline-none focus:border-indigo-500"
           />
@@ -167,6 +262,7 @@ function Team({ team = [], setTeam }) {
           <table className="w-full min-w-[850px]">
 
             <thead className="bg-slate-50">
+
               <tr>
 
                 <th className="px-6 py-4 text-left text-xs font-semibold uppercase text-slate-500">
@@ -190,21 +286,28 @@ function Team({ team = [], setTeam }) {
                 </th>
 
               </tr>
+
             </thead>
 
             <tbody className="divide-y divide-slate-100">
 
               {filteredTeam.length === 0 ? (
+
                 <tr>
+
                   <td
                     colSpan="5"
                     className="px-6 py-12 text-center text-slate-500"
                   >
                     No team members found.
                   </td>
+
                 </tr>
+
               ) : (
+
                 filteredTeam.map((member) => (
+
                   <tr
                     key={member.id}
                     className="hover:bg-slate-50"
@@ -243,7 +346,9 @@ function Team({ team = [], setTeam }) {
                       <div className="flex justify-end gap-2">
 
                         <button
-                          onClick={() => openEdit(member)}
+                          onClick={() =>
+                            openEdit(member)
+                          }
                           className="rounded-lg p-2 text-slate-500 hover:bg-indigo-50 hover:text-indigo-600"
                         >
                           <Pencil size={17} />
@@ -263,7 +368,9 @@ function Team({ team = [], setTeam }) {
                     </td>
 
                   </tr>
+
                 ))
+
               )}
 
             </tbody>
@@ -276,10 +383,12 @@ function Team({ team = [], setTeam }) {
 
       {/* Modal */}
       {showModal && (
+
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4">
 
           <div className="w-full max-w-2xl rounded-2xl bg-white">
 
+            {/* Modal Header */}
             <div className="flex items-center justify-between border-b border-slate-200 p-6">
 
               <h2 className="text-xl font-bold text-slate-900">
@@ -297,6 +406,7 @@ function Team({ team = [], setTeam }) {
 
             </div>
 
+            {/* Form */}
             <form
               onSubmit={handleSubmit}
               className="space-y-5 p-6"
@@ -307,6 +417,7 @@ function Team({ team = [], setTeam }) {
                 name="name"
                 value={form.name}
                 onChange={handleChange}
+                placeholder="John Doe"
                 required
               />
 
@@ -327,17 +438,21 @@ function Team({ team = [], setTeam }) {
                   type="email"
                   value={form.email}
                   onChange={handleChange}
+                  placeholder="john@example.com"
                 />
 
                 <Input
                   label="Phone"
                   name="phone"
+                  type="tel"
                   value={form.phone}
                   onChange={handleChange}
+                  placeholder="+91 9876543210"
                 />
 
               </div>
 
+              {/* Status */}
               <div>
 
                 <label className="mb-2 block text-sm font-medium text-slate-700">
@@ -348,27 +463,33 @@ function Team({ team = [], setTeam }) {
                   name="status"
                   value={form.status}
                   onChange={handleChange}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3"
+                  className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-indigo-500"
                 >
-                  <option>Active</option>
-                  <option>Inactive</option>
+                  <option value="Active">
+                    Active
+                  </option>
+
+                  <option value="Inactive">
+                    Inactive
+                  </option>
                 </select>
 
               </div>
 
+              {/* Buttons */}
               <div className="flex justify-end gap-3 border-t border-slate-200 pt-5">
 
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="rounded-xl border border-slate-200 px-5 py-3 font-semibold text-slate-700"
+                  className="rounded-xl border border-slate-200 px-5 py-3 font-semibold text-slate-700 hover:bg-slate-50"
                 >
                   Cancel
                 </button>
 
                 <button
                   type="submit"
-                  className="rounded-xl bg-indigo-600 px-5 py-3 font-semibold text-white"
+                  className="rounded-xl bg-indigo-600 px-5 py-3 font-semibold text-white hover:bg-indigo-700"
                 >
                   {editingMember
                     ? "Update Member"
@@ -382,6 +503,7 @@ function Team({ team = [], setTeam }) {
           </div>
 
         </div>
+
       )}
 
     </div>
@@ -399,6 +521,7 @@ function Input({
 }) {
   return (
     <div>
+
       <label className="mb-2 block text-sm font-medium text-slate-700">
         {label}
       </label>
@@ -412,6 +535,7 @@ function Input({
         required={required}
         className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-indigo-500"
       />
+
     </div>
   );
 }

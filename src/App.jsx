@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import {
   Navigate,
@@ -108,10 +107,122 @@ function loadData(key, defaultData) {
 
 function saveData(key, data) {
   try {
-    localStorage.setItem(key, JSON.stringify(data));
+    localStorage.setItem(
+      key,
+      JSON.stringify(data)
+    );
   } catch (error) {
     console.error(`Error saving ${key}:`, error);
   }
+}
+
+// ======================================================
+// MERGE PROJECT DATA
+// ======================================================
+//
+// This allows new fields added to initialProjects,
+// such as:
+//
+// - longDescription
+// - shortDescription
+//
+// to automatically appear in old localStorage data.
+//
+// At the same time, Admin edits are preserved.
+//
+// ======================================================
+
+function mergeProjects(savedProjects) {
+  // ----------------------------------------------------
+  // No saved projects
+  // ----------------------------------------------------
+
+  if (!Array.isArray(savedProjects)) {
+    return initialProjects;
+  }
+
+  // ----------------------------------------------------
+  // Merge existing initial projects
+  // ----------------------------------------------------
+
+  const mergedProjects = initialProjects.map(
+    (initialProject) => {
+      const savedProject = savedProjects.find(
+        (project) =>
+          String(project.id) ===
+          String(initialProject.id)
+      );
+
+      // ------------------------------------------------
+      // Project does not exist in localStorage
+      // ------------------------------------------------
+
+      if (!savedProject) {
+        return initialProject;
+      }
+
+      // ------------------------------------------------
+      // Project exists
+      // ------------------------------------------------
+
+      return {
+        // Latest structure from initialProjects
+        ...initialProject,
+
+        // Preserve Admin/localStorage changes
+        ...savedProject,
+
+        // ------------------------------------------------
+        // LONG DESCRIPTION
+        // ------------------------------------------------
+        //
+        // If saved project already has a long description,
+        // keep it.
+        //
+        // If it doesn't, use the latest initialProjects
+        // longDescription.
+        //
+        longDescription:
+          savedProject.longDescription?.trim()
+            ? savedProject.longDescription
+            : initialProject.longDescription || "",
+
+        // ------------------------------------------------
+        // SHORT DESCRIPTION
+        // ------------------------------------------------
+
+        shortDescription:
+          savedProject.shortDescription?.trim()
+            ? savedProject.shortDescription
+            : initialProject.shortDescription || "",
+      };
+    }
+  );
+
+  // ----------------------------------------------------
+  // KEEP ADMIN-CREATED PROJECTS
+  // ----------------------------------------------------
+  //
+  // If a project was created from the Admin panel and
+  // does not exist in initialProjects, keep it.
+  //
+  const customProjects = savedProjects.filter(
+    (savedProject) =>
+      !initialProjects.some(
+        (initialProject) =>
+          String(initialProject.id) ===
+          String(savedProject.id)
+      )
+  );
+
+  // ----------------------------------------------------
+  // Final project list
+  // ----------------------------------------------------
+
+  return [
+    ...mergedProjects,
+    ...customProjects,
+  ];
 }
 
 // ======================================================
@@ -120,8 +231,12 @@ function saveData(key, data) {
 
 function isAdminLoggedIn() {
   return (
-    localStorage.getItem("agency_admin_logged_in") === "true" ||
-    localStorage.getItem("adminLoggedIn") === "true"
+    localStorage.getItem(
+      "agency_admin_logged_in"
+    ) === "true" ||
+    localStorage.getItem(
+      "adminLoggedIn"
+    ) === "true"
   );
 }
 
@@ -133,7 +248,12 @@ function ProtectedAdminRoute({ children }) {
   const loggedIn = isAdminLoggedIn();
 
   if (!loggedIn) {
-    return <Navigate to="/" replace />;
+    return (
+      <Navigate
+        to="/"
+        replace
+      />
+    );
   }
 
   return children;
@@ -158,13 +278,31 @@ function App() {
   // ====================================================
   // PROJECTS
   // ====================================================
+  //
+  // IMPORTANT:
+  //
+  // Instead of directly loading:
+  //
+  // loadData(
+  //   STORAGE_KEYS.projects,
+  //   initialProjects
+  // )
+  //
+  // we merge the saved projects with initialProjects.
+  //
+  // This allows new longDescription fields to appear
+  // without deleting localStorage manually.
+  //
+  // ====================================================
 
-  const [projects, setProjects] = useState(() =>
-    loadData(
+  const [projects, setProjects] = useState(() => {
+    const savedProjects = loadData(
       STORAGE_KEYS.projects,
-      initialProjects
-    )
-  );
+      null
+    );
+
+    return mergeProjects(savedProjects);
+  });
 
   // ====================================================
   // BLOGS
@@ -192,23 +330,63 @@ function App() {
   // TEAM
   // ====================================================
 
-  const [team, setTeam] = useState(() =>
-    loadData(
-      STORAGE_KEYS.team,
-      initialTeam
-    )
-  );
+  const [team, setTeam] = useState(() => {
+    const savedTeam = localStorage.getItem(
+      STORAGE_KEYS.team
+    );
+
+    if (!savedTeam) {
+      return initialTeam;
+    }
+
+    try {
+      const parsedTeam = JSON.parse(
+        savedTeam
+      );
+
+      if (!Array.isArray(parsedTeam)) {
+        return initialTeam;
+      }
+
+      // Keep latest images from initialTeam
+      // while preserving saved team information.
+      return parsedTeam.map((member) => {
+        const defaultMember =
+          initialTeam.find(
+            (item) =>
+              item.id === member.id
+          );
+
+        if (!defaultMember) {
+          return member;
+        }
+
+        return {
+          ...member,
+          image: defaultMember.image,
+        };
+      });
+    } catch (error) {
+      console.error(
+        "Error loading team:",
+        error
+      );
+
+      return initialTeam;
+    }
+  });
 
   // ====================================================
   // TESTIMONIALS
   // ====================================================
 
-  const [testimonials, setTestimonials] = useState(() =>
-    loadData(
-      STORAGE_KEYS.testimonials,
-      initialTestimonials
-    )
-  );
+  const [testimonials, setTestimonials] =
+    useState(() =>
+      loadData(
+        STORAGE_KEYS.testimonials,
+        initialTestimonials
+      )
+    );
 
   // ====================================================
   // SAVE SERVICES
@@ -295,7 +473,8 @@ function App() {
   const updateService = (updatedService) => {
     setServices((currentServices) =>
       currentServices.map((service) =>
-        service.id === updatedService.id
+        String(service.id) ===
+        String(updatedService.id)
           ? updatedService
           : service
       )
@@ -305,7 +484,9 @@ function App() {
   const deleteService = (id) => {
     setServices((currentServices) =>
       currentServices.filter(
-        (service) => service.id !== id
+        (service) =>
+          String(service.id) !==
+          String(id)
       )
     );
   };
@@ -329,7 +510,8 @@ function App() {
   const updateProject = (updatedProject) => {
     setProjects((currentProjects) =>
       currentProjects.map((project) =>
-        project.id === updatedProject.id
+        String(project.id) ===
+        String(updatedProject.id)
           ? updatedProject
           : project
       )
@@ -339,7 +521,9 @@ function App() {
   const deleteProject = (id) => {
     setProjects((currentProjects) =>
       currentProjects.filter(
-        (project) => project.id !== id
+        (project) =>
+          String(project.id) !==
+          String(id)
       )
     );
   };
@@ -363,7 +547,8 @@ function App() {
   const updateBlog = (updatedBlog) => {
     setBlogs((currentBlogs) =>
       currentBlogs.map((blog) =>
-        blog.id === updatedBlog.id
+        String(blog.id) ===
+        String(updatedBlog.id)
           ? updatedBlog
           : blog
       )
@@ -373,7 +558,9 @@ function App() {
   const deleteBlog = (id) => {
     setBlogs((currentBlogs) =>
       currentBlogs.filter(
-        (blog) => blog.id !== id
+        (blog) =>
+          String(blog.id) !==
+          String(id)
       )
     );
   };
@@ -397,7 +584,8 @@ function App() {
   const updateTeamMember = (updatedMember) => {
     setTeam((currentTeam) =>
       currentTeam.map((member) =>
-        member.id === updatedMember.id
+        String(member.id) ===
+        String(updatedMember.id)
           ? updatedMember
           : member
       )
@@ -407,7 +595,9 @@ function App() {
   const deleteTeamMember = (id) => {
     setTeam((currentTeam) =>
       currentTeam.filter(
-        (member) => member.id !== id
+        (member) =>
+          String(member.id) !==
+          String(id)
       )
     );
   };
@@ -419,31 +609,42 @@ function App() {
   const addTestimonial = (testimonial) => {
     const newTestimonial = {
       ...testimonial,
-      id: testimonial.id || Date.now(),
+      id:
+        testimonial.id ||
+        Date.now(),
     };
 
-    setTestimonials((currentTestimonials) => [
-      ...currentTestimonials,
-      newTestimonial,
-    ]);
+    setTestimonials(
+      (currentTestimonials) => [
+        ...currentTestimonials,
+        newTestimonial,
+      ]
+    );
   };
 
-  const updateTestimonial = (updatedTestimonial) => {
-    setTestimonials((currentTestimonials) =>
-      currentTestimonials.map((testimonial) =>
-        testimonial.id === updatedTestimonial.id
-          ? updatedTestimonial
-          : testimonial
-      )
+  const updateTestimonial = (
+    updatedTestimonial
+  ) => {
+    setTestimonials(
+      (currentTestimonials) =>
+        currentTestimonials.map(
+          (testimonial) =>
+            String(testimonial.id) ===
+            String(updatedTestimonial.id)
+              ? updatedTestimonial
+              : testimonial
+        )
     );
   };
 
   const deleteTestimonial = (id) => {
-    setTestimonials((currentTestimonials) =>
-      currentTestimonials.filter(
-        (testimonial) =>
-          testimonial.id !== id
-      )
+    setTestimonials(
+      (currentTestimonials) =>
+        currentTestimonials.filter(
+          (testimonial) =>
+            String(testimonial.id) !==
+            String(id)
+        )
     );
   };
 
@@ -455,37 +656,50 @@ function App() {
     const newEnquiry = {
       ...enquiry,
 
-      id: enquiry.id || Date.now(),
+      id:
+        enquiry.id ||
+        Date.now(),
 
       status:
-        enquiry.status || "New",
+        enquiry.status ||
+        "New",
 
       createdAt:
         enquiry.createdAt ||
         new Date().toISOString(),
     };
 
-    setEnquiries((currentEnquiries) => [
-      newEnquiry,
-      ...currentEnquiries,
-    ]);
+    setEnquiries(
+      (currentEnquiries) => [
+        newEnquiry,
+        ...currentEnquiries,
+      ]
+    );
   };
 
-  const updateEnquiry = (updatedEnquiry) => {
-    setEnquiries((currentEnquiries) =>
-      currentEnquiries.map((enquiry) =>
-        enquiry.id === updatedEnquiry.id
-          ? updatedEnquiry
-          : enquiry
-      )
+  const updateEnquiry = (
+    updatedEnquiry
+  ) => {
+    setEnquiries(
+      (currentEnquiries) =>
+        currentEnquiries.map(
+          (enquiry) =>
+            String(enquiry.id) ===
+            String(updatedEnquiry.id)
+              ? updatedEnquiry
+              : enquiry
+        )
     );
   };
 
   const deleteEnquiry = (id) => {
-    setEnquiries((currentEnquiries) =>
-      currentEnquiries.filter(
-        (enquiry) => enquiry.id !== id
-      )
+    setEnquiries(
+      (currentEnquiries) =>
+        currentEnquiries.filter(
+          (enquiry) =>
+            String(enquiry.id) !==
+            String(id)
+        )
     );
   };
 
@@ -543,7 +757,9 @@ function App() {
     team,
     testimonials,
     enquiries,
+
     setEnquiries,
+
     addEnquiry,
   };
 
@@ -552,7 +768,7 @@ function App() {
   // ====================================================
 
   const adminProps = {
-    // Current entity states
+    // Current data
     services,
     projects,
     blogs,
@@ -560,7 +776,7 @@ function App() {
     testimonials,
     enquiries,
 
-    // State setters (expected by admin CRUD components)
+    // State setters
     setServices,
     setProjects,
     setBlogs,
@@ -607,9 +823,9 @@ function App() {
   // ====================================================
 
   return (
-   <>
-   <ScrollToTop />
-   
+    <>
+      <ScrollToTop />
+
       <Routes>
 
         {/* ==================================================
@@ -763,7 +979,6 @@ function App() {
 
         </Route>
 
-
         {/* ==================================================
             ADMIN LOGIN
         ================================================== */}
@@ -775,21 +990,29 @@ function App() {
           }
         />
 
-        {/* /admin/login redirect: if not logged in -> /, if logged in -> /admin */}
+        {/* ==================================================
+            ADMIN LOGIN REDIRECT
+        ================================================== */}
+
         <Route
           path="/admin/login"
           element={
             isAdminLoggedIn() ? (
-              <Navigate to="/admin" replace />
+              <Navigate
+                to="/admin"
+                replace
+              />
             ) : (
-              <Navigate to="/" replace />
+              <Navigate
+                to="/"
+                replace
+              />
             )
           }
         />
 
-
         {/* ==================================================
-            ADMIN PANEL
+            PROTECTED ADMIN PANEL
         ================================================== */}
 
         <Route
@@ -803,9 +1026,6 @@ function App() {
 
           {/* ==================================================
               ADMIN DASHBOARD
-
-              URL:
-              /admin and /admin/dashboard
           ================================================== */}
 
           <Route
@@ -826,12 +1046,8 @@ function App() {
             }
           />
 
-
           {/* ==================================================
               ADMIN SERVICES
-
-              URL:
-              /admin/services
           ================================================== */}
 
           <Route
@@ -843,12 +1059,8 @@ function App() {
             }
           />
 
-
           {/* ==================================================
               ADMIN PROJECTS
-
-              URL:
-              /admin/projects
           ================================================== */}
 
           <Route
@@ -860,12 +1072,8 @@ function App() {
             }
           />
 
-
           {/* ==================================================
               ADMIN BLOGS
-
-              URL:
-              /admin/blogs
           ================================================== */}
 
           <Route
@@ -877,12 +1085,8 @@ function App() {
             }
           />
 
-
           {/* ==================================================
               ADMIN TEAM
-
-              URL:
-              /admin/team
           ================================================== */}
 
           <Route
@@ -894,12 +1098,8 @@ function App() {
             }
           />
 
-
           {/* ==================================================
               ADMIN TESTIMONIALS
-
-              URL:
-              /admin/testimonials
           ================================================== */}
 
           <Route
@@ -911,12 +1111,8 @@ function App() {
             }
           />
 
-
           {/* ==================================================
               ADMIN ENQUIRIES
-
-              URL:
-              /admin/enquiries
           ================================================== */}
 
           <Route
@@ -928,12 +1124,8 @@ function App() {
             }
           />
 
-
           {/* ==================================================
               ADMIN SETTINGS
-
-              URL:
-              /admin/settings
           ================================================== */}
 
           <Route
@@ -946,7 +1138,6 @@ function App() {
           />
 
         </Route>
-
 
         {/* ==================================================
             UNKNOWN URL
@@ -963,10 +1154,8 @@ function App() {
         />
 
       </Routes>
-</>
-   
+    </>
   );
 }
 
 export default App;
-

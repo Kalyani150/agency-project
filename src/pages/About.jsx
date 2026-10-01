@@ -59,7 +59,7 @@ function About({ team = [] }) {
           {/* CONTENT */}
 
           <div>
-            <span className="text-sm font-bold uppercase tracking-widest text-indigo-600">
+            <span className="text-m font-bold uppercase tracking-widest text-indigo-600">
               Who We Are
             </span>
 
@@ -67,12 +67,12 @@ function About({ team = [] }) {
               A team focused on technology, design and business growth.
             </h2>
 
-            <p className="mt-6 leading-8 text-slate-600">
+            <p className="mt-6 text-lg leading-8 text-slate-600">
               We help organizations build strong digital products through a
               combination of strategy, design and technology.
             </p>
 
-            <p className="mt-4 leading-8 text-slate-600">
+            <p className="mt-4 text-lg leading-8 text-slate-600">
               From a simple business website to a complex web application, we
               focus on creating solutions that are easy to use, scalable and
               aligned with business objectives.
@@ -92,11 +92,11 @@ function About({ team = [] }) {
                   className="flex items-center gap-3"
                 >
                   <CheckCircle2
-                    size={20}
+                    size={22}
                     className="shrink-0 text-indigo-600"
                   />
 
-                  <span className="font-medium text-slate-700">
+                  <span className="font-medium text-lg text-slate-700">
                     {item}
                   </span>
                 </div>
@@ -119,7 +119,7 @@ function About({ team = [] }) {
             description="The principles behind the way we build digital products."
           />
 
-          <div className="mt-14 grid gap-6 md:grid-cols-3">
+          <div className="mt-14 grid gap-6 min-[450px]:grid-cols-2 md:grid-cols-3">
             {[
               {
                 icon: Target,
@@ -157,11 +157,11 @@ function About({ team = [] }) {
                     <Icon size={27} />
                   </div>
 
-                  <h3 className="mt-6 text-xl font-bold text-slate-900">
+                  <h3 className="mt-6 text-2xl font-bold text-slate-900">
                     {item.title}
                   </h3>
 
-                  <p className="mt-3 leading-7 text-slate-600">
+                  <p className="mt-3 text-m leading-7 text-slate-600">
                     {item.text}
                   </p>
                 </div>

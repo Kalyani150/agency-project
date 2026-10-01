@@ -123,7 +123,7 @@ function Testimonials({ testimonials = [] }) {
             SECTION TITLE
         ================================================== */}
 
-        <span className="text-sm font-bold uppercase tracking-widest text-indigo-600">
+        <span className="text-m font-bold uppercase tracking-widest text-indigo-600">
           Testimonials
         </span>
 
@@ -144,9 +144,12 @@ function Testimonials({ testimonials = [] }) {
           />
 
           {/* Message */}
-          <p className="mx-auto mt-7 max-w-3xl text-lg leading-8 text-slate-700 sm:text-xl sm:leading-9">
-            "{testimonial.message}"
-          </p>
+         
+<p className="mx-auto mt-7 max-w-3xl text-left text-base leading-7 text-slate-700 sm:text-center sm:text-xl sm:leading-9">
+  "{testimonial.message}"
+</p>
+
+
 
           {/* ==================================================
               MEMBER IMAGE - ROUND
@@ -193,7 +196,7 @@ function Testimonials({ testimonials = [] }) {
             }).map((_, index) => (
               <Star
                 key={index}
-                size={19}
+                size={20}
                 fill="currentColor"
                 className="text-amber-400"
               />
@@ -204,7 +207,7 @@ function Testimonials({ testimonials = [] }) {
               NAME
           ================================================== */}
 
-          <h3 className="mt-5 text-lg font-bold text-slate-900">
+          <h3 className="mt-5 text-2xl font-bold text-slate-900">
             {testimonial.name}
           </h3>
 
@@ -212,7 +215,7 @@ function Testimonials({ testimonials = [] }) {
               ROLE
           ================================================== */}
 
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-lg text-slate-500">
             {testimonial.role}
           </p>
         </div>

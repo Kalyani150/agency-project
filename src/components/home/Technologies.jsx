@@ -21,7 +21,7 @@ function Technologies() {
 
         <div className="text-center">
 
-          <span className="text-sm font-bold uppercase tracking-widest text-indigo-600">
+          <span className="text-m font-bold uppercase tracking-widest text-indigo-600">
             Technologies
           </span>
 
@@ -29,7 +29,7 @@ function Technologies() {
             Technologies We Work With
           </h2>
 
-          <p className="mx-auto mt-5 max-w-2xl leading-8 text-slate-600">
+          <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-600">
             We select technologies according to the requirements,
             scale and goals of each project.
           </p>

@@ -13,11 +13,11 @@ function BlogPreview({ blogs = [] }) {
 
           <div>
 
-            <span className="text-sm font-bold uppercase tracking-widest text-indigo-600">
+            <span className="text-m font-bold uppercase tracking-widest text-indigo-600">
               Latest Articles
             </span>
 
-            <h2 className="mt-4 text-3xl font-black text-slate-900 sm:text-5xl">
+            <h2 className="mt-4 text-4xl font-black text-slate-900 sm:text-5xl">
               From Our Blog
             </h2>
 
@@ -25,7 +25,7 @@ function BlogPreview({ blogs = [] }) {
 
           <Link
             to="/blog"
-            className="inline-flex items-center gap-2 font-bold text-indigo-600"
+            className="inline-flex text-lg items-center gap-2 font-bold text-indigo-600"
           >
             View All Articles
             <ArrowRight size={18} />

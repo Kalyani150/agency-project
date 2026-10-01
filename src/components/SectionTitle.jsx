@@ -11,7 +11,7 @@ function SectionTitle({
       } max-w-3xl`}
     >
       {badge && (
-        <span className="mb-3 inline-block rounded-full bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-600">
+        <span className="mb-3 inline-block rounded-full bg-indigo-50 px-4 py-2 text-lg font-semibold text-indigo-600">
           {badge}
         </span>
       )}

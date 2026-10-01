@@ -91,195 +91,139 @@ export const initialServices = [
   },
 ];
 
-// ======================================================
-// PROJECTS
-// ======================================================
+
 
 // ======================================================
 // PROJECTS
 // ======================================================
+
 
 export const initialProjects = [
   {
     id: 1,
-    title: "MarketHub",
+    title: "E-Commerce Website",
     category: "Web Development",
-    client: "MarketHub",
-    year: "2026",
-
-    shortDescription:
-      "A modern e-commerce platform designed for growing businesses.",
+    client: "ABC Company",
+    year: "2025",
+    status: "Completed",
+    image: marketHubImage,
 
     description:
-      "MarketHub is a comprehensive e-commerce platform developed for growing businesses that want to establish a professional online presence and provide customers with a smooth digital shopping experience. The project combines modern visual design, intuitive navigation, responsive layouts and carefully structured product experiences to create a consistent experience across desktop, tablet and mobile devices.",
+      "A modern e-commerce platform designed to provide a smooth and engaging online shopping experience.",
 
-    overview:
-      "The goal of MarketHub was to create a scalable online shopping platform that makes product discovery simple while providing the business with a flexible foundation for future growth. The experience was designed around clear navigation, strong visual presentation and a streamlined customer journey.",
+    longDescription: `
+This project involved the design and development of a complete modern e-commerce website focused on creating a simple, attractive and user-friendly shopping experience. The platform was designed with a clean interface that allows customers to easily browse products, explore categories and find the products they are looking for.
 
-    challenge:
-      "The main challenge was creating a shopping experience that could handle a growing product catalog while remaining simple and easy to use. Customers needed to find products quickly, understand product information clearly and move through the purchasing process without unnecessary steps.",
+The website provides a responsive experience across desktop computers, tablets and mobile devices. Every section of the interface was carefully structured to maintain consistent spacing, typography, navigation and visual hierarchy across different screen sizes.
 
-    solution:
-      "We designed and developed a responsive e-commerce experience with structured navigation, product categories, detailed product pages and a streamlined shopping flow. Reusable interface components were used throughout the platform to maintain consistency and make future development easier.",
+A major focus of the project was creating an intuitive product browsing experience. Customers can explore products through organized categories, view detailed product information and easily navigate between different sections of the website. Product cards and content sections were designed to provide important information without making the interface feel complicated.
 
-    features: [
-      "Responsive e-commerce website",
-      "Product catalog and categories",
-      "Detailed product pages",
-      "Customer-focused shopping experience",
-      "Responsive checkout flow",
-      "Mobile-friendly interface",
-      "Scalable component architecture",
-      "Performance-focused development",
-    ],
+The user interface was developed with modern design principles, including clear call-to-action elements, consistent colors, responsive layouts and accessible navigation. The overall visual design was created to provide a professional appearance while keeping the shopping journey simple and easy to understand.
 
-    technologies: [
-      "React",
-      "JavaScript",
-      "Tailwind CSS",
-      "Responsive Design",
-      "REST API",
-    ],
+Performance and scalability were also considered during development. The structure of the application allows additional products, categories and features to be added in the future without requiring major changes to the existing interface.
 
-    image: marketHubImage,
-    status: "Completed",
+The project was also optimized for different screen sizes. On mobile devices, content automatically adapts to the available screen width, navigation becomes easier to use and images and sections resize appropriately. This ensures that users receive a consistent experience regardless of the device they use.
+
+Overall, the project combines modern web development techniques, responsive design and user-focused functionality to create a reliable and professional e-commerce platform that can grow with the business.
+`,
   },
 
   {
     id: 2,
-    title: "Finora Dashboard",
-    category: "UI/UX Design",
-    client: "Finora",
-    year: "2026",
-
-    shortDescription:
-      "A modern financial analytics dashboard designed for clear and efficient data management.",
+    title: "Business Management Platform",
+    category: "Web Application",
+    client: "XYZ Solutions",
+    year: "2025",
+    status: "Completed",
+    image: finoraDashboardImage,
 
     description:
-      "Finora Dashboard is a modern financial analytics interface designed to transform complex financial information into a clear, organized and easy-to-understand digital experience. The project focuses on information architecture, visual hierarchy and usability while maintaining a professional financial technology aesthetic.",
+      "A centralized business management platform designed to simplify daily operations and improve productivity.",
 
-    overview:
-      "The objective was to create a dashboard that allows users to quickly understand important financial information while still providing access to detailed analytics. The interface was structured around clear sections, summary cards, reports and interactive data components.",
+    longDescription: `
+This project focused on creating a centralized business management platform that helps organizations manage their daily activities through a single, easy-to-use interface. The goal was to reduce unnecessary complexity and provide users with a clear overview of important business information.
 
-    challenge:
-      "Financial dashboards often contain large amounts of information, which can make interfaces difficult to understand. The challenge was to organize this information in a way that allows users to identify important metrics quickly without creating unnecessary visual complexity.",
+The application was designed with a structured dashboard that presents important information in an organized format. Users can quickly understand the current state of their operations through summary cards, tables, activity sections and other visual components.
 
-    solution:
-      "We created a structured dashboard system with clear information hierarchy, reusable cards, organized navigation and responsive layouts. Important metrics are presented prominently while detailed information remains accessible through secondary sections.",
+A responsive layout was implemented throughout the application so that employees can access important information from desktop computers, tablets and mobile devices. The interface automatically adjusts according to the screen size while maintaining readability and usability.
 
-    features: [
-      "Modern financial dashboard",
-      "Analytics and reporting sections",
-      "Summary metric cards",
-      "Interactive data areas",
-      "Responsive dashboard layout",
-      "Clean information hierarchy",
-      "Reusable UI components",
-      "Professional visual design",
-    ],
+The platform also focuses on efficient navigation. Different areas of the application are organized into clearly defined sections, allowing users to move between features without unnecessary steps. Buttons, forms and interactive elements were designed with consistent styling to make the application easier to learn.
 
-    technologies: [
-      "Figma",
-      "React",
-      "JavaScript",
-      "Tailwind CSS",
-      "Responsive UI",
-    ],
+Data management was another important part of the project. Information is displayed in structured tables and organized sections so users can quickly search, review and manage records. The interface was designed to support future expansion and additional business functionality.
 
-    image: finoraDashboardImage,
-    status: "Completed",
+The visual design uses a modern professional layout with carefully selected typography, spacing and interface components. This creates a consistent experience across all pages while keeping the application clean and easy to understand.
+
+The project was developed with scalability in mind. New modules, dashboard sections and management features can be added as the organization's requirements grow.
+
+Overall, the platform provides a centralized environment for managing business information, monitoring activities and improving the efficiency of everyday workflows.
+`,
   },
 
   {
     id: 3,
-    title: "TravelNest",
-    category: "Mobile App",
-    client: "TravelNest",
-    year: "2025",
-
-    shortDescription:
-      "A mobile travel booking experience designed for simple destination discovery and reservations.",
+    title: "Corporate Website",
+    category: "Website Design",
+    client: "Global Technologies",
+    year: "2024",
+    status: "Completed",
+    image: travelNestImage,
 
     description:
-      "TravelNest is a mobile travel booking experience created to help users discover destinations, explore accommodation options and organize their travel plans through a simple and intuitive application. The project focuses on creating a smooth journey from destination discovery through property selection and booking.",
+      "A professional corporate website created to establish a strong digital presence and communicate the company's services.",
 
-    overview:
-      "The objective was to create a convenient mobile experience where travelers could discover destinations, search available accommodation, review important information and continue through the booking process with minimal friction.",
+    longDescription: `
+This corporate website was created to establish a professional digital presence for the organization and clearly communicate its services, capabilities and overall brand identity.
 
-    challenge:
-      "The main challenge was presenting a large amount of travel information on smaller mobile screens without making the interface feel crowded. Users needed access to search, filtering, destination information and booking actions while keeping navigation simple.",
+The website structure was carefully planned to provide visitors with a straightforward browsing experience. Important information is presented through dedicated sections that explain the company's services, expertise, projects and other relevant information.
 
-    solution:
-      "We created a mobile-first interface with clear navigation, touch-friendly components, structured search functionality and visually engaging destination sections. The booking journey was divided into logical steps to make the overall experience easier to understand.",
+The homepage was designed to immediately communicate the organization's core message while providing clear navigation to the most important areas of the website. Strong visual sections and carefully positioned call-to-action elements help visitors understand the company's offerings.
 
-    features: [
-      "Mobile-first design",
-      "Destination discovery",
-      "Accommodation search",
-      "Search and filtering",
-      "Property detail screens",
-      "Booking flow",
-      "Touch-friendly interactions",
-      "Responsive interface",
-    ],
+A responsive design approach was used throughout the project. The website adapts smoothly to desktop, tablet and mobile screen sizes, ensuring that content remains readable and accessible regardless of the device being used.
 
-    technologies: [
-      "React Native",
-      "JavaScript",
-      "Mobile UI Design",
-      "Responsive Design",
-      "API Integration",
-    ],
+The service sections were designed to clearly explain each offering without overwhelming visitors with excessive information. Content is organized into logical sections with consistent typography, spacing and visual elements.
 
-    image: travelNestImage,
-    status: "Completed",
+The project also includes a dedicated project or portfolio section where previous work can be displayed. This allows potential customers to understand the company's experience and the type of solutions it can provide.
+
+Visual consistency was an important part of the design. Colors, typography, buttons, cards and spacing follow a common design system so that every page feels like part of the same website.
+
+The website architecture was also designed with future growth in mind. Additional services, projects, pages and content can be added without changing the overall structure of the website.
+
+Overall, the project delivers a modern and professional corporate website that combines strong visual presentation, responsive design and clear information architecture.
+`,
   },
 
   {
     id: 4,
-    title: "Nova Corporate",
-    category: "Branding",
-    client: "Nova",
-    year: "2025",
-
-    shortDescription:
-      "A complete corporate brand identity created for a modern technology company.",
+    title: "Mobile Application",
+    category: "App Development",
+    client: "Digital Solutions",
+    year: "2024",
+    status: "Completed",
+    image: novaCorporateImage,
 
     description:
-      "Nova Corporate is a complete corporate branding project developed for a technology company that wanted to establish a stronger, more consistent and recognizable identity across its digital presence. The project focuses on creating a modern visual language that communicates innovation, professionalism and reliability.",
+      "A modern mobile application designed to provide users with a fast, simple and convenient digital experience.",
 
-    overview:
-      "The project involved creating a flexible brand identity that could be consistently applied across the company's website, marketing materials, presentations, social media content and other digital communication channels.",
+    longDescription: `
+This project involved designing and developing a modern mobile application focused on providing users with a simple, fast and convenient digital experience.
 
-    challenge:
-      "The company needed an identity that looked modern and technology-focused while remaining professional enough for corporate communication. The branding also needed to work consistently across different digital platforms and marketing materials.",
+The application was planned around the needs of everyday users, with an emphasis on clear navigation and easy access to important functionality. The interface was designed to minimize unnecessary steps and make common actions easy to discover.
 
-    solution:
-      "We created a cohesive visual system covering typography, colors, layouts, graphic elements and digital presentation styles. Clear design guidelines were established to help maintain consistency as the company continues to create new content.",
+The application uses a structured navigation system that allows users to move between different sections efficiently. Each screen follows a consistent visual structure so that users can quickly become familiar with the application.
 
-    features: [
-      "Complete brand identity",
-      "Corporate visual language",
-      "Typography system",
-      "Color system",
-      "Digital brand guidelines",
-      "Marketing design direction",
-      "Social media visual direction",
-      "Website branding",
-    ],
+Special attention was given to mobile usability. Buttons, input fields, menus and interactive components were designed with touch-based interaction in mind. Content automatically adjusts to different mobile screen sizes to provide a comfortable experience.
 
-    technologies: [
-      "Adobe Illustrator",
-      "Figma",
-      "Adobe Photoshop",
-      "Brand Strategy",
-      "Visual Design",
-    ],
+The visual design uses modern interface principles with clear typography, balanced spacing and recognizable icons. Important actions are visually emphasized so users can easily understand what they can do on each screen.
 
-    image: novaCorporateImage,
-    status: "Completed",
+The application architecture was designed to support future improvements and additional functionality. New features can be integrated without significantly changing the existing user experience.
+
+Performance was also considered during development. Screens and components were structured to provide a smooth experience while keeping the interface lightweight and responsive.
+
+The final application provides a modern digital experience that combines usability, responsive design and scalable architecture for future development.
+`,
   },
 ];
+
 
 
 

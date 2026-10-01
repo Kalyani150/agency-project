@@ -18,14 +18,12 @@ import {
   Settings,
   Menu,
   X,
-  ExternalLink,
   LogOut,
   Bell,
 } from "lucide-react";
 
 function AdminLayout() {
-  const [sidebarOpen, setSidebarOpen] =
-    useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -35,43 +33,36 @@ function AdminLayout() {
       path: "/admin",
       icon: LayoutDashboard,
     },
-
     {
       name: "Services",
       path: "/admin/services",
       icon: BriefcaseBusiness,
     },
-
     {
       name: "Projects",
       path: "/admin/projects",
       icon: FolderKanban,
     },
-
     {
       name: "Enquiries",
       path: "/admin/enquiries",
       icon: MessageSquare,
     },
-
     {
       name: "Blogs",
       path: "/admin/blogs",
       icon: FileText,
     },
-
     {
       name: "Team",
       path: "/admin/team",
       icon: Users,
     },
-
     {
       name: "Testimonials",
       path: "/admin/testimonials",
       icon: Star,
     },
-
     {
       name: "Settings",
       path: "/admin/settings",
@@ -86,6 +77,16 @@ function AdminLayout() {
     navigate("/login", { replace: true });
   };
 
+  // Bell click
+  const handleNotificationClick = () => {
+    navigate("/admin/settings");
+  };
+
+  // Admin user click
+  const handleUserClick = () => {
+    navigate("/admin/settings");
+  };
+
   const navLinkClasses = ({ isActive }) =>
     `group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition ${
       isActive
@@ -97,18 +98,14 @@ function AdminLayout() {
     <div className="min-h-screen bg-slate-100">
 
       {/* Mobile Overlay */}
-
       {sidebarOpen && (
         <div
           className="fixed inset-0 z-40 bg-slate-950/50 lg:hidden"
-          onClick={() =>
-            setSidebarOpen(false)
-          }
+          onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
-
       <aside
         className={`fixed inset-y-0 left-0 z-50 flex w-72 flex-col bg-slate-950 transition-transform duration-300 ${
           sidebarOpen
@@ -118,17 +115,13 @@ function AdminLayout() {
       >
 
         {/* Logo */}
-
         <div className="flex h-20 items-center justify-between border-b border-white/10 px-6">
 
           <Link
             to="/admin"
             className="flex items-center gap-3"
-            onClick={() =>
-              setSidebarOpen(false)
-            }
+            onClick={() => setSidebarOpen(false)}
           >
-
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 text-lg font-bold text-white">
               N
             </div>
@@ -138,20 +131,16 @@ function AdminLayout() {
                 Nova Admin
               </p>
 
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-300">
                 Digital Agency
               </p>
             </div>
-
           </Link>
 
           {/* Close mobile sidebar */}
-
           <button
             type="button"
-            onClick={() =>
-              setSidebarOpen(false)
-            }
+            onClick={() => setSidebarOpen(false)}
             className="rounded-lg p-2 text-slate-400 hover:bg-white/10 hover:text-white lg:hidden"
           >
             <X size={20} />
@@ -160,10 +149,9 @@ function AdminLayout() {
         </div>
 
         {/* Navigation */}
-
         <nav className="flex-1 overflow-y-auto px-4 py-6">
 
-          <p className="mb-3 px-4 text-xs font-semibold uppercase tracking-wider text-slate-600">
+          <p className="mb-3 px-4 text-xs font-semibold uppercase tracking-wider text-slate-400">
             Main Menu
           </p>
 
@@ -177,9 +165,7 @@ function AdminLayout() {
                   key={item.path}
                   to={item.path}
                   end={item.path === "/admin"}
-                  onClick={() =>
-                    setSidebarOpen(false)
-                  }
+                  onClick={() => setSidebarOpen(false)}
                   className={navLinkClasses}
                 >
                   <Icon
@@ -199,20 +185,7 @@ function AdminLayout() {
         </nav>
 
         {/* Sidebar Bottom */}
-
         <div className="border-t border-white/10 p-4">
-
-          <Link
-            to="/"
-            target="_blank"
-            className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-400 transition hover:bg-white/5 hover:text-white"
-          >
-            <ExternalLink size={18} />
-
-            <span>
-              View Website
-            </span>
-          </Link>
 
           <button
             type="button"
@@ -231,24 +204,19 @@ function AdminLayout() {
       </aside>
 
       {/* Main Area */}
-
       <div className="lg:pl-72">
 
         {/* Topbar */}
-
         <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
 
           <div className="flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
 
             {/* Left */}
-
             <div className="flex items-center gap-4">
 
               <button
                 type="button"
-                onClick={() =>
-                  setSidebarOpen(true)
-                }
+                onClick={() => setSidebarOpen(true)}
                 className="rounded-lg p-2 text-slate-600 hover:bg-slate-100 lg:hidden"
               >
                 <Menu size={24} />
@@ -267,14 +235,14 @@ function AdminLayout() {
             </div>
 
             {/* Right */}
-
             <div className="flex items-center gap-3">
 
               {/* Notification */}
-
               <button
                 type="button"
-                className="relative rounded-xl p-2.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
+                onClick={handleNotificationClick}
+                aria-label="Go to settings"
+                className="relative cursor-pointer rounded-xl p-2.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
               >
                 <Bell size={20} />
 
@@ -282,12 +250,15 @@ function AdminLayout() {
               </button>
 
               {/* Divider */}
-
               <div className="hidden h-8 w-px bg-slate-200 sm:block" />
 
               {/* User */}
-
-              <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={handleUserClick}
+                className="flex cursor-pointer items-center gap-3 rounded-xl px-2 py-1.5 text-left transition hover:bg-slate-100"
+                aria-label="Open admin settings"
+              >
 
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 font-semibold text-indigo-600">
                   A
@@ -305,7 +276,7 @@ function AdminLayout() {
 
                 </div>
 
-              </div>
+              </button>
 
             </div>
 
@@ -314,11 +285,8 @@ function AdminLayout() {
         </header>
 
         {/* Page Content */}
-
         <main className="min-h-[calc(100vh-80px)] p-4 sm:p-6 lg:p-8">
-
           <Outlet />
-
         </main>
 
       </div>

@@ -46,19 +46,19 @@ function ServiceCard({ service }) {
 
       </div>
 
-      <p className="relative mt-6 text-xs font-bold uppercase tracking-widest text-indigo-600">
+      <p className="relative mt-6 text-m font-bold uppercase tracking-widest text-indigo-600">
         {service.category}
       </p>
 
-      <h3 className="relative mt-2 text-xl font-bold text-slate-900 transition-colors duration-300 group-hover:text-indigo-600">
+      <h3 className="relative mt-2 text-2xl font-bold text-slate-900 transition-colors duration-300 group-hover:text-indigo-600">
         {service.title}
       </h3>
 
-      <p className="relative mt-3 leading-7 text-slate-600">
+      <p className="relative mt-3 leading-7 text-lg text-slate-600">
         {service.description}
       </p>
 
-      <span className="relative mt-6 inline-flex items-center gap-1 text-sm font-bold text-indigo-600 transition-all duration-300 group-hover:gap-3">
+      <span className="relative mt-6 inline-flex items-center gap-1 text-m font-bold text-indigo-600 transition-all duration-300 group-hover:gap-3">
         Learn More
         <ArrowUpRight size={15} />
       </span>

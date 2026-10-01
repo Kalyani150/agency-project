@@ -17,7 +17,7 @@ function PageHero({
 
         <div className="max-w-3xl">
 
-          <span className="text-sm font-bold uppercase tracking-widest text-indigo-400">
+          <span className="text-m font-bold uppercase tracking-widest text-indigo-400">
             {badge}
           </span>
 
@@ -25,7 +25,7 @@ function PageHero({
             {title}
           </h1>
 
-          <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-400">
+          <p className="mt-6 max-w-2xl text-xl leading-8 text-slate-400">
             {description}
           </p>
 
