@@ -57,48 +57,44 @@ function PublicFooter() {
 
   return (
     <footer className="overflow-hidden bg-slate-950 text-white">
-
-      {/* ==================================================
+      {/* =====================================================
           MAIN FOOTER
-      ================================================== */}
-
-      <div className="mx-auto max-w-7xl px-5 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
-
+      ====================================================== */}
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-20">
         <div
           className="
-            grid
-            grid-cols-1
-            gap-12
-            sm:gap-14
-            lg:grid-cols-4
-            lg:gap-10
+            grid grid-cols-1 gap-10
+
+            min-[320px]:grid-cols-2
+            min-[320px]:gap-x-5
+            min-[320px]:gap-y-10
+
+            min-[600px]:grid-cols-3
+            min-[600px]:gap-x-6
+            min-[600px]:gap-y-12
+
+            min-[1021px]:grid-cols-4
+            min-[1021px]:gap-10
           "
         >
-
-          {/* ==================================================
+          {/* =================================================
               COMPANY
           ================================================== */}
+          <div
+            className="
+              min-w-0
 
-          <div className="min-w-0">
-
-            <Link
-              to="/"
-              className="inline-flex items-center gap-3"
-            >
+              min-[320px]:col-span-2
+              min-[600px]:col-span-3
+              min-[1021px]:col-span-1
+            "
+          >
+            <Link to="/" className="inline-flex items-center gap-3">
               <div
                 className="
-                  flex
-                  h-10
-                  w-10
-                  shrink-0
-                  items-center
-                  justify-center
-                  rounded-xl
-                  bg-indigo-600
-                  text-lg
-                  font-black
-                  sm:h-11
-                  sm:w-11
+                  flex h-10 w-10 shrink-0 items-center justify-center
+                  rounded-xl bg-indigo-600 text-lg font-black
+                  sm:h-11 sm:w-11
                 "
               >
                 N
@@ -109,7 +105,13 @@ function PublicFooter() {
                   Nova
                 </p>
 
-                <p className="text-[10px] uppercase tracking-[0.18em] text-indigo-400 sm:text-[11px] sm:tracking-widest">
+                <p
+                  className="
+                    text-[9px] uppercase tracking-[0.15em]
+                    text-indigo-400
+                    sm:text-[11px] sm:tracking-widest
+                  "
+                >
                   Digital Agency
                 </p>
               </div>
@@ -117,74 +119,68 @@ function PublicFooter() {
 
             <p
               className="
-                mt-5
-                max-w-md
-                text-sm
-                leading-7
-                text-slate-400
-                sm:mt-6
-                sm:text-base
+                mt-5 max-w-md text-sm leading-6 text-slate-400
+                sm:mt-6 sm:text-base sm:leading-7
               "
             >
-              We create modern digital experiences that help businesses grow,
-              connect with customers and achieve their goals.
+              We create modern digital experiences that help
+              businesses grow, connect with customers and achieve
+              their goals.
             </p>
 
-            <div className="mt-6 flex gap-3">
-              {socialLinks.map(({ name, icon: Icon, href }) => (
-                <a
-                  key={name}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={name}
-                  className="
-                    flex
-                    h-10
-                    w-10
-                    shrink-0
-                    items-center
-                    justify-center
-                    rounded-lg
-                    bg-white/10
-                    text-slate-300
-                    transition
-                    duration-300
-                    hover:bg-indigo-600
-                    hover:text-white
-                  "
-                >
-                  <Icon size={17} />
-                </a>
-              ))}
+            <div
+              className="
+                mt-5 flex flex-wrap gap-2.5
+                sm:mt-6 sm:gap-3
+              "
+            >
+              {socialLinks.map(
+                ({ name, icon: Icon, href }) => (
+                  <a
+                    key={name}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={name}
+                    className="
+                      flex h-9 w-9 shrink-0 items-center
+                      justify-center rounded-lg
+                      bg-white/10 text-slate-300
+                      transition duration-300
+                      hover:bg-indigo-600 hover:text-white
+                      sm:h-10 sm:w-10
+                    "
+                  >
+                    <Icon
+                      size={16}
+                      className="sm:h-[17px] sm:w-[17px]"
+                    />
+                  </a>
+                )
+              )}
             </div>
           </div>
 
-          {/* ==================================================
+          {/* =================================================
               QUICK LINKS
           ================================================== */}
-
           <div className="min-w-0">
-
-            <h3 className="text-lg font-bold">
+            <h3 className="text-base font-bold sm:text-lg">
               Quick Links
             </h3>
 
-            <div className="mt-5 space-y-3">
+            <div className="mt-4 space-y-2 sm:mt-5 sm:space-y-3">
               {quickLinks.map(({ name, path }) => (
                 <Link
                   key={path}
                   to={path}
                   className="
-                    block
-                    text-sm
-                    leading-6
+                    block break-words text-xs leading-5
                     text-slate-400
-                    transition
-                    duration-300
-                    hover:translate-x-1
-                    hover:text-white
-                    sm:text-base
+                    transition duration-300
+                    hover:translate-x-1 hover:text-white
+                    sm:text-sm sm:leading-6
+                    lg:text-base
                   "
                 >
                   {name}
@@ -193,31 +189,26 @@ function PublicFooter() {
             </div>
           </div>
 
-          {/* ==================================================
+          {/* =================================================
               SERVICES
           ================================================== */}
-
           <div className="min-w-0">
-
-            <h3 className="text-lg font-bold">
+            <h3 className="text-base font-bold sm:text-lg">
               Services
             </h3>
 
-            <div className="mt-5 space-y-3">
+            <div className="mt-4 space-y-2 sm:mt-5 sm:space-y-3">
               {serviceLinks.map(({ name, path }) => (
                 <Link
                   key={path}
                   to={path}
                   className="
-                    block
-                    text-sm
-                    leading-6
+                    block break-words text-xs leading-5
                     text-slate-400
-                    transition
-                    duration-300
-                    hover:translate-x-1
-                    hover:text-indigo-400
-                    sm:text-base
+                    transition duration-300
+                    hover:translate-x-1 hover:text-indigo-400
+                    sm:text-sm sm:leading-6
+                    lg:text-base
                   "
                 >
                   {name}
@@ -226,25 +217,35 @@ function PublicFooter() {
             </div>
           </div>
 
-          {/* ==================================================
-              CONTACT
+          {/* =================================================
+              CONTACT US
           ================================================== */}
+          <div
+            className="
+              min-w-0
 
-          <div className="min-w-0">
+              max-[319px]:col-span-1
 
-            <h3 className="text-lg font-bold">
+              min-[320px]:col-span-2
+
+              min-[600px]:col-span-1
+
+              min-[1021px]:col-span-1
+            "
+          >
+            <h3 className="text-base font-bold sm:text-lg">
               Contact Us
             </h3>
 
-            <div className="mt-5 space-y-5">
-
-              {/* ADDRESS */}
-
-              <div className="flex items-start gap-3">
-
+            <div className="mt-4 space-y-4 sm:mt-5 sm:space-y-5">
+              {/* LOCATION */}
+              <div className="flex items-start gap-2 sm:gap-3">
                 <MapPin
-                  size={19}
-                  className="mt-0.5 shrink-0 text-indigo-400"
+                  size={18}
+                  className="
+                    mt-0.5 shrink-0 text-indigo-400
+                    sm:h-[19px] sm:w-[19px]
+                  "
                 />
 
                 <a
@@ -252,13 +253,11 @@ function PublicFooter() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="
-                    break-words
-                    text-sm
-                    leading-6
-                    text-slate-400
-                    transition
-                    hover:text-white
-                    sm:text-base
+                    min-w-0 break-words
+                    text-xs leading-5 text-slate-400
+                    transition hover:text-white
+                    sm:text-sm sm:leading-6
+                    lg:text-base
                   "
                 >
                   Hyderabad, Telangana, India
@@ -266,24 +265,23 @@ function PublicFooter() {
               </div>
 
               {/* EMAIL */}
-
-              <div className="flex items-start gap-3">
-
+              <div className="flex items-start gap-2 sm:gap-3">
                 <Mail
-                  size={19}
-                  className="mt-0.5 shrink-0 text-indigo-400"
+                  size={18}
+                  className="
+                    mt-0.5 shrink-0 text-indigo-400
+                    sm:h-[19px] sm:w-[19px]
+                  "
                 />
 
                 <a
                   href="mailto:hello@novaagency.com"
                   className="
-                    break-all
-                    text-sm
-                    leading-6
-                    text-slate-400
-                    transition
-                    hover:text-indigo-400
-                    sm:text-base
+                    min-w-0 break-all
+                    text-xs leading-5 text-slate-400
+                    transition hover:text-indigo-400
+                    sm:text-sm sm:leading-6
+                    lg:text-base
                   "
                 >
                   hello@novaagency.com
@@ -291,74 +289,61 @@ function PublicFooter() {
               </div>
 
               {/* PHONE */}
-
-              <div className="flex items-start gap-3">
-
+              <div className="flex items-start gap-2 sm:gap-3">
                 <Phone
-                  size={19}
-                  className="mt-0.5 shrink-0 text-indigo-400"
+                  size={18}
+                  className="
+                    mt-0.5 shrink-0 text-indigo-400
+                    sm:h-[19px] sm:w-[19px]
+                  "
                 />
 
                 <a
                   href="tel:+919876543210"
                   className="
-                    text-sm
-                    leading-6
-                    text-slate-400
-                    transition
-                    hover:text-indigo-400
-                    sm:text-base
+                    min-w-0
+                    text-xs leading-5 text-slate-400
+                    transition hover:text-indigo-400
+                    sm:text-sm sm:leading-6
+                    lg:text-base
                   "
                 >
                   +91 98765 43210
                 </a>
               </div>
-
             </div>
           </div>
-
         </div>
       </div>
 
-      {/* ==================================================
-          BOTTOM BAR
-      ================================================== */}
-
+      {/* =====================================================
+          COPYRIGHT
+      ====================================================== */}
       <div className="border-t border-white/10">
-
         <div
           className="
-            mx-auto
-            flex
-            max-w-7xl
-            flex-col
-            items-center
-            gap-4
-            px-5
-            py-5
-            text-xs
-            text-slate-500
-            sm:px-6
-            sm:py-6
-            sm:text-sm
+            mx-auto flex max-w-7xl flex-col items-center
+            gap-3 px-4 py-5
+            text-center text-[11px] text-slate-500
+
+            sm:gap-4 sm:px-6 sm:py-6 sm:text-sm
+
             md:flex-row
             md:justify-between
+            md:text-left
+
             lg:px-8
           "
         >
-
-          <p className="text-center md:text-left">
+          <p>
             © 2026 Nova Digital Agency. All rights reserved.
           </p>
 
           <div
             className="
-              flex
-              flex-wrap
-              items-center
-              justify-center
-              gap-x-5
-              gap-y-2
+              flex flex-wrap items-center justify-center
+              gap-x-4 gap-y-2
+              sm:gap-x-5
             "
           >
             <Link
@@ -374,26 +359,11 @@ function PublicFooter() {
             >
               Terms & Conditions
             </Link>
-
-            <Link
-              to="/login"
-              className="
-                font-semibold
-                text-slate-400
-                transition
-                hover:text-indigo-400
-              "
-            >
-              Admin Portal
-            </Link>
           </div>
-
         </div>
       </div>
-
     </footer>
   );
 }
 
 export default PublicFooter;
-

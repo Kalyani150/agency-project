@@ -1,11 +1,5 @@
-import { useEffect, useState } from "react";
 
-import {
-  ChevronLeft,
-  ChevronRight,
-  Quote,
-  Star,
-} from "lucide-react";
+import { Quote, Star } from "lucide-react";
 
 // ======================================================
 // TESTIMONIAL IMAGES
@@ -20,8 +14,6 @@ import davidBrownImage from "../../assets/team/david-brown.png";
 // ======================================================
 
 function Testimonials({ testimonials = [] }) {
-  const [active, setActive] = useState(0);
-
   // ======================================================
   // ADD IMAGES
   // ======================================================
@@ -48,67 +40,12 @@ function Testimonials({ testimonials = [] }) {
   });
 
   // ======================================================
-  // AUTO SLIDER
-  // ======================================================
-
-  useEffect(() => {
-    if (testimonialsWithImages.length <= 1) {
-      return;
-    }
-
-    const timer = setInterval(() => {
-      setActive((current) =>
-        current === testimonialsWithImages.length - 1
-          ? 0
-          : current + 1
-      );
-    }, 5000);
-
-    return () => clearInterval(timer);
-  }, [testimonialsWithImages.length]);
-
-  // ======================================================
-  // RESET ACTIVE
-  // ======================================================
-
-  useEffect(() => {
-    if (
-      testimonialsWithImages.length > 0 &&
-      active >= testimonialsWithImages.length
-    ) {
-      setActive(0);
-    }
-  }, [active, testimonialsWithImages.length]);
-
-  // ======================================================
   // EMPTY STATE
   // ======================================================
 
   if (!testimonialsWithImages.length) {
     return null;
   }
-
-  const testimonial = testimonialsWithImages[active];
-
-  // ======================================================
-  // NAVIGATION
-  // ======================================================
-
-  const handlePrevious = () => {
-    setActive((current) =>
-      current === 0
-        ? testimonialsWithImages.length - 1
-        : current - 1
-    );
-  };
-
-  const handleNext = () => {
-    setActive((current) =>
-      current === testimonialsWithImages.length - 1
-        ? 0
-        : current + 1
-    );
-  };
 
   // ======================================================
   // RENDER
@@ -117,144 +54,168 @@ function Testimonials({ testimonials = [] }) {
   return (
     <section className="bg-white py-20 sm:py-24">
 
-      <div className="mx-auto max-w-5xl px-4 text-center sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
         {/* ==================================================
-            SECTION TITLE
+            SECTION HEADER
         ================================================== */}
 
-        <span className="text-m font-bold uppercase tracking-widest text-indigo-600">
-          Testimonials
-        </span>
+        <div className="text-center">
 
-        <h2 className="mt-4 text-3xl font-black text-slate-900 sm:text-5xl">
-          What Our Clients Say
-        </h2>
+          <span className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-600 sm:text-sm">
+            Testimonials
+          </span>
 
-        {/* ==================================================
-            TESTIMONIAL CARD
-        ================================================== */}
+          <h2 className="mt-4 text-3xl font-black tracking-tight text-slate-900 sm:text-5xl">
+            What Our Clients Say
+          </h2>
 
-        <div className="mt-12 rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-sm sm:p-12">
-
-          {/* Quote */}
-          <Quote
-            size={45}
-            className="mx-auto text-indigo-200"
-          />
-
-          {/* Message */}
-         
-<p className="mx-auto mt-7 max-w-3xl text-left text-base leading-7 text-slate-700 sm:text-center sm:text-xl sm:leading-9">
-  "{testimonial.message}"
-</p>
-
-
-
-          {/* ==================================================
-              MEMBER IMAGE - ROUND
-          ================================================== */}
-
-          <div className="mt-8 flex justify-center">
-            <div
-              className="
-                h-40
-                w-40
-                overflow-hidden
-                rounded-full
-                border-4
-                border-white
-                bg-slate-200
-                shadow-xl
-                ring-2
-                ring-indigo-100
-                sm:h-36
-                sm:w-36
-              "
-            >
-              <img
-                src={testimonial.image}
-                alt={testimonial.name}
-                className="
-                  block
-                  h-full
-                  w-full
-                  object-cover
-                  object-top
-                "
-              />
-            </div>
-          </div>
-
-          {/* ==================================================
-              STAR RATING
-          ================================================== */}
-
-          <div className="mt-6 flex justify-center gap-1">
-            {Array.from({
-              length: testimonial.rating || 5,
-            }).map((_, index) => (
-              <Star
-                key={index}
-                size={20}
-                fill="currentColor"
-                className="text-amber-400"
-              />
-            ))}
-          </div>
-
-          {/* ==================================================
-              NAME
-          ================================================== */}
-
-          <h3 className="mt-5 text-2xl font-bold text-slate-900">
-            {testimonial.name}
-          </h3>
-
-          {/* ==================================================
-              ROLE
-          ================================================== */}
-
-          <p className="mt-1 text-lg text-slate-500">
-            {testimonial.role}
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">
+            Hear from clients who trusted us to turn their ideas into
+            powerful digital experiences.
           </p>
+
         </div>
 
         {/* ==================================================
-            NAVIGATION
+            TESTIMONIAL GRID
         ================================================== */}
 
-        
+        <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
 
-        {/* ==================================================
-            DOTS
-        ================================================== */}
+          {testimonialsWithImages.map((testimonial, index) => (
 
-        <div className="mt-5 flex justify-center gap-2">
-
-          {testimonialsWithImages.map((item, index) => (
-            <button
-              key={item.id ?? index}
-              type="button"
-              onClick={() => setActive(index)}
-              aria-label={`Show testimonial ${index + 1}`}
-              className={`
-                h-2.5
-                rounded-full
+            <div
+              key={testimonial.id ?? index}
+              className="
+                group
+                relative
+                flex
+                min-h-[300px]
+                flex-col
+                rounded-3xl
+                border
+                border-slate-200
+                bg-slate-50
+                p-6
+                shadow-sm
                 transition-all
                 duration-300
-                ${
-                  active === index
-                    ? "w-8 bg-indigo-600"
-                    : "w-2.5 bg-slate-300 hover:bg-indigo-400"
-                }
-              `}
-            />
+                hover:-translate-y-2
+                hover:border-indigo-200
+                hover:bg-white
+                hover:shadow-xl
+                sm:p-8
+              "
+            >
+
+              {/* ==================================================
+                  PROFILE - TOP
+              ================================================== */}
+
+              <div className="flex items-center gap-4">
+
+                {/* Profile Image */}
+
+                <div
+                  className="
+                    h-16
+                    w-16
+                    shrink-0
+                    overflow-hidden
+                    rounded-full
+                    border-2
+                    border-white
+                    bg-slate-200
+                    shadow-md
+                    ring-2
+                    ring-indigo-100
+                  "
+                >
+                  <img
+                    src={testimonial.image}
+                    alt={testimonial.name}
+                    className="
+                      block
+                      h-full
+                      w-full
+                      object-cover
+                      object-top
+                    "
+                  />
+                </div>
+
+                {/* Name + Role */}
+
+                <div className="min-w-0 text-left">
+
+                  <h3 className="truncate text-lg font-bold text-slate-900">
+                    {testimonial.name}
+                  </h3>
+
+                  <p className="mt-1 truncate text-sm text-slate-500">
+                    {testimonial.role}
+                  </p>
+
+                </div>
+
+              </div>
+
+              {/* ==================================================
+                  STAR RATING
+              ================================================== */}
+
+              <div className="mt-5 flex items-center gap-1">
+
+                {Array.from({
+                  length: testimonial.rating || 5,
+                }).map((_, starIndex) => (
+                  <Star
+                    key={starIndex}
+                    size={18}
+                    fill="currentColor"
+                    className="text-amber-400"
+                  />
+                ))}
+
+              </div>
+
+              {/* ==================================================
+                  DIVIDER
+              ================================================== */}
+
+              <div className="mt-6 h-px bg-slate-200" />
+
+              {/* ==================================================
+                  MESSAGE
+              ================================================== */}
+
+              <div className="flex flex-1 flex-col justify-center">
+
+                <p
+                  className="
+                    text-left
+                    text-base
+                    leading-7
+                    text-slate-600
+                    sm:text-[17px]
+                    sm:leading-8
+                  "
+                >
+                  "{testimonial.message}"
+                </p>
+
+              </div>
+              
+
+            </div>
+
           ))}
 
         </div>
 
       </div>
+
     </section>
   );
 }

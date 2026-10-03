@@ -11,6 +11,7 @@ import {
   Search,
   Pencil,
   Trash2,
+  Eye,
   X,
 } from "lucide-react";
 
@@ -25,8 +26,12 @@ function Services({
   // ======================================================
 
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [categoryFilter, setCategoryFilter] = useState("All");
+
   const [showModal, setShowModal] = useState(false);
   const [editingService, setEditingService] = useState(null);
+  const [viewingService, setViewingService] = useState(null);
 
   const [form, setForm] = useState({
     title: "",
@@ -38,6 +43,27 @@ function Services({
   const [errors, setErrors] = useState({});
 
   const titleInputRef = useRef(null);
+const [openFilter, setOpenFilter] = useState(null);
+  // ======================================================
+  // LOCK BACKGROUND PAGE WHEN MODAL IS OPEN
+  // ======================================================
+
+  useEffect(() => {
+    const modalIsOpen =
+      showModal || Boolean(viewingService);
+
+    if (!modalIsOpen) {
+      document.body.style.overflow = "";
+      return;
+    }
+
+    // Prevent the page behind the modal from scrolling.
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [showModal, viewingService]);
 
   // ======================================================
   // KEYBOARD CONTROL
@@ -68,29 +94,19 @@ function Services({
   // ======================================================
 
   const handleTextKeyDown = (event) => {
-    // Allow Ctrl/Cmd shortcuts:
-    // Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X, etc.
     if (isShortcutKey(event)) {
       return;
     }
 
-    // Allow editing and navigation keys
     if (allowedControlKeys.includes(event.key)) {
       return;
     }
 
-    // Prevent Enter in title/category
     if (event.key === "Enter") {
       event.preventDefault();
       return;
     }
 
-    // Allow:
-    // letters
-    // numbers
-    // spaces
-    // &
-    // -
     const allowedPattern = /^[a-zA-Z0-9 &-]$/;
 
     if (!allowedPattern.test(event.key)) {
@@ -103,22 +119,18 @@ function Services({
   // ======================================================
 
   const handleDescriptionKeyDown = (event) => {
-    // Allow Ctrl/Cmd shortcuts
     if (isShortcutKey(event)) {
       return;
     }
 
-    // Allow navigation/editing keys
     if (allowedControlKeys.includes(event.key)) {
       return;
     }
 
-    // Allow Enter in textarea
     if (event.key === "Enter") {
       return;
     }
 
-    // Allow normal printable characters
     if (event.key.length === 1) {
       return;
     }
@@ -128,26 +140,66 @@ function Services({
   // FILTER SERVICES
   // ======================================================
 
-  const filteredServices = useMemo(() => {
-    const term = search.trim().toLowerCase();
-
-    if (!term) {
-      return services;
-    }
-
-    return services.filter((service) =>
-      [
-        service.title,
-        service.category,
-        service.description,
-        service.status,
-      ]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase()
-        .includes(term)
+  const categories = useMemo(() => {
+    return Array.from(
+      new Set(
+        services
+          .map((service) =>
+            service.category?.trim()
+          )
+          .filter(Boolean)
+      )
+    ).sort((a, b) =>
+      a.localeCompare(b)
     );
-  }, [services, search]);
+  }, [services]);
+
+  const filteredServices = useMemo(() => {
+    const term = search
+      .trim()
+      .toLowerCase();
+
+    return services.filter((service) => {
+      const matchesSearch =
+        !term ||
+        [
+          service.title,
+          service.category,
+          service.description,
+          service.status,
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase()
+          .includes(term);
+
+      const matchesStatus =
+        statusFilter === "All" ||
+        (service.status || "Inactive") ===
+          statusFilter;
+
+      const matchesCategory =
+        categoryFilter === "All" ||
+        (service.category || "") ===
+          categoryFilter;
+
+      return (
+        matchesSearch &&
+        matchesStatus &&
+        matchesCategory
+      );
+    });
+  }, [
+    services,
+    search,
+    statusFilter,
+    categoryFilter,
+  ]);
+
+  const hasActiveFilters =
+    Boolean(search.trim()) ||
+    statusFilter !== "All" ||
+    categoryFilter !== "All";
 
   // ======================================================
   // RESET FORM
@@ -173,7 +225,8 @@ function Services({
 
     const title = form.title.trim();
     const category = form.category.trim();
-    const description = form.description.trim();
+    const description =
+      form.description.trim();
 
     // ----------------------------------------------------
     // SERVICE TITLE
@@ -188,7 +241,9 @@ function Services({
     } else if (title.length > 100) {
       newErrors.title =
         "Service title must not exceed 100 characters.";
-    } else if (!/^[a-zA-Z0-9 &-]+$/.test(title)) {
+    } else if (
+      !/^[a-zA-Z0-9 &-]+$/.test(title)
+    ) {
       newErrors.title =
         "Service title contains invalid characters.";
     }
@@ -242,7 +297,9 @@ function Services({
 
     setErrors(newErrors);
 
-    return Object.keys(newErrors).length === 0;
+    return (
+      Object.keys(newErrors).length === 0
+    );
   };
 
   // ======================================================
@@ -265,8 +322,10 @@ function Services({
     setForm({
       title: service.title || "",
       category: service.category || "",
-      description: service.description || "",
-      status: service.status || "Active",
+      description:
+        service.description || "",
+      status:
+        service.status || "Active",
     });
 
     setErrors({});
@@ -296,12 +355,21 @@ function Services({
   // ======================================================
 
   useEffect(() => {
-    if (!showModal) {
+    if (
+      !showModal &&
+      !viewingService
+    ) {
       return;
     }
 
     const handleKeyDown = (event) => {
-      if (event.key === "Escape") {
+      if (event.key !== "Escape") {
+        return;
+      }
+
+      if (viewingService) {
+        closeViewModal();
+      } else if (showModal) {
         closeModal();
       }
     };
@@ -317,68 +385,60 @@ function Services({
         handleKeyDown
       );
     };
-  }, [showModal]);
+  }, [
+    showModal,
+    viewingService,
+  ]);
 
   // ======================================================
   // HANDLE INPUT CHANGE
   // ======================================================
 
   const handleChange = (event) => {
-    const { name, value } = event.target;
+    const {
+      name,
+      value,
+    } = event.target;
 
     let cleanedValue = value;
 
-    // ----------------------------------------------------
-    // REMOVE LEADING SPACES
-    // ----------------------------------------------------
-
+    // Remove leading spaces
     cleanedValue = cleanedValue.replace(
       /^\s+/,
       ""
     );
 
-    // ----------------------------------------------------
-    // REPLACE MULTIPLE SPACES
-    // ----------------------------------------------------
-
+    // Replace multiple spaces
     cleanedValue = cleanedValue.replace(
       /\s{2,}/g,
       " "
     );
 
-    // ----------------------------------------------------
-    // TITLE
-    // ----------------------------------------------------
-
+    // Title
     if (name === "title") {
-      cleanedValue = cleanedValue.replace(
-        /[^a-zA-Z0-9 &-]/g,
-        ""
-      );
+      cleanedValue =
+        cleanedValue.replace(
+          /[^a-zA-Z0-9 &-]/g,
+          ""
+        );
     }
 
-    // ----------------------------------------------------
-    // CATEGORY
-    // ----------------------------------------------------
-
+    // Category
     if (name === "category") {
-      cleanedValue = cleanedValue.replace(
-        /[^a-zA-Z0-9 &-]/g,
-        ""
-      );
+      cleanedValue =
+        cleanedValue.replace(
+          /[^a-zA-Z0-9 &-]/g,
+          ""
+        );
     }
 
-    // ----------------------------------------------------
-    // DESCRIPTION
-    // ----------------------------------------------------
-
+    // Description
     if (name === "description") {
-      // Remove control characters but keep normal
-      // punctuation, numbers, spaces and new lines.
-      cleanedValue = cleanedValue.replace(
-        /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g,
-        ""
-      );
+      cleanedValue =
+        cleanedValue.replace(
+          /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g,
+          ""
+        );
     }
 
     setForm((previousForm) => ({
@@ -386,11 +446,22 @@ function Services({
       [name]: cleanedValue,
     }));
 
-    // Remove current field error
     setErrors((previousErrors) => ({
       ...previousErrors,
       [name]: "",
     }));
+  };
+
+  // ======================================================
+  // VIEW SERVICE
+  // ======================================================
+
+  const openViewModal = (service) => {
+    setViewingService(service);
+  };
+
+  const closeViewModal = () => {
+    setViewingService(null);
   };
 
   // ======================================================
@@ -417,8 +488,10 @@ function Services({
     }
 
     const title = form.title.trim();
-    const category = form.category.trim();
-    const description = form.description.trim();
+    const category =
+      form.category.trim();
+    const description =
+      form.description.trim();
 
     // ====================================================
     // UPDATE EXISTING SERVICE
@@ -526,32 +599,215 @@ function Services({
       </div>
 
       {/* ==================================================
-          SEARCH
+    SEARCH + FILTERS
+================================================== */}
+
+<div>
+  <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+
+    {/* SEARCH */}
+
+    <div className="relative w-full sm:flex-1">
+
+      <Search
+        size={18}
+        className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+      />
+
+      <input
+        type="text"
+        value={search}
+        onChange={(event) =>
+          setSearch(event.target.value)
+        }
+        placeholder="Search services..."
+        className="w-full rounded-xl border border-slate-200 py-3 pl-10 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+      />
+
+    </div>
+
+    {/* FILTERS */}
+
+    <div className="grid w-full grid-cols-2 gap-3 min-[351px]:grid min-[351px]:grid-cols-2 sm:flex sm:w-auto">
+
+      {/* ==================================================
+          STATUS DROPDOWN
       ================================================== */}
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-4">
+      <div className="relative w-full sm:w-36">
 
-        <div className="relative">
+        <button
+          type="button"
+          onClick={() =>
+            setOpenFilter(
+              openFilter === "status"
+                ? null
+                : "status"
+            )
+          }
+          className="flex w-full items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm text-slate-700 outline-none transition hover:border-indigo-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+        >
+          <span className="truncate">
+            {statusFilter === "All"
+              ? "All Status"
+              : statusFilter}
+          </span>
 
-          <Search
-            size={18}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-          />
+          <span
+            className={`shrink-0 text-slate-400 transition-transform ${
+              openFilter === "status"
+                ? "rotate-180"
+                : ""
+            }`}
+          >
+            ▼
+          </span>
+        </button>
 
-          <input
-            type="text"
-            value={search}
-            onChange={(event) =>
-              setSearch(event.target.value)
-            }
-            placeholder="Search services..."
-            className="w-full rounded-xl border border-slate-200 py-3 pl-10 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 sm:text-base"
-          />
+        {openFilter === "status" && (
+          <div className="absolute left-0 right-0 top-full z-[100] mt-2 max-h-60 overflow-y-auto rounded-xl border border-slate-200 bg-white p-1 shadow-xl">
 
-        </div>
+            {[
+              {
+                value: "All",
+                label: "All Status",
+              },
+              {
+                value: "Active",
+                label: "Active",
+              },
+              {
+                value: "Inactive",
+                label: "Inactive",
+              },
+            ].map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => {
+                  setStatusFilter(option.value);
+                  setOpenFilter(null);
+                }}
+                className={`w-full rounded-lg px-3 py-3 text-left text-sm transition ${
+                  statusFilter === option.value
+                    ? "bg-indigo-50 font-semibold text-indigo-600"
+                    : "text-slate-700 hover:bg-slate-50"
+                }`}
+              >
+                {option.label}
+              </button>
+            ))}
+
+          </div>
+        )}
 
       </div>
 
+      {/* ==================================================
+          CATEGORY DROPDOWN
+      ================================================== */}
+
+      <div className="relative w-full sm:w-40">
+
+        <button
+          type="button"
+          onClick={() =>
+            setOpenFilter(
+              openFilter === "category"
+                ? null
+                : "category"
+            )
+          }
+          className="flex w-full items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm text-slate-700 outline-none transition hover:border-indigo-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+        >
+          <span className="truncate">
+            {categoryFilter === "All"
+              ? "All Categories"
+              : categoryFilter}
+          </span>
+
+          <span
+            className={`shrink-0 text-slate-400 transition-transform ${
+              openFilter === "category"
+                ? "rotate-180"
+                : ""
+            }`}
+          >
+            ▼
+          </span>
+        </button>
+
+        {openFilter === "category" && (
+          <div className="absolute left-0 right-0 top-full z-[100] mt-2 max-h-60 overflow-y-auto rounded-xl border border-slate-200 bg-white p-1 shadow-xl">
+
+            {/* ALL CATEGORIES */}
+
+            <button
+              type="button"
+              onClick={() => {
+                setCategoryFilter("All");
+                setOpenFilter(null);
+              }}
+              className={`w-full rounded-lg px-3 py-3 text-left text-sm transition ${
+                categoryFilter === "All"
+                  ? "bg-indigo-50 font-semibold text-indigo-600"
+                  : "text-slate-700 hover:bg-slate-50"
+              }`}
+            >
+              All Categories
+            </button>
+
+            {/* CATEGORIES */}
+
+            {categories.map((category) => (
+              <button
+                key={category}
+                type="button"
+                onClick={() => {
+                  setCategoryFilter(category);
+                  setOpenFilter(null);
+                }}
+                className={`w-full rounded-lg px-3 py-3 text-left text-sm transition ${
+                  categoryFilter === category
+                    ? "bg-indigo-50 font-semibold text-indigo-600"
+                    : "text-slate-700 hover:bg-slate-50"
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+
+          </div>
+        )}
+
+      </div>
+
+    </div>
+
+  </div>
+
+  {/* CLEAR FILTERS */}
+
+  {hasActiveFilters && (
+    <div className="mt-3 flex justify-end">
+
+      <button
+        type="button"
+        onClick={() => {
+          setSearch("");
+          setStatusFilter("All");
+          setCategoryFilter("All");
+          setOpenFilter(null);
+        }}
+        className="text-sm font-medium text-indigo-600 transition hover:text-indigo-700"
+      >
+        Clear filters
+      </button>
+
+    </div>
+  )}
+
+</div>
       {/* ==================================================
           SERVICES TABLE
       ================================================== */}
@@ -600,8 +856,8 @@ function Services({
                     colSpan={5}
                     className="px-6 py-12 text-center text-slate-500"
                   >
-                    {search
-                      ? "No services match your search."
+                    {hasActiveFilters
+                      ? "No services match the selected filters."
                       : "No services found."}
                   </td>
 
@@ -609,92 +865,109 @@ function Services({
 
               ) : (
 
-                filteredServices.map((service) => (
+                filteredServices.map(
+                  (service) => (
 
-                  <tr
-                    key={service.id}
-                    className="transition hover:bg-slate-50"
-                  >
+                    <tr
+                      key={service.id}
+                      className="transition hover:bg-slate-50"
+                    >
 
-                    {/* ID */}
+                      <td className="px-6 py-4 text-sm text-slate-500">
+                        #{service.id}
+                      </td>
 
-                    <td className="px-6 py-4 text-sm text-slate-500">
-                      #{service.id}
-                    </td>
+                      <td className="px-6 py-4">
 
-                    {/* SERVICE */}
+                        <p className="font-semibold text-slate-900">
+                          {service.title}
+                        </p>
 
-                    <td className="px-6 py-4">
+                        <p className="mt-1 max-w-md truncate text-sm text-slate-500">
+                          {service.description}
+                        </p>
 
-                      <p className="font-semibold text-slate-900">
-                        {service.title}
-                      </p>
+                      </td>
 
-                      <p className="mt-1 max-w-md truncate text-sm text-slate-500">
-                        {service.description}
-                      </p>
+                      <td className="px-6 py-4 text-sm text-slate-600">
+                        {service.category || "-"}
+                      </td>
 
-                    </td>
+                      <td className="px-6 py-4">
 
-                    {/* CATEGORY */}
-
-                    <td className="px-6 py-4 text-sm text-slate-600">
-                      {service.category || "-"}
-                    </td>
-
-                    {/* STATUS */}
-
-                    <td className="px-6 py-4">
-
-                      <span
-                        className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
-                          service.status === "Active"
-                            ? "bg-green-50 text-green-600"
-                            : "bg-slate-100 text-slate-600"
-                        }`}
-                      >
-                        {service.status || "Inactive"}
-                      </span>
-
-                    </td>
-
-                    {/* ACTIONS */}
-
-                    <td className="px-6 py-4">
-
-                      <div className="flex justify-end gap-2">
-
-                        <button
-                          type="button"
-                          onClick={() =>
-                            openEditModal(service)
-                          }
-                          className="rounded-lg p-2 text-slate-500 transition hover:bg-indigo-50 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                          title="Edit service"
-                          aria-label={`Edit ${service.title}`}
+                        <span
+                          className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+                            service.status === "Active"
+                              ? "bg-green-50 text-green-600"
+                              : "bg-slate-100 text-slate-600"
+                          }`}
                         >
-                          <Pencil size={17} />
-                        </button>
+                          {service.status ||
+                            "Inactive"}
+                        </span>
 
-                        <button
-                          type="button"
-                          onClick={() =>
-                            handleDelete(service.id)
-                          }
-                          className="rounded-lg p-2 text-slate-500 transition hover:bg-red-50 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
-                          title="Delete service"
-                          aria-label={`Delete ${service.title}`}
-                        >
-                          <Trash2 size={17} />
-                        </button>
+                      </td>
 
-                      </div>
+                      <td className="px-6 py-4">
 
-                    </td>
+                        <div className="flex justify-end gap-2">
 
-                  </tr>
+                          {/* VIEW */}
 
-                ))
+                          <button
+                            type="button"
+                            onClick={() =>
+                              openViewModal(
+                                service
+                              )
+                            }
+                            className="rounded-lg p-2 text-slate-500 transition hover:bg-blue-50 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            title="View service"
+                            aria-label={`View ${service.title}`}
+                          >
+                            <Eye size={17} />
+                          </button>
+
+                          {/* EDIT */}
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              openEditModal(
+                                service
+                              )
+                            }
+                            className="rounded-lg p-2 text-slate-500 transition hover:bg-indigo-50 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            title="Edit service"
+                            aria-label={`Edit ${service.title}`}
+                          >
+                            <Pencil size={17} />
+                          </button>
+
+                          {/* DELETE */}
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              handleDelete(
+                                service.id
+                              )
+                            }
+                            className="rounded-lg p-2 text-slate-500 transition hover:bg-red-50 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+                            title="Delete service"
+                            aria-label={`Delete ${service.title}`}
+                          >
+                            <Trash2 size={17} />
+                          </button>
+
+                        </div>
+
+                      </td>
+
+                    </tr>
+
+                  )
+                )
 
               )}
 
@@ -707,16 +980,194 @@ function Services({
       </div>
 
       {/* ==================================================
+          VIEW SERVICE MODAL
+      ================================================== */}
+
+      {viewingService && (
+
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-slate-950/60 p-4"
+          onMouseDown={(event) => {
+            if (
+              event.target ===
+              event.currentTarget
+            ) {
+              closeViewModal();
+            }
+          }}
+        >
+
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="view-service-modal-title"
+            className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white shadow-2xl"
+          >
+
+            {/* MODAL HEADER */}
+
+            <div className="flex items-center justify-between border-b border-slate-200 p-6">
+
+              <div>
+
+                <h2
+                  id="view-service-modal-title"
+                  className="text-xl font-bold text-slate-900"
+                >
+                  Service Details
+                </h2>
+
+                <p className="mt-1 text-sm text-slate-500">
+                  View the complete service information.
+                </p>
+
+              </div>
+
+              <button
+                type="button"
+                onClick={closeViewModal}
+                className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                aria-label="Close service details"
+                title="Close"
+              >
+                <X size={20} />
+              </button>
+
+            </div>
+
+            {/* SERVICE DETAILS */}
+
+            <div className="space-y-5 p-6">
+
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    Service ID
+                  </p>
+
+                  <p className="mt-1 text-base font-semibold text-slate-900">
+                    #{viewingService.id}
+                  </p>
+
+                </div>
+
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    Status
+                  </p>
+
+                  <span
+                    className={`mt-2 inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+                      viewingService.status ===
+                      "Active"
+                        ? "bg-green-50 text-green-600"
+                        : "bg-slate-100 text-slate-600"
+                    }`}
+                  >
+                    {viewingService.status ||
+                      "Inactive"}
+                  </span>
+
+                </div>
+
+              </div>
+
+              <div>
+
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  Service Title
+                </p>
+
+                <p className="mt-1 text-lg font-bold text-slate-900">
+                  {viewingService.title ||
+                    "-"}
+                </p>
+
+              </div>
+
+              <div>
+
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  Category
+                </p>
+
+                <p className="mt-1 text-base text-slate-700">
+                  {viewingService.category ||
+                    "-"}
+                </p>
+
+              </div>
+
+              <div>
+
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  Description
+                </p>
+
+                <div className="mt-2 rounded-xl border border-slate-200 bg-slate-50 p-4">
+
+                  <p className="whitespace-pre-wrap text-sm leading-6 text-slate-700">
+                    {viewingService.description ||
+                      "-"}
+                  </p>
+
+                </div>
+
+              </div>
+
+              {/* VIEW BUTTONS */}
+
+              <div className="flex flex-col-reverse gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:justify-end">
+
+                <button
+                  type="button"
+                  onClick={closeViewModal}
+                  className="rounded-xl border border-slate-200 px-5 py-3 font-semibold text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                >
+                  Close
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const service =
+                      viewingService;
+
+                    closeViewModal();
+                    openEditModal(
+                      service
+                    );
+                  }}
+                  className="rounded-xl bg-indigo-600 px-5 py-3 font-semibold text-white transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                >
+                  Edit Service
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      )}
+
+      {/* ==================================================
           ADD / EDIT MODAL
       ================================================== */}
 
       {showModal && (
 
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-slate-950/60 p-4"
           onMouseDown={(event) => {
             if (
-              event.target === event.currentTarget
+              event.target ===
+              event.currentTarget
             ) {
               closeModal();
             }
@@ -730,9 +1181,7 @@ function Services({
             className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white shadow-2xl"
           >
 
-            {/* ==================================================
-                MODAL HEADER
-            ================================================== */}
+            {/* MODAL HEADER */}
 
             <div className="flex items-center justify-between border-b border-slate-200 p-6">
 
@@ -767,9 +1216,7 @@ function Services({
 
             </div>
 
-            {/* ==================================================
-                FORM
-            ================================================== */}
+            {/* FORM */}
 
             <form
               onSubmit={handleSubmit}
@@ -777,9 +1224,7 @@ function Services({
               noValidate
             >
 
-              {/* ==================================================
-                  SERVICE TITLE
-              ================================================== */}
+              {/* SERVICE TITLE */}
 
               <div>
 
@@ -800,11 +1245,15 @@ function Services({
                   name="title"
                   value={form.title}
                   onChange={handleChange}
-                  onKeyDown={handleTextKeyDown}
+                  onKeyDown={
+                    handleTextKeyDown
+                  }
                   placeholder="Web Development"
                   maxLength={100}
                   autoComplete="off"
-                  aria-invalid={Boolean(errors.title)}
+                  aria-invalid={Boolean(
+                    errors.title
+                  )}
                   aria-describedby={
                     errors.title
                       ? "service-title-error"
@@ -826,13 +1275,9 @@ function Services({
                   </p>
                 )}
 
-               
-
               </div>
 
-              {/* ==================================================
-                  CATEGORY
-              ================================================== */}
+              {/* CATEGORY */}
 
               <div>
 
@@ -852,11 +1297,15 @@ function Services({
                   name="category"
                   value={form.category}
                   onChange={handleChange}
-                  onKeyDown={handleTextKeyDown}
+                  onKeyDown={
+                    handleTextKeyDown
+                  }
                   placeholder="Development"
                   maxLength={50}
                   autoComplete="off"
-                  aria-invalid={Boolean(errors.category)}
+                  aria-invalid={Boolean(
+                    errors.category
+                  )}
                   aria-describedby={
                     errors.category
                       ? "service-category-error"
@@ -878,12 +1327,9 @@ function Services({
                   </p>
                 )}
 
-
               </div>
 
-              {/* ==================================================
-                  DESCRIPTION
-              ================================================== */}
+              {/* DESCRIPTION */}
 
               <div>
 
@@ -903,7 +1349,9 @@ function Services({
                   rows={5}
                   value={form.description}
                   onChange={handleChange}
-                  onKeyDown={handleDescriptionKeyDown}
+                  onKeyDown={
+                    handleDescriptionKeyDown
+                  }
                   placeholder="Describe this service..."
                   maxLength={500}
                   aria-invalid={Boolean(
@@ -930,12 +1378,9 @@ function Services({
                   </p>
                 )}
 
-              
               </div>
 
-              {/* ==================================================
-                  STATUS
-              ================================================== */}
+              {/* STATUS */}
 
               <div>
 
@@ -963,6 +1408,7 @@ function Services({
                       : "border-slate-200 focus:border-indigo-500 focus:ring-indigo-100"
                   }`}
                 >
+
                   <option value="Active">
                     Active
                   </option>
@@ -970,6 +1416,7 @@ function Services({
                   <option value="Inactive">
                     Inactive
                   </option>
+
                 </select>
 
                 {errors.status && (
@@ -980,10 +1427,7 @@ function Services({
 
               </div>
 
-
-              {/* ==================================================
-                  FORM BUTTONS
-              ================================================== */}
+              {/* FORM BUTTONS */}
 
               <div className="flex flex-col-reverse gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:justify-end">
 

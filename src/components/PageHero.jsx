@@ -31,19 +31,7 @@ function PageHero({
 
           <div className="mt-7 flex items-center gap-2 text-sm text-slate-500">
 
-            <Link
-              to="/"
-              className="hover:text-white"
-            >
-              Home
-            </Link>
-
-            <ArrowRight size={14} />
-
-            <span className="text-indigo-400">
-              {badge}
-            </span>
-
+           
           </div>
 
         </div>

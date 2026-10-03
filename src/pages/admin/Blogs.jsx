@@ -1,17 +1,31 @@
-import { useMemo, useState } from "react";
+
+import { useEffect, useMemo, useState } from "react";
 import {
   Plus,
   Search,
   Pencil,
   Trash2,
   X,
+  Eye,
+  ChevronDown,
 } from "lucide-react";
+
 import { nextId } from "../../utils";
 
 function Blogs({ blogs = [], setBlogs }) {
+  // ======================================================
+  // STATE
+  // ======================================================
+
   const [search, setSearch] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+
+  const [openFilter, setOpenFilter] = useState(null);
+
   const [showModal, setShowModal] = useState(false);
   const [editingBlog, setEditingBlog] = useState(null);
+  const [viewingBlog, setViewingBlog] = useState(null);
 
   const emptyForm = {
     title: "",
@@ -26,33 +40,117 @@ function Blogs({ blogs = [], setBlogs }) {
 
   const [form, setForm] = useState(emptyForm);
 
+  // ======================================================
+  // LOCK BACKGROUND SCROLL WHEN MODAL IS OPEN
+  // ======================================================
+
+  useEffect(() => {
+    const modalOpen =
+      showModal || Boolean(viewingBlog);
+
+    if (!modalOpen) {
+      return;
+    }
+
+    const originalOverflow =
+      document.body.style.overflow;
+
+    const originalHtmlOverflow =
+      document.documentElement.style.overflow;
+
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow =
+      "hidden";
+
+    return () => {
+      document.body.style.overflow =
+        originalOverflow;
+
+      document.documentElement.style.overflow =
+        originalHtmlOverflow;
+    };
+  }, [showModal, viewingBlog]);
+
+  // ======================================================
+  // CATEGORY OPTIONS
+  // ======================================================
+
+  const categoryOptions = useMemo(() => {
+    return [
+      ...new Set(
+        blogs
+          .map((blog) => blog.category)
+          .filter(Boolean)
+      ),
+    ].sort();
+  }, [blogs]);
+
+  // ======================================================
+  // FILTER BLOGS
+  // ======================================================
+
   const filteredBlogs = useMemo(() => {
     const term = search.trim().toLowerCase();
 
-    if (!term) return blogs;
+    return blogs.filter((blog) => {
+      const matchesSearch =
+        !term ||
+        [
+          blog.title,
+          blog.category,
+          blog.author,
+          blog.status,
+          blog.excerpt,
+        ]
+          .join(" ")
+          .toLowerCase()
+          .includes(term);
 
-    return blogs.filter((blog) =>
-      [
-        blog.title,
-        blog.category,
-        blog.author,
-        blog.status,
-      ]
-        .join(" ")
-        .toLowerCase()
-        .includes(term)
-    );
-  }, [blogs, search]);
+      const matchesCategory =
+        !categoryFilter ||
+        blog.category === categoryFilter;
+
+      const matchesStatus =
+        !statusFilter ||
+        blog.status === statusFilter;
+
+      return (
+        matchesSearch &&
+        matchesCategory &&
+        matchesStatus
+      );
+    });
+  }, [
+    blogs,
+    search,
+    categoryFilter,
+    statusFilter,
+  ]);
+
+  // ======================================================
+  // RESET FORM
+  // ======================================================
 
   const resetForm = () => {
-    setForm(emptyForm);
+    setForm({
+      ...emptyForm,
+    });
   };
+
+  // ======================================================
+  // OPEN ADD
+  // ======================================================
 
   const openAdd = () => {
     setEditingBlog(null);
     resetForm();
+    setOpenFilter(null);
     setShowModal(true);
   };
+
+  // ======================================================
+  // OPEN EDIT
+  // ======================================================
 
   const openEdit = (blog) => {
     setEditingBlog(blog);
@@ -68,8 +166,13 @@ function Blogs({ blogs = [], setBlogs }) {
       status: blog.status || "Published",
     });
 
+    setOpenFilter(null);
     setShowModal(true);
   };
+
+  // ======================================================
+  // CLOSE ADD / EDIT MODAL
+  // ======================================================
 
   const closeModal = () => {
     setShowModal(false);
@@ -77,9 +180,17 @@ function Blogs({ blogs = [], setBlogs }) {
     resetForm();
   };
 
-  /* ======================================================
-     ALLOWED CHARACTER HELPERS
-  ====================================================== */
+  // ======================================================
+  // CLOSE VIEW MODAL
+  // ======================================================
+
+  const closeViewModal = () => {
+    setViewingBlog(null);
+  };
+
+  // ======================================================
+  // ALLOWED CHARACTER HELPERS
+  // ======================================================
 
   const allowTitleCharacters = (value) => {
     return value.replace(
@@ -116,9 +227,9 @@ function Blogs({ blogs = [], setBlogs }) {
     );
   };
 
-  /* ======================================================
-     HANDLE CHANGE
-  ====================================================== */
+  // ======================================================
+  // HANDLE CHANGE
+  // ======================================================
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -147,6 +258,7 @@ function Blogs({ blogs = [], setBlogs }) {
         break;
 
       case "excerpt":
+      case "content":
         cleanedValue =
           allowTextCharacters(value);
         break;
@@ -161,9 +273,9 @@ function Blogs({ blogs = [], setBlogs }) {
     }));
   };
 
-  /* ======================================================
-     SUBMIT
-  ====================================================== */
+  // ======================================================
+  // SUBMIT
+  // ======================================================
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -190,6 +302,7 @@ function Blogs({ blogs = [], setBlogs }) {
       date: form.date,
       readTime: form.readTime.trim(),
       excerpt: form.excerpt.trim(),
+      content: form.content.trim(),
       status: form.status,
     };
 
@@ -218,12 +331,16 @@ function Blogs({ blogs = [], setBlogs }) {
     closeModal();
   };
 
-  /* ======================================================
-     DELETE
-  ====================================================== */
+  // ======================================================
+  // DELETE
+  // ======================================================
 
   const handleDelete = (id) => {
-    if (!window.confirm("Delete this blog post?")) {
+    if (
+      !window.confirm(
+        "Delete this blog post?"
+      )
+    ) {
       return;
     }
 
@@ -233,10 +350,48 @@ function Blogs({ blogs = [], setBlogs }) {
           String(blog.id) !== String(id)
       )
     );
+
+    if (
+      viewingBlog &&
+      String(viewingBlog.id) === String(id)
+    ) {
+      setViewingBlog(null);
+    }
   };
 
+  // ======================================================
+  // CLEAR FILTERS
+  // ======================================================
+
+  const clearFilters = () => {
+    setSearch("");
+    setCategoryFilter("");
+    setStatusFilter("");
+    setOpenFilter(null);
+  };
+
+  const hasFilters =
+    search ||
+    categoryFilter ||
+    statusFilter;
+
+  // ======================================================
+  // RENDER
+  // ======================================================
+
   return (
-    <div className="w-full min-w-0 space-y-6">
+    <div
+      className="w-full min-w-0 space-y-6"
+      onClick={(e) => {
+        if (
+          !e.target.closest(
+            "[data-filter-dropdown]"
+          )
+        ) {
+          setOpenFilter(null);
+        }
+      }}
+    >
       {/* ==================================================
           HEADER
       ================================================== */}
@@ -263,26 +418,233 @@ function Blogs({ blogs = [], setBlogs }) {
       </div>
 
       {/* ==================================================
-          SEARCH
+          SEARCH + FILTERS
       ================================================== */}
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-4">
-        <div className="relative">
-          <Search
-            size={18}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-          />
+      <div>
+        <div className="grid grid-cols-1 gap-3 min-[351px]:grid-cols-2 lg:grid-cols-6">
 
-          <input
-            type="search"
-            value={search}
-            onChange={(e) =>
-              setSearch(e.target.value)
-            }
-            placeholder="Search blogs..."
-            className="w-full rounded-xl border border-slate-200 py-3 pl-10 pr-4 text-sm outline-none transition focus:border-indigo-500 sm:text-base"
-          />
+          {/* SEARCH */}
+
+          <div className="relative lg:col-span-4">
+            <Search
+              size={18}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+            />
+
+            <input
+              type="search"
+              value={search}
+              onChange={(e) =>
+                setSearch(e.target.value)
+              }
+              placeholder="Search blogs..."
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 py-3 pl-10 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 hover:border-slate-300 focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 sm:text-base"
+            />
+          </div>
+
+          {/* ==================================================
+              CATEGORY FILTER
+          ================================================== */}
+
+          <div
+            className="relative w-full min-w-0"
+            data-filter-dropdown
+          >
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+
+                setOpenFilter(
+                  openFilter === "category"
+                    ? null
+                    : "category"
+                );
+              }}
+              className="flex w-full min-w-0 items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-left text-sm text-slate-700 outline-none transition hover:border-slate-300 focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 sm:text-base"
+            >
+              <span className="min-w-0 truncate">
+                {categoryFilter ||
+                  "All Categories"}
+              </span>
+
+              <ChevronDown
+                size={17}
+                className={`ml-2 shrink-0 transition-transform ${
+                  openFilter === "category"
+                    ? "rotate-180"
+                    : ""
+                }`}
+              />
+            </button>
+
+            {openFilter === "category" && (
+              <div
+                className="absolute left-0 right-0 top-full z-[100] mt-2 max-h-60 overflow-y-auto overscroll-contain rounded-xl border border-slate-200 bg-white p-1 shadow-xl"
+                onClick={(e) =>
+                  e.stopPropagation()
+                }
+              >
+                {/* ALL CATEGORIES */}
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCategoryFilter("");
+                    setOpenFilter(null);
+                  }}
+                  className={`w-full rounded-lg px-3 py-2.5 text-left text-sm transition hover:bg-indigo-50 hover:text-indigo-600 sm:text-base ${
+                    !categoryFilter
+                      ? "bg-indigo-50 font-semibold text-indigo-600"
+                      : "text-slate-700"
+                  }`}
+                >
+                  All Categories
+                </button>
+
+                {/* CATEGORY OPTIONS */}
+
+                {categoryOptions.length > 0 ? (
+                  categoryOptions.map(
+                    (category) => (
+                      <button
+                        key={category}
+                        type="button"
+                        onClick={() => {
+                          setCategoryFilter(
+                            category
+                          );
+                          setOpenFilter(null);
+                        }}
+                        className={`w-full rounded-lg px-3 py-2.5 text-left text-sm transition hover:bg-indigo-50 hover:text-indigo-600 sm:text-base ${
+                          categoryFilter ===
+                          category
+                            ? "bg-indigo-50 font-semibold text-indigo-600"
+                            : "text-slate-700"
+                        }`}
+                      >
+                        <span className="block break-words">
+                          {category}
+                        </span>
+                      </button>
+                    )
+                  )
+                ) : (
+                  <div className="px-3 py-3 text-sm text-slate-400">
+                    No categories available
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* ==================================================
+              STATUS FILTER
+          ================================================== */}
+
+          <div
+            className="relative w-full min-w-0"
+            data-filter-dropdown
+          >
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+
+                setOpenFilter(
+                  openFilter === "status"
+                    ? null
+                    : "status"
+                );
+              }}
+              className="flex w-full min-w-0 items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-left text-sm text-slate-700 outline-none transition hover:border-slate-300 focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 sm:text-base"
+            >
+              <span className="min-w-0 truncate">
+                {statusFilter ||
+                  "All Statuses"}
+              </span>
+
+              <ChevronDown
+                size={17}
+                className={`ml-2 shrink-0 transition-transform ${
+                  openFilter === "status"
+                    ? "rotate-180"
+                    : ""
+                }`}
+              />
+            </button>
+
+            {openFilter === "status" && (
+              <div
+                className="absolute left-0 right-0 top-full z-[100] mt-2 max-h-60 overflow-y-auto overscroll-contain rounded-xl border border-slate-200 bg-white p-1 shadow-xl"
+                onClick={(e) =>
+                  e.stopPropagation()
+                }
+              >
+                {[
+                  {
+                    label: "All Statuses",
+                    value: "",
+                  },
+                  {
+                    label: "Published",
+                    value: "Published",
+                  },
+                  {
+                    label: "Draft",
+                    value: "Draft",
+                  },
+                ].map((option) => (
+                  <button
+                    key={option.label}
+                    type="button"
+                    onClick={() => {
+                      setStatusFilter(
+                        option.value
+                      );
+                      setOpenFilter(null);
+                    }}
+                    className={`w-full rounded-lg px-3 py-2.5 text-left text-sm transition hover:bg-indigo-50 hover:text-indigo-600 sm:text-base ${
+                      statusFilter ===
+                      option.value
+                        ? "bg-indigo-50 font-semibold text-indigo-600"
+                        : "text-slate-700"
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
+
+        {/* FILTER INFO */}
+
+        {hasFilters && (
+          <div className="mt-3 flex flex-col gap-2 min-[351px]:flex-row min-[351px]:items-center min-[351px]:justify-between">
+            <p className="text-xs text-slate-500">
+              Showing{" "}
+              <span className="font-semibold text-slate-700">
+                {filteredBlogs.length}
+              </span>{" "}
+              of{" "}
+              <span className="font-semibold text-slate-700">
+                {blogs.length}
+              </span>{" "}
+              blogs
+            </p>
+
+            <button
+              type="button"
+              onClick={clearFilters}
+              className="self-start text-xs font-semibold text-indigo-600 transition hover:text-indigo-700 min-[351px]:self-auto"
+            >
+              Clear filters
+            </button>
+          </div>
+        )}
       </div>
 
       {/* ==================================================
@@ -325,9 +687,32 @@ function Blogs({ blogs = [], setBlogs }) {
                 <tr>
                   <td
                     colSpan="6"
-                    className="px-6 py-12 text-center text-slate-500"
+                    className="px-6 py-12 text-center"
                   >
-                    No blogs found.
+                    <div className="flex flex-col items-center justify-center">
+                      <Search
+                        size={28}
+                        className="mb-3 text-slate-300"
+                      />
+
+                      <p className="text-sm font-medium text-slate-600">
+                        No blogs found.
+                      </p>
+
+                      <p className="mt-1 text-xs text-slate-400">
+                        Try changing your search or filters.
+                      </p>
+
+                      {hasFilters && (
+                        <button
+                          type="button"
+                          onClick={clearFilters}
+                          className="mt-4 rounded-lg bg-indigo-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-indigo-700"
+                        >
+                          Clear Filters
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ) : (
@@ -336,6 +721,8 @@ function Blogs({ blogs = [], setBlogs }) {
                     key={blog.id}
                     className="transition hover:bg-slate-50"
                   >
+                    {/* BLOG */}
+
                     <td className="max-w-[350px] px-6 py-4">
                       <p className="truncate font-semibold text-slate-900">
                         {blog.title}
@@ -346,22 +733,31 @@ function Blogs({ blogs = [], setBlogs }) {
                       </p>
                     </td>
 
+                    {/* CATEGORY */}
+
                     <td className="px-6 py-4 text-sm text-slate-600">
                       {blog.category || "-"}
                     </td>
+
+                    {/* AUTHOR */}
 
                     <td className="px-6 py-4 text-sm text-slate-600">
                       {blog.author || "-"}
                     </td>
 
+                    {/* DATE */}
+
                     <td className="px-6 py-4 text-sm text-slate-600">
                       {blog.date || "-"}
                     </td>
 
+                    {/* STATUS */}
+
                     <td className="px-6 py-4">
                       <span
                         className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                          blog.status === "Published"
+                          blog.status ===
+                          "Published"
                             ? "bg-green-50 text-green-600"
                             : "bg-amber-50 text-amber-600"
                         }`}
@@ -370,18 +766,40 @@ function Blogs({ blogs = [], setBlogs }) {
                       </span>
                     </td>
 
+                    {/* ACTIONS */}
+
                     <td className="px-6 py-4">
                       <div className="flex justify-end gap-2">
+
+                        {/* VIEW */}
+
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setViewingBlog(blog)
+                          }
+                          aria-label={`View ${blog.title}`}
+                          title="View blog"
+                          className="rounded-lg p-2 text-slate-500 transition hover:bg-indigo-50 hover:text-indigo-600"
+                        >
+                          <Eye size={17} />
+                        </button>
+
+                        {/* EDIT */}
+
                         <button
                           type="button"
                           onClick={() =>
                             openEdit(blog)
                           }
                           aria-label={`Edit ${blog.title}`}
+                          title="Edit blog"
                           className="rounded-lg p-2 text-slate-500 transition hover:bg-indigo-50 hover:text-indigo-600"
                         >
                           <Pencil size={17} />
                         </button>
+
+                        {/* DELETE */}
 
                         <button
                           type="button"
@@ -389,6 +807,7 @@ function Blogs({ blogs = [], setBlogs }) {
                             handleDelete(blog.id)
                           }
                           aria-label={`Delete ${blog.title}`}
+                          title="Delete blog"
                           className="rounded-lg p-2 text-slate-500 transition hover:bg-red-50 hover:text-red-600"
                         >
                           <Trash2 size={17} />
@@ -404,20 +823,28 @@ function Blogs({ blogs = [], setBlogs }) {
       </div>
 
       {/* ==================================================
-          MODAL
+          ADD / EDIT MODAL
       ================================================== */}
 
       {showModal && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-3 sm:p-4"
           onMouseDown={(e) => {
-            if (e.target === e.currentTarget) {
+            if (
+              e.target ===
+              e.currentTarget
+            ) {
               closeModal();
             }
           }}
         >
-          <div className="flex max-h-[95vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl sm:max-h-[90vh]">
-            {/* Modal Header */}
+          <div
+            className="flex max-h-[95vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl sm:max-h-[90vh]"
+            onMouseDown={(e) =>
+              e.stopPropagation()
+            }
+          >
+            {/* MODAL HEADER */}
 
             <div className="flex shrink-0 items-center justify-between border-b border-slate-200 p-4 sm:p-6">
               <div className="min-w-0">
@@ -444,15 +871,14 @@ function Blogs({ blogs = [], setBlogs }) {
               </button>
             </div>
 
-            {/* ==================================================
-                FORM
-            ================================================== */}
+            {/* FORM */}
 
             <form
               onSubmit={handleSubmit}
-              className="min-h-0 overflow-y-auto"
+              className="min-h-0 overflow-y-auto overscroll-contain"
             >
               <div className="space-y-5 p-4 sm:p-6">
+
                 {/* BLOG TITLE */}
 
                 <Input
@@ -513,6 +939,17 @@ function Blogs({ blogs = [], setBlogs }) {
                   placeholder="Enter a short description for the blog..."
                 />
 
+                {/* CONTENT */}
+
+                <Textarea
+                  label="Content"
+                  name="content"
+                  value={form.content}
+                  onChange={handleChange}
+                  rows={7}
+                  placeholder="Enter the full blog content..."
+                />
+
                 {/* STATUS */}
 
                 <div>
@@ -537,9 +974,7 @@ function Blogs({ blogs = [], setBlogs }) {
                 </div>
               </div>
 
-              {/* ==================================================
-                  MODAL FOOTER
-              ================================================== */}
+              {/* MODAL FOOTER */}
 
               <div className="sticky bottom-0 flex flex-col-reverse gap-3 border-t border-slate-200 bg-white p-4 sm:flex-row sm:justify-end sm:p-6">
                 <button
@@ -563,6 +998,171 @@ function Blogs({ blogs = [], setBlogs }) {
           </div>
         </div>
       )}
+
+      {/* ==================================================
+          VIEW BLOG MODAL
+      ================================================== */}
+
+      {viewingBlog && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/60 p-3 backdrop-blur-sm sm:p-4"
+          onMouseDown={(e) => {
+            if (
+              e.target ===
+              e.currentTarget
+            ) {
+              closeViewModal();
+            }
+          }}
+        >
+          <div
+            className="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
+            onMouseDown={(e) =>
+              e.stopPropagation()
+            }
+          >
+            {/* VIEW HEADER */}
+
+            <div className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white p-4 sm:p-6">
+              <div className="min-w-0">
+                <h2 className="truncate text-lg font-bold text-slate-900 sm:text-xl">
+                  Blog Details
+                </h2>
+
+                <p className="mt-1 text-xs text-slate-500 sm:text-sm">
+                  View your blog post details.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={closeViewModal}
+                aria-label="Close blog details"
+                className="ml-3 shrink-0 rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* VIEW CONTENT */}
+
+            <div className="min-h-0 overflow-y-auto overscroll-contain">
+              <div className="space-y-6 p-5 sm:p-6">
+
+                {/* TITLE */}
+
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                    Title
+                  </p>
+
+                  <h3 className="mt-1 break-words text-xl font-bold text-slate-900 sm:text-2xl">
+                    {viewingBlog.title ||
+                      "-"}
+                  </h3>
+                </div>
+
+                {/* META */}
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <Detail
+                    label="Category"
+                    value={
+                      viewingBlog.category
+                    }
+                  />
+
+                  <Detail
+                    label="Author"
+                    value={
+                      viewingBlog.author
+                    }
+                  />
+
+                  <Detail
+                    label="Date"
+                    value={
+                      viewingBlog.date
+                    }
+                  />
+
+                  <Detail
+                    label="Read Time"
+                    value={
+                      viewingBlog.readTime
+                    }
+                  />
+
+                  <div>
+                    <p className="text-sm font-semibold text-slate-700">
+                      Status
+                    </p>
+
+                    <span
+                      className={`mt-1 inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+                        viewingBlog.status ===
+                        "Published"
+                          ? "bg-green-50 text-green-600"
+                          : "bg-amber-50 text-amber-600"
+                      }`}
+                    >
+                      {viewingBlog.status ||
+                        "Draft"}
+                    </span>
+                  </div>
+                </div>
+
+                {/* EXCERPT */}
+
+                <div>
+                  <p className="text-sm font-semibold text-slate-700">
+                    Excerpt
+                  </p>
+
+                  <p className="mt-1 whitespace-pre-wrap break-words rounded-xl bg-slate-50 p-4 text-sm leading-6 text-slate-600">
+                    {viewingBlog.excerpt ||
+                      "-"}
+                  </p>
+                </div>
+
+                {/* CONTENT */}
+
+                <div>
+                  <p className="text-sm font-semibold text-slate-700">
+                    Content
+                  </p>
+
+                  <div className="mt-1 whitespace-pre-wrap break-words rounded-xl bg-slate-50 p-4 text-sm leading-7 text-slate-600">
+                    {viewingBlog.content ||
+                      "No content available."}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ======================================================
+   DETAIL COMPONENT
+====================================================== */
+
+function Detail({
+  label,
+  value,
+}) {
+  return (
+    <div className="min-w-0">
+      <p className="text-sm font-semibold text-slate-700">
+        {label}
+      </p>
+
+      <p className="mt-1 break-words text-sm text-slate-500">
+        {value || "-"}
+      </p>
     </div>
   );
 }

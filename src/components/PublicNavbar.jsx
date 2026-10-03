@@ -1,4 +1,9 @@
-import { useEffect, useState } from "react";
+
+import {
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import {
   Menu,
@@ -6,8 +11,6 @@ import {
   ChevronDown,
   Search,
   ArrowRight,
-  Mail,
-  Phone,
 } from "lucide-react";
 
 import {
@@ -18,17 +21,25 @@ import {
 const SCROLLED_OFFSET_PX = 40;
 
 function PublicNavbar() {
-  const [mobileOpen, setMobileOpen] =
-    useState(false);
+  // ======================================================
+  // STATE
+  // ======================================================
 
-  const [servicesOpen, setServicesOpen] =
-    useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [servicesOpen, setServicesOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
-  const [searchOpen, setSearchOpen] =
-    useState(false);
+  // ======================================================
+  // REFS
+  // ======================================================
 
-  const [scrolled, setScrolled] =
-    useState(false);
+  const desktopServicesRef = useRef(null);
+  const mobileServicesRef = useRef(null);
+
+  // ======================================================
+  // SCROLL EFFECT
+  // ======================================================
 
   useEffect(() => {
     const handleScroll = () => {
@@ -41,9 +52,57 @@ function PublicNavbar() {
       passive: true,
     });
 
-    return () =>
+    return () => {
       window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
+
+  // ======================================================
+  // LOCK BACKGROUND SCROLL WHEN MOBILE MENU IS OPEN
+  // ======================================================
+
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileOpen]);
+
+  // ======================================================
+  // CLOSE SERVICES DROPDOWN WHEN CLICKING OUTSIDE
+  // ======================================================
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      const clickedInsideDesktop =
+        desktopServicesRef.current?.contains(event.target);
+
+      const clickedInsideMobile =
+        mobileServicesRef.current?.contains(event.target);
+
+      if (!clickedInsideDesktop && !clickedInsideMobile) {
+        setServicesOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener(
+        "mousedown",
+        handleClickOutside
+      );
+    };
+  }, []);
+
+  // ======================================================
+  // SERVICES
+  // ======================================================
 
   const services = [
     {
@@ -72,6 +131,10 @@ function PublicNavbar() {
     },
   ];
 
+  // ======================================================
+  // NAV ITEMS
+  // ======================================================
+
   const navItems = [
     {
       name: "Home",
@@ -93,63 +156,51 @@ function PublicNavbar() {
       name: "Blog",
       path: "/blog",
     },
-    
     {
       name: "Contact",
       path: "/contact",
     },
   ];
 
+  // ======================================================
+  // CLOSE MOBILE MENU
+  // ======================================================
+
+  const closeMobileMenu = () => {
+    setMobileOpen(false);
+    setServicesOpen(false);
+  };
+
+  // ======================================================
+  // TOGGLE SERVICES
+  // ======================================================
+
+  const toggleServices = () => {
+    setServicesOpen((prev) => !prev);
+  };
+
   return (
     <>
-      {/* TOP BAR */}
-
-      <div className="hidden bg-slate-950 text-white lg:block">
-
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 py-3">
-
-          <div className="flex items-center gap-6 text-sm text-slate-300">
-
-            <span className="flex items-center gap-2">
-              <Mail size={15} />
-              hello@novaagency.com
-            </span>
-
-            <span className="flex items-center gap-2">
-              <Phone size={15} />
-              +91 98765 43210
-            </span>
-
-          </div>
-
-          <div className="flex gap-5 text-sm text-slate-400">
-            <span>Facebook</span>
-            <span>LinkedIn</span>
-            <span>Instagram</span>
-          </div>
-
-        </div>
-
-      </div>
-
-      {/* HEADER */}
+      {/* ==================================================
+          HEADER
+      ================================================== */}
 
       <header
         className={`gratech-header sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur ${
           scrolled ? "gratech-header-scrolled" : ""
         }`}
       >
-
         <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
 
-          {/* LOGO */}
+          {/* ==================================================
+              LOGO
+          ================================================== */}
 
           <Link
             to="/"
+            onClick={closeMobileMenu}
             className="flex items-center gap-3"
-            onClick={() => setMobileOpen(false)}
           >
-
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-600 text-xl font-black text-white">
               N
             </div>
@@ -163,17 +214,19 @@ function PublicNavbar() {
                 Digital Agency
               </p>
             </div>
-
           </Link>
 
-          {/* DESKTOP NAV */}
+          {/* ==================================================
+              DESKTOP NAV
+          ================================================== */}
 
           <nav className="hidden items-center gap-7 lg:flex">
 
             <NavLink
               to="/"
+              onClick={() => setServicesOpen(false)}
               className={({ isActive }) =>
-                `text-lg font-semibold ${
+                `text-lg font-semibold transition ${
                   isActive
                     ? "text-indigo-600"
                     : "text-slate-700 hover:text-indigo-600"
@@ -185,8 +238,9 @@ function PublicNavbar() {
 
             <NavLink
               to="/about"
+              onClick={() => setServicesOpen(false)}
               className={({ isActive }) =>
-                `text-lg font-semibold ${
+                `text-lg font-semibold transition ${
                   isActive
                     ? "text-indigo-600"
                     : "text-slate-700 hover:text-indigo-600"
@@ -196,57 +250,66 @@ function PublicNavbar() {
               About
             </NavLink>
 
-            {/* SERVICES DROPDOWN */}
+            {/* SERVICES */}
 
             <div
-              className="relative"
-              onMouseEnter={() =>
-                setServicesOpen(true)
-              }
-              onMouseLeave={() =>
-                setServicesOpen(false)
-              }
+              ref={desktopServicesRef}
+              className="relative flex items-center"
             >
+              <NavLink
+                to="/services"
+                onClick={() => setServicesOpen(false)}
+                className={({ isActive }) =>
+                  `text-lg font-semibold transition ${
+                    isActive
+                      ? "text-indigo-600"
+                      : "text-slate-700 hover:text-indigo-600"
+                  }`
+                }
+              >
+                Services
+              </NavLink>
 
-              <Link
-  to="/services"
-  className="flex items-center gap-1 text-lg font-semibold text-slate-700 hover:text-indigo-600"
->
-  Services
-  <ChevronDown size={15} />
-</Link>
+              <button
+                type="button"
+                onClick={toggleServices}
+                className="ml-1 rounded p-1 text-slate-700 transition hover:text-indigo-600"
+                aria-label="Toggle services dropdown"
+                aria-expanded={servicesOpen}
+              >
+                <ChevronDown
+                  size={15}
+                  className={`transition-transform duration-200 ${
+                    servicesOpen ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
 
               {servicesOpen && (
-  <div className="gratech-dropdown absolute left-1/2 top-full mt-4 w-72 -translate-x-1/2 rounded-2xl border border-slate-200 bg-white p-3 shadow-2xl">
-
+                <div className="gratech-dropdown absolute left-1/2 top-full z-50 mt-4 w-72 -translate-x-1/2 rounded-2xl border border-slate-200 bg-white p-3 shadow-2xl">
                   {services.map((service) => (
                     <Link
                       key={service.path}
                       to={service.path}
-                      className="block rounded-xl px-4 py-3 text-lg font-medium text-slate-700 hover:bg-indigo-50 hover:text-indigo-600"
+                      onClick={() => setServicesOpen(false)}
+                      className="block rounded-xl px-4 py-3 text-lg font-medium text-slate-700 transition hover:bg-indigo-50 hover:text-indigo-600"
                     >
                       {service.name}
                     </Link>
                   ))}
-
-                  <Link
-                    to="/services"
-                    className="mt-2 block border-t border-slate-100 px-4 pt-3 text-lg font-bold text-indigo-600"
-                  >
-                    View all services →
-                  </Link>
-
                 </div>
               )}
-
             </div>
+
+            {/* PROJECTS / TEAM / BLOG / CONTACT */}
 
             {navItems.slice(2).map((item) => (
               <NavLink
                 key={item.path}
                 to={item.path}
+                onClick={() => setServicesOpen(false)}
                 className={({ isActive }) =>
-                  `text-lg font-semibold ${
+                  `text-lg font-semibold transition ${
                     isActive
                       ? "text-indigo-600"
                       : "text-slate-700 hover:text-indigo-600"
@@ -257,40 +320,46 @@ function PublicNavbar() {
               </NavLink>
             ))}
 
-            {/* SEARCH */}
-
-            
-
-            {/* CTA */}
+            {/* GET QUOTE */}
 
             <Link
               to="/get-quote"
-              className="flex items-center gap-2 rounded-lg bg-indigo-600 px-5 py-3 text-m font-bold text-white transition hover:bg-indigo-700"
+              onClick={() => setServicesOpen(false)}
+              className="flex items-center gap-2 rounded-lg bg-indigo-600 px-5 py-3 text-base font-bold text-white transition hover:bg-indigo-700"
             >
               Get Quote
               <ArrowRight size={16} />
             </Link>
-
           </nav>
 
-          {/* MOBILE */}
+          {/* ==================================================
+              MOBILE HEADER
+          ================================================== */}
 
           <div className="flex items-center gap-3 lg:hidden">
 
+            {/* SEARCH */}
+
             <button
-              onClick={() =>
-                setSearchOpen(true)
-              }
-              className="rounded-lg p-2 text-slate-700"
+              type="button"
+              onClick={() => setSearchOpen(true)}
+              className="rounded-lg p-2 text-slate-700 transition hover:bg-slate-100"
+              aria-label="Open search"
             >
               <Search size={20} />
             </button>
 
+            {/* MENU */}
+
             <button
-              onClick={() =>
-                setMobileOpen(!mobileOpen)
-              }
+              type="button"
+              onClick={() => {
+                setMobileOpen((prev) => !prev);
+                setServicesOpen(false);
+              }}
               className="rounded-lg bg-slate-100 p-2"
+              aria-label="Toggle mobile menu"
+              aria-expanded={mobileOpen}
             >
               {mobileOpen ? (
                 <X size={23} />
@@ -298,23 +367,25 @@ function PublicNavbar() {
                 <Menu size={23} />
               )}
             </button>
-
           </div>
-
         </div>
 
-        {/* MOBILE MENU */}
+        {/* ==================================================
+            MOBILE MENU
+        ================================================== */}
 
         {mobileOpen && (
           <div className="border-t border-slate-200 bg-white lg:hidden">
 
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-5">
+            <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6">
 
               <nav className="flex flex-col gap-1">
 
+                {/* HOME */}
+
                 <NavLink
                   to="/"
-                  onClick={() => setMobileOpen(false)}
+                  onClick={closeMobileMenu}
                   className={({ isActive }) =>
                     `rounded-lg px-4 py-3 text-sm font-semibold ${
                       isActive
@@ -326,9 +397,11 @@ function PublicNavbar() {
                   Home
                 </NavLink>
 
+                {/* ABOUT */}
+
                 <NavLink
                   to="/about"
-                  onClick={() => setMobileOpen(false)}
+                  onClick={closeMobileMenu}
                   className={({ isActive }) =>
                     `rounded-lg px-4 py-3 text-sm font-semibold ${
                       isActive
@@ -340,50 +413,70 @@ function PublicNavbar() {
                   About
                 </NavLink>
 
-                <button
-                  onClick={() =>
-                    setServicesOpen(!servicesOpen)
-                  }
-                  className="flex items-center justify-between rounded-lg px-4 py-3 text-left text-sm font-semibold text-slate-700"
+                {/* MOBILE SERVICES */}
+
+                <div
+                  ref={mobileServicesRef}
+                  className="relative"
                 >
-                  Services
-                  <ChevronDown size={17} />
-                </button>
+                  <div className="flex items-center rounded-lg">
 
-                {servicesOpen && (
-                  <div className="ml-4 border-l border-indigo-200 pl-3">
-
-                    {services.map((service) => (
-                      <Link
-                        key={service.path}
-                        to={service.path}
-                        onClick={() =>
-                          setMobileOpen(false)
-                        }
-                        className="block px-4 py-3 text-sm text-slate-600 hover:text-indigo-600"
-                      >
-                        {service.name}
-                      </Link>
-                    ))}
-
-                    <Link
+                    <NavLink
                       to="/services"
-                      onClick={() => setMobileOpen(false)}
-                      className="block px-4 py-3 text-sm font-bold text-indigo-600"
+                      onClick={() => {
+                        setMobileOpen(false);
+                        setServicesOpen(false);
+                      }}
+                      className={({ isActive }) =>
+                        `flex-1 rounded-lg px-4 py-3 text-sm font-semibold ${
+                          isActive
+                            ? "bg-indigo-50 text-indigo-600"
+                            : "text-slate-700"
+                        }`
+                      }
                     >
-                      View all services →
-                    </Link>
+                      Services
+                    </NavLink>
 
+                    <button
+                      type="button"
+                      onClick={toggleServices}
+                      className="rounded-lg p-3 text-slate-700 transition hover:bg-slate-100"
+                      aria-label="Toggle services dropdown"
+                      aria-expanded={servicesOpen}
+                    >
+                      <ChevronDown
+                        size={17}
+                        className={`transition-transform duration-200 ${
+                          servicesOpen ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
                   </div>
-                )}
+
+                  {servicesOpen && (
+                    <div className="ml-4 border-l border-indigo-200 pl-3">
+                      {services.map((service) => (
+                        <Link
+                          key={service.path}
+                          to={service.path}
+                          onClick={closeMobileMenu}
+                          className="block px-4 py-3 text-sm text-slate-600 transition hover:text-indigo-600"
+                        >
+                          {service.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* PROJECTS / TEAM / BLOG / CONTACT */}
 
                 {navItems.slice(2).map((item) => (
                   <NavLink
                     key={item.path}
                     to={item.path}
-                    onClick={() =>
-                      setMobileOpen(false)
-                    }
+                    onClick={closeMobileMenu}
                     className={({ isActive }) =>
                       `rounded-lg px-4 py-3 text-sm font-semibold ${
                         isActive
@@ -396,31 +489,35 @@ function PublicNavbar() {
                   </NavLink>
                 ))}
 
+                {/* GET QUOTE */}
+
                 <Link
                   to="/get-quote"
-                  onClick={() =>
-                    setMobileOpen(false)
-                  }
-                  className="mt-3 flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-5 py-4 text-sm font-bold text-white"
+                  onClick={closeMobileMenu}
+                  className="mt-3 flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-5 py-4 text-sm font-bold text-white transition hover:bg-indigo-700"
                 >
                   Get Quote
                   <ArrowRight size={17} />
                 </Link>
-
               </nav>
-
             </div>
-
           </div>
         )}
-
       </header>
 
-      {/* SEARCH OVERLAY */}
+      {/* ==================================================
+          SEARCH OVERLAY
+      ================================================== */}
 
       {searchOpen && (
-        <div className="gratech-search-overlay fixed inset-0 z-[100] bg-slate-950/80 px-5 pt-28">
-
+        <div
+          className="gratech-search-overlay fixed inset-0 z-[100] bg-slate-950/80 px-5 pt-28"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
+              setSearchOpen(false);
+            }
+          }}
+        >
           <div className="gratech-search-box mx-auto max-w-2xl rounded-2xl bg-white p-6 shadow-2xl">
 
             <div className="flex items-center justify-between">
@@ -430,10 +527,10 @@ function PublicNavbar() {
               </h2>
 
               <button
-                onClick={() =>
-                  setSearchOpen(false)
-                }
-                className="rounded-lg p-2 hover:bg-slate-100"
+                type="button"
+                onClick={() => setSearchOpen(false)}
+                className="rounded-lg p-2 transition hover:bg-slate-100"
+                aria-label="Close search"
               >
                 <X />
               </button>
@@ -446,12 +543,9 @@ function PublicNavbar() {
               placeholder="Search services, projects, blogs..."
               className="mt-6 w-full rounded-xl border border-slate-200 px-5 py-4 outline-none focus:border-indigo-500"
             />
-
           </div>
-
         </div>
       )}
-
     </>
   );
 }

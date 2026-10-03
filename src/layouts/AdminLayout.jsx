@@ -53,21 +53,7 @@ function AdminLayout() {
       path: "/admin/blogs",
       icon: FileText,
     },
-    {
-      name: "Team",
-      path: "/admin/team",
-      icon: Users,
-    },
-    {
-      name: "Testimonials",
-      path: "/admin/testimonials",
-      icon: Star,
-    },
-    {
-      name: "Settings",
-      path: "/admin/settings",
-      icon: Settings,
-    },
+    
   ];
 
   const handleLogout = () => {
@@ -78,9 +64,7 @@ function AdminLayout() {
   };
 
   // Bell click
-  const handleNotificationClick = () => {
-    navigate("/admin/settings");
-  };
+ 
 
   // Admin user click
   const handleUserClick = () => {
@@ -238,16 +222,7 @@ function AdminLayout() {
             <div className="flex items-center gap-3">
 
               {/* Notification */}
-              <button
-                type="button"
-                onClick={handleNotificationClick}
-                aria-label="Go to settings"
-                className="relative cursor-pointer rounded-xl p-2.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
-              >
-                <Bell size={20} />
-
-                <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500" />
-              </button>
+              
 
               {/* Divider */}
               <div className="hidden h-8 w-px bg-slate-200 sm:block" />

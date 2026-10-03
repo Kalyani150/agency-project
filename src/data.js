@@ -368,13 +368,14 @@ export const initialTeam = [
 // ======================================================
 
 
+
 export const initialTestimonials = [
   {
     id: 1,
     name: "Daniel Carter",
     role: "CEO, TechFlow",
     message:
-      "The team delivered an excellent website and understood our requirements perfectly.",
+      "The team delivered an excellent website and understood our requirements perfectly. They took the time to understand our business goals, suggested practical improvements, and created a modern website that is both professional and easy to use. The entire development process was smooth, communication was clear, and the final result exceeded our expectations. We are very happy with the quality of their work and support.",
     rating: 5,
     status: "Published",
   },
@@ -384,7 +385,7 @@ export const initialTestimonials = [
     name: "Ananya Kumar",
     role: "Founder, MarketHub",
     message:
-      "Professional team, excellent communication and great design.",
+      "Professional team, excellent communication and great design. From the initial discussion to the final delivery, the team was responsive and understood exactly what we wanted to achieve. They created a clean and engaging digital experience that represents our brand very well. Their attention to detail, creativity, and commitment to delivering quality work made the entire experience easy and enjoyable.",
     rating: 5,
     status: "Published",
   },
@@ -394,7 +395,7 @@ export const initialTestimonials = [
     name: "David Brown",
     role: "Director, Finora",
     message:
-      "They transformed our old platform into a modern digital experience.",
+      "They transformed our old platform into a modern digital experience. The team carefully analyzed our existing platform and provided thoughtful solutions to improve both the design and user experience. The new platform is faster, easier to navigate, and much more aligned with our business goals. Their technical expertise and attention to detail were impressive throughout the project, and we are extremely satisfied with the final outcome.",
     rating: 5,
     status: "Published",
   },

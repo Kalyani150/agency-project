@@ -46,7 +46,7 @@ function Dashboard({
   const recentEnquiries = enquiries.slice(0, 5);
 
   return (
-    <div className="w-full min-w-0 space-y-6 sm:space-y-8">
+    <div className="w-full min-w-0 space-y-4 sm:space-y-6">
 
       {/* ==================================================
           HEADER
@@ -62,44 +62,54 @@ function Dashboard({
         </p>
       </div>
 
-      {/* ==================================================
-          STATISTICS
-      ================================================== */}
-<div className="grid min-[400px]:grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-        {stats.map((stat) => {
-          const Icon = stat.icon;
+    
+{/* ==================================================
+    STATISTICS
+================================================== */}
 
-          return (
-            <Link
-              key={stat.title}
-              to={stat.link}
-              className="group min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg sm:p-6"
-            >
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 sm:h-12 sm:w-12">
-                  <Icon
-                    size={21}
-                    strokeWidth={2}
-                  />
-                </div>
+<div className="grid min-[400px]:grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
 
-                <ArrowUpRight
-                  size={19}
-                  className="shrink-0 text-slate-400 transition group-hover:text-indigo-600"
-                />
-              </div>
+  {stats.map((stat) => {
+    const Icon = stat.icon;
 
-              <p className="mt-4 text-sm font-medium text-slate-600 sm:mt-5 sm:text-base">
-                {stat.title}
-              </p>
+    return (
+      <Link
+        key={stat.title}
+        to={stat.link}
+        className="group min-w-0 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg sm:p-4"
+      >
 
-              <h2 className="mt-1 text-2xl font-bold text-slate-900 sm:text-3xl">
-                {stat.value}
-              </h2>
-            </Link>
-          );
-        })}
-      </div>
+        <div className="flex items-center justify-between gap-2">
+
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 sm:h-10 sm:w-10">
+            <Icon
+              size={18}
+              strokeWidth={2}
+            />
+          </div>
+
+          <ArrowUpRight
+            size={17}
+            className="shrink-0 text-slate-400 transition group-hover:text-indigo-600"
+          />
+
+        </div>
+
+        <p className="mt-2 text-xs font-medium text-slate-600 sm:mt-3 sm:text-sm">
+          {stat.title}
+        </p>
+
+        <h2 className="mt-0.5 text-xl font-bold text-slate-900 sm:text-2xl">
+          {stat.value}
+        </h2>
+
+      </Link>
+    );
+  })}
+
+</div>
+
+
 
       {/* ==================================================
           CONTENT
@@ -246,19 +256,7 @@ function Dashboard({
 
           {/* Website button */}
 
-          <a
-            href="/"
-            target="_blank"
-            rel="noreferrer"
-            className="mt-6 flex min-h-[46px] w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 active:scale-[0.99] sm:mt-8 sm:text-base"
-          >
-            View Website
-
-            <ExternalLink
-              size={16}
-              className="shrink-0"
-            />
-          </a>
+          
 
         </div>
 

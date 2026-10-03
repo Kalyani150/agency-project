@@ -1,4 +1,3 @@
-
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Plus,
@@ -7,6 +6,8 @@ import {
   Trash2,
   X,
   ImagePlus,
+  Eye,
+  ChevronDown,
 } from "lucide-react";
 
 import { nextId } from "../../utils";
@@ -44,298 +45,299 @@ const navigationKeys = [
   "Tab",
 ];
 
-/* =========================================================
-   IMAGE RESIZE / COMPRESSION
-========================================================= */
+const readAndShrinkImage = (file) =>
+  new Promise((resolve, reject) => {
+    if (!file) {
+      reject(new Error("No image selected."));
+      return;
+    }
 
-function readAndShrinkImage(file) {
-  return new Promise((resolve, reject) => {
+    if (!file.type.startsWith("image/")) {
+      reject(new Error("Please select a valid image file."));
+      return;
+    }
+
+    if (file.size > MAX_FILE_BYTES) {
+      reject(new Error("Image size must be 10MB or smaller."));
+      return;
+    }
+
     const reader = new FileReader();
 
     reader.onload = () => {
-      const image = new Image();
+      const img = new Image();
 
-      image.onload = () => {
-        let width = image.width;
-        let height = image.height;
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
 
-        if (
-          width > MAX_IMAGE_DIMENSION ||
-          height > MAX_IMAGE_DIMENSION
-        ) {
-          if (width > height) {
-            height =
-              (height / width) *
-              MAX_IMAGE_DIMENSION;
-            width = MAX_IMAGE_DIMENSION;
-          } else {
-            width =
-              (width / height) *
-              MAX_IMAGE_DIMENSION;
-            height = MAX_IMAGE_DIMENSION;
-          }
-        }
+        const scale = Math.min(
+          1,
+          MAX_IMAGE_DIMENSION / Math.max(width, height)
+        );
 
-        const canvas =
-          document.createElement("canvas");
+        width = Math.round(width * scale);
+        height = Math.round(height * scale);
 
-        canvas.width = Math.round(width);
-        canvas.height = Math.round(height);
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
 
-        const context =
-          canvas.getContext("2d");
+        const context = canvas.getContext("2d");
 
         if (!context) {
-          reject(
-            new Error(
-              "Unable to process image."
-            )
-          );
+          reject(new Error("Unable to process image."));
           return;
         }
 
-        context.drawImage(
-          image,
-          0,
-          0,
-          canvas.width,
-          canvas.height
+        context.drawImage(img, 0, 0, width, height);
+
+        const dataUrl = canvas.toDataURL(
+          "image/jpeg",
+          JPEG_QUALITY
         );
 
-        resolve(
-          canvas.toDataURL(
-            "image/jpeg",
-            JPEG_QUALITY
-          )
-        );
+        resolve(dataUrl);
       };
 
-      image.onerror = () => {
-        reject(
-          new Error("Invalid image file.")
-        );
+      img.onerror = () => {
+        reject(new Error("Unable to read the selected image."));
       };
 
-      image.src = reader.result;
+      img.src = reader.result;
     };
 
     reader.onerror = () => {
-      reject(
-        new Error("Unable to read image.")
-      );
+      reject(new Error("Unable to read the selected file."));
     };
 
     reader.readAsDataURL(file);
   });
-}
-
-/* =========================================================
-   COMPONENT
-========================================================= */
 
 function Projects({
   projects = [],
   setProjects,
 }) {
-  const [search, setSearch] =
-    useState("");
+  const [search, setSearch] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
 
-  const [showModal, setShowModal] =
-    useState(false);
+  const [openFilter, setOpenFilter] = useState(null);
 
-  const [editingProject, setEditingProject] =
-    useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [editingProject, setEditingProject] = useState(null);
+  const [viewingProject, setViewingProject] = useState(null);
 
-  const [form, setForm] =
-    useState(EMPTY_FORM);
+  const [form, setForm] = useState(EMPTY_FORM);
+  const [errors, setErrors] = useState({});
+  const [imageError, setImageError] = useState("");
 
-  const [errors, setErrors] =
-    useState({});
+  const titleInputRef = useRef(null);
+  const viewModalRef = useRef(null);
+  const filterDropdownRef = useRef(null);
 
-  const [imageError, setImageError] =
-    useState("");
+  /* =========================================================
+     CATEGORY OPTIONS
+  ========================================================= */
 
-  const titleInputRef =
-    useRef(null);
+  const categoryOptions = useMemo(() => {
+    return Array.from(
+      new Set(
+        projects
+          .map((project) => project.category)
+          .filter(Boolean)
+      )
+    ).sort((a, b) => a.localeCompare(b));
+  }, [projects]);
 
-  /* =======================================================
-     FILTER PROJECTS
-  ======================================================= */
+  /* =========================================================
+     FILTERED PROJECTS
+  ========================================================= */
 
   const filteredProjects = useMemo(() => {
-    const keyword =
-      search.trim().toLowerCase();
-
-    if (!keyword) {
-      return projects;
-    }
+    const query = search.trim().toLowerCase();
 
     return projects.filter((project) => {
-      return (
+      const matchesSearch =
+        !query ||
         String(project.title || "")
           .toLowerCase()
-          .includes(keyword) ||
+          .includes(query) ||
         String(project.category || "")
           .toLowerCase()
-          .includes(keyword) ||
+          .includes(query) ||
         String(project.client || "")
           .toLowerCase()
-          .includes(keyword)
+          .includes(query) ||
+        String(project.description || "")
+          .toLowerCase()
+          .includes(query) ||
+        String(project.shortDescription || "")
+          .toLowerCase()
+          .includes(query) ||
+        String(project.status || "")
+          .toLowerCase()
+          .includes(query);
+
+      const matchesCategory =
+        !categoryFilter ||
+        project.category === categoryFilter;
+
+      const matchesStatus =
+        !statusFilter ||
+        project.status === statusFilter;
+
+      return (
+        matchesSearch &&
+        matchesCategory &&
+        matchesStatus
       );
     });
-  }, [projects, search]);
+  }, [
+    projects,
+    search,
+    categoryFilter,
+    statusFilter,
+  ]);
 
-  /* =======================================================
-     MODAL FOCUS
-  ======================================================= */
-
-  useEffect(() => {
-    if (showModal) {
-      const timer = setTimeout(() => {
-        titleInputRef.current?.focus();
-      }, 100);
-
-      return () => clearTimeout(timer);
-    }
-  }, [showModal]);
-
-  /* =======================================================
-     ESCAPE KEY
-  ======================================================= */
+  /* =========================================================
+     OUTSIDE CLICK FOR FILTER DROPDOWNS
+  ========================================================= */
 
   useEffect(() => {
-    const handleEscape = (event) => {
+    const handleOutsideClick = (event) => {
       if (
-        event.key === "Escape" &&
-        showModal
+        filterDropdownRef.current &&
+        !filterDropdownRef.current.contains(event.target)
       ) {
-        closeModal();
+        setOpenFilter(null);
+      }
+    };
+
+    document.addEventListener(
+      "mousedown",
+      handleOutsideClick
+    );
+
+    return () => {
+      document.removeEventListener(
+        "mousedown",
+        handleOutsideClick
+      );
+    };
+  }, []);
+
+  /* =========================================================
+     ESC KEY
+  ========================================================= */
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        if (openFilter) {
+          setOpenFilter(null);
+          return;
+        }
+
+        if (viewingProject) {
+          setViewingProject(null);
+          return;
+        }
+
+        if (showModal) {
+          setShowModal(false);
+        }
       }
     };
 
     document.addEventListener(
       "keydown",
-      handleEscape
+      handleKeyDown
     );
 
     return () => {
       document.removeEventListener(
         "keydown",
-        handleEscape
+        handleKeyDown
       );
     };
+  }, [
+    openFilter,
+    viewingProject,
+    showModal,
+  ]);
+
+  /* =========================================================
+     VIEW MODAL OUTSIDE CLICK
+  ========================================================= */
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        viewingProject &&
+        viewModalRef.current &&
+        !viewModalRef.current.contains(event.target)
+      ) {
+        setViewingProject(null);
+      }
+    };
+
+    if (viewingProject) {
+      document.addEventListener(
+        "mousedown",
+        handleClickOutside
+      );
+    }
+
+    return () => {
+      document.removeEventListener(
+        "mousedown",
+        handleClickOutside
+      );
+    };
+  }, [viewingProject]);
+
+  /* =========================================================
+     AUTO FOCUS
+  ========================================================= */
+
+  useEffect(() => {
+    if (showModal) {
+      setTimeout(() => {
+        titleInputRef.current?.focus();
+      }, 100);
+    }
   }, [showModal]);
 
-  /* =======================================================
-     KEYBOARD VALIDATION
-  ======================================================= */
-
-  const handleTextKeyDown = (event) => {
-    if (
-      event.ctrlKey ||
-      event.metaKey
-    ) {
-      return;
-    }
-
-    if (
-      navigationKeys.includes(event.key)
-    ) {
-      return;
-    }
-
-    if (event.key === "Enter") {
-      event.preventDefault();
-      return;
-    }
-
-    if (
-      !/^[a-zA-Z0-9 &.'-]$/.test(
-        event.key
-      )
-    ) {
-      event.preventDefault();
-    }
-  };
-
-  const handleYearKeyDown = (event) => {
-    if (
-      event.ctrlKey ||
-      event.metaKey
-    ) {
-      return;
-    }
-
-    if (
-      navigationKeys.includes(event.key)
-    ) {
-      return;
-    }
-
-    if (!/^[0-9]$/.test(event.key)) {
-      event.preventDefault();
-    }
-  };
-
-  const handleDescriptionKeyDown = (
-    event
-  ) => {
-    if (
-      event.ctrlKey ||
-      event.metaKey
-    ) {
-      return;
-    }
-
-    if (
-      navigationKeys.includes(event.key) ||
-      event.key === "Enter"
-    ) {
-      return;
-    }
-
-    if (event.key.length === 1) {
-      return;
-    }
-
-    event.preventDefault();
-  };
-
-  /* =======================================================
+  /* =========================================================
      OPEN ADD MODAL
-  ======================================================= */
+  ========================================================= */
 
-  const openAddModal = () => {
+  const handleAdd = () => {
     setEditingProject(null);
-    setForm({
-      ...EMPTY_FORM,
-    });
+    setForm(EMPTY_FORM);
     setErrors({});
     setImageError("");
     setShowModal(true);
   };
 
-  /* =======================================================
+  /* =========================================================
      OPEN EDIT MODAL
-  ======================================================= */
+  ========================================================= */
 
-  const openEditModal = (project) => {
+  const handleEdit = (project) => {
     setEditingProject(project);
 
     setForm({
       title: project.title || "",
       category: project.category || "",
-      description:
-        project.description || "",
+      description: project.description || "",
       shortDescription:
         project.shortDescription || "",
       client: project.client || "",
-      year: project.year
-        ? String(project.year)
-        : "",
+      year: project.year || "",
       image: project.image || "",
-      status:
-        project.status || "Completed",
+      status: project.status || "Completed",
     });
 
     setErrors({});
@@ -343,234 +345,96 @@ function Projects({
     setShowModal(true);
   };
 
-  /* =======================================================
-     CLOSE MODAL
-  ======================================================= */
-
-  const closeModal = () => {
-    setShowModal(false);
-    setEditingProject(null);
-    setForm({
-      ...EMPTY_FORM,
-    });
-    setErrors({});
-    setImageError("");
-  };
-
-  /* =======================================================
+  /* =========================================================
      FORM CHANGE
-  ======================================================= */
+  ========================================================= */
 
-  const handleChange = (event) => {
-    const {
-      name,
-      value,
-    } = event.target;
-
-    let cleanValue = value;
-
-    if (
-      name === "title" ||
-      name === "category" ||
-      name === "client"
-    ) {
-      cleanValue = value
-        .replace(
-          /[^a-zA-Z0-9 &.'-]/g,
-          ""
-        )
-        .replace(/^\s+/, "")
-        .replace(/\s{2,}/g, " ");
-    }
-
-    if (name === "year") {
-      cleanValue = value
-        .replace(/\D/g, "")
-        .slice(0, 4);
-    }
-
-    if (
-      name === "description" ||
-      name === "shortDescription"
-    ) {
-      cleanValue = value.replace(
-        /[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,
-        ""
-      );
-    }
-
-    setForm((current) => ({
-      ...current,
-      [name]: cleanValue,
+  const handleChange = (field, value) => {
+    setForm((prev) => ({
+      ...prev,
+      [field]: value,
     }));
 
-    setErrors((current) => ({
-      ...current,
-      [name]: "",
+    setErrors((prev) => ({
+      ...prev,
+      [field]: "",
     }));
   };
 
-  /* =======================================================
-     IMAGE UPLOAD
-  ======================================================= */
+  /* =========================================================
+     IMAGE CHANGE
+  ========================================================= */
 
-  const handleImageChange = async (
-    event
-  ) => {
-    const file =
-      event.target.files?.[0];
-
-    setImageError("");
+  const handleImageChange = async (event) => {
+    const file = event.target.files?.[0];
 
     if (!file) {
       return;
     }
 
-    if (
-      !file.type.startsWith("image/")
-    ) {
-      setImageError(
-        "Please select a valid image file."
-      );
-      return;
-    }
-
-    if (file.size > MAX_FILE_BYTES) {
-      setImageError(
-        "Image must be smaller than 10 MB."
-      );
-      return;
-    }
+    setImageError("");
 
     try {
-      const imageData =
-        await readAndShrinkImage(file);
+      const image = await readAndShrinkImage(file);
 
-      setForm((current) => ({
-        ...current,
-        image: imageData,
+      setForm((prev) => ({
+        ...prev,
+        image,
       }));
     } catch (error) {
-      console.error(error);
-
       setImageError(
-        "Unable to process this image."
+        error.message || "Unable to process image."
       );
     }
+
+    event.target.value = "";
   };
 
-  /* =======================================================
+  /* =========================================================
      VALIDATION
-  ======================================================= */
+  ========================================================= */
 
   const validateForm = () => {
     const newErrors = {};
 
-    const title =
-      form.title.trim();
-
-    const category =
-      form.category.trim();
-
-    const client =
-      form.client.trim();
-
-    const year =
-      form.year.trim();
-
-    const shortDescription =
-      form.shortDescription.trim();
-
-    const description =
-      form.description.trim();
-
-    if (!title) {
-      newErrors.title =
-        "Project title is required.";
-    } else if (title.length < 3) {
-      newErrors.title =
-        "Title must contain at least 3 characters.";
-    } else if (title.length > 100) {
-      newErrors.title =
-        "Title cannot exceed 100 characters.";
+    if (!form.title.trim()) {
+      newErrors.title = "Project title is required.";
     }
 
-    if (!category) {
-      newErrors.category =
-        "Category is required.";
-    } else if (category.length < 2) {
-      newErrors.category =
-        "Category must contain at least 2 characters.";
-    } else if (category.length > 50) {
-      newErrors.category =
-        "Category cannot exceed 50 characters.";
+    if (!form.category.trim()) {
+      newErrors.category = "Category is required.";
     }
 
-    if (client.length > 100) {
-      newErrors.client =
-        "Client cannot exceed 100 characters.";
+    if (!form.client.trim()) {
+      newErrors.client = "Client name is required.";
     }
 
-    if (year) {
-      if (!/^\d{4}$/.test(year)) {
-        newErrors.year =
-          "Year must contain exactly 4 digits.";
-      } else {
-        const numericYear =
-          Number(year);
-
-        if (
-          numericYear < 1900 ||
-          numericYear > 2100
-        ) {
-          newErrors.year =
-            "Year must be between 1900 and 2100.";
-        }
-      }
+    if (!form.year.trim()) {
+      newErrors.year = "Year is required.";
     }
 
-    if (
-      shortDescription.length > 200
-    ) {
+    if (!form.shortDescription.trim()) {
       newErrors.shortDescription =
-        "Short description cannot exceed 200 characters.";
+        "Short description is required.";
     }
 
-    if (!description) {
+    if (!form.description.trim()) {
       newErrors.description =
-        "Description is required.";
-    } else if (
-      description.length < 10
-    ) {
-      newErrors.description =
-        "Description must contain at least 10 characters.";
-    } else if (
-      description.length > 1000
-    ) {
-      newErrors.description =
-        "Description cannot exceed 1000 characters.";
+        "Project description is required.";
     }
 
-    if (
-      !STATUS_OPTIONS.includes(
-        form.status
-      )
-    ) {
-      newErrors.status =
-        "Please select a valid status.";
+    if (!form.image) {
+      newErrors.image = "Project image is required.";
     }
 
     setErrors(newErrors);
 
-    return (
-      Object.keys(newErrors).length ===
-      0
-    );
+    return Object.keys(newErrors).length === 0;
   };
 
-  /* =======================================================
+  /* =========================================================
      SUBMIT
-  ======================================================= */
+  ========================================================= */
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -580,212 +444,430 @@ function Projects({
     }
 
     const cleanProject = {
+      ...form,
       title: form.title.trim(),
-      category:
-        form.category.trim(),
-      description:
-        form.description.trim(),
+      category: form.category.trim(),
+      description: form.description.trim(),
       shortDescription:
         form.shortDescription.trim(),
-      client:
-        form.client.trim(),
-      year: form.year.trim(),
+      client: form.client.trim(),
+      year: String(form.year).trim(),
       image: form.image,
       status: form.status,
     };
 
     if (editingProject) {
-      setProjects(
-        (currentProjects) =>
-          currentProjects.map(
-            (project) =>
-              project.id ===
-              editingProject.id
-                ? {
-                    ...project,
-                    ...cleanProject,
-                  }
-                : project
-          )
+      setProjects((prev) =>
+        prev.map((project) =>
+          project.id === editingProject.id
+            ? {
+                ...project,
+                ...cleanProject,
+              }
+            : project
+        )
       );
     } else {
-      const newProject = {
-        id: nextId(projects),
-        ...cleanProject,
-      };
-
-      setProjects(
-        (currentProjects) => [
-          ...currentProjects,
-          newProject,
-        ]
-      );
+      setProjects((prev) => [
+        {
+          id: nextId(prev),
+          ...cleanProject,
+        },
+        ...prev,
+      ]);
     }
 
-    closeModal();
+    setShowModal(false);
+    setEditingProject(null);
+    setForm(EMPTY_FORM);
+    setErrors({});
+    setImageError("");
   };
 
-  /* =======================================================
+  /* =========================================================
      DELETE
-  ======================================================= */
+  ========================================================= */
 
-  const handleDelete = (id) => {
-    const project =
-      projects.find(
-        (item) => item.id === id
-      );
-
-    if (!project) {
-      return;
-    }
-
-    const confirmed =
-      window.confirm(
-        `Are you sure you want to delete "${project.title}"?`
-      );
+  const handleDelete = (project) => {
+    const confirmed = window.confirm(
+      `Are you sure you want to delete "${project.title}"?`
+    );
 
     if (!confirmed) {
       return;
     }
 
-    setProjects(
-      (currentProjects) =>
-        currentProjects.filter(
-          (item) => item.id !== id
-        )
+    setProjects((prev) =>
+      prev.filter(
+        (item) => item.id !== project.id
+      )
     );
+
+    if (
+      viewingProject &&
+      viewingProject.id === project.id
+    ) {
+      setViewingProject(null);
+    }
   };
 
-  /* =======================================================
+  /* =========================================================
+     CLEAR FILTERS
+  ========================================================= */
+
+  const clearFilters = () => {
+    setSearch("");
+    setCategoryFilter("");
+    setStatusFilter("");
+    setOpenFilter(null);
+  };
+
+  const hasFilters =
+    search ||
+    categoryFilter ||
+    statusFilter;
+
+  /* =========================================================
+     STATUS STYLING
+  ========================================================= */
+
+  const getStatusClasses = (status) => {
+    if (status === "Completed") {
+      return "bg-green-100 text-green-700";
+    }
+
+    if (status === "In Progress") {
+      return "bg-blue-100 text-blue-700";
+    }
+
+    if (status === "Planning") {
+      return "bg-yellow-100 text-yellow-700";
+    }
+
+    return "bg-gray-100 text-gray-700";
+  };
+
+  /* =========================================================
      RENDER
-  ======================================================= */
+  ========================================================= */
 
   return (
-    <div className="space-y-6">
-      {/* ===================================================
+    <div className="w-full min-w-0">
+      {/* =====================================================
           HEADER
-      =================================================== */}
+      ===================================================== */}
 
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="text-3xl font-black text-black">
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="text-2xl font-bold text-gray-900">
             Projects
           </h1>
 
-          <p className="mt-1 text-m text-slate-500">
-            Manage projects displayed
-            on your public website.
+          <p className="mt-1 text-sm text-gray-500">
+            Manage your projects and portfolio.
           </p>
         </div>
 
         <button
           type="button"
-          onClick={openAddModal}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 font-bold text-white transition hover:bg-indigo-500"
+          onClick={handleAdd}
+          className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 sm:w-auto"
         >
           <Plus size={18} />
           Add Project
         </button>
       </div>
 
-      {/* ===================================================
-          SEARCH
-      =================================================== */}
+      {/* =====================================================
+          FILTERS
+      ===================================================== */}
 
-      <div >
-        <div className="relative">
-          <Search
-            size={18}
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600"
-          />
+      <div className="mb-6">
+        <div className="grid grid-cols-1 gap-3 lg:grid-cols-7">
+          {/* SEARCH */}
 
-          <input
-            type="text"
-            value={search}
-            onChange={(event) =>
-              setSearch(
-                event.target.value
-              )
-            }
-            placeholder="Search projects..."
-            className="w-full rounded-xl border border-slate-700  py-3 pl-11 pr-4 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-indigo-500"
-          />
-        </div>
+          <div className="relative lg:col-span-5">
+            <Search
+              size={18}
+              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+            />
+
+            <input
+              type="text"
+              value={search}
+              onChange={(event) =>
+                setSearch(event.target.value)
+              }
+              placeholder="Search projects..."
+              className="h-11 w-full rounded-xl border border-gray-200 bg-white pl-10 pr-4 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+            />
+          </div>
+
+          
+
+{/* CATEGORY + STATUS CUSTOM DROPDOWNS */}
+
+<div
+  ref={filterDropdownRef}
+  className="grid grid-cols-1 min-[351px]:grid-cols-2 gap-2 sm:gap-3 lg:col-span-2"
+>
+  {/* CATEGORY */}
+
+  <div className="relative min-w-0">
+    <button
+      type="button"
+      onClick={() =>
+        setOpenFilter(
+          openFilter === "category"
+            ? null
+            : "category"
+        )
+      }
+      aria-haspopup="listbox"
+      aria-expanded={openFilter === "category"}
+      className="flex h-11 w-full min-w-0 items-center justify-between gap-1.5 rounded-xl border border-gray-200 bg-white px-2.5 text-left text-sm text-gray-700 outline-none transition hover:border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 sm:gap-2 sm:px-3"
+    >
+      <span className="min-w-0 truncate">
+        {categoryFilter || "All Categories"}
+      </span>
+
+      <ChevronDown
+        size={17}
+        className={`shrink-0 text-gray-500 transition-transform ${
+          openFilter === "category"
+            ? "rotate-180"
+            : ""
+        }`}
+      />
+    </button>
+
+    {openFilter === "category" && (
+      <div className="absolute left-0 right-0 top-full z-50 mt-2 max-h-60 overflow-y-auto rounded-xl border border-gray-200 bg-white p-1.5 shadow-xl">
+        <button
+          type="button"
+          onClick={() => {
+            setCategoryFilter("");
+            setOpenFilter(null);
+          }}
+          className={`w-full rounded-lg px-3 py-2.5 text-left text-sm transition ${
+            categoryFilter === ""
+              ? "bg-indigo-50 font-semibold text-indigo-600"
+              : "text-gray-700 hover:bg-gray-50"
+          }`}
+        >
+          All Categories
+        </button>
+
+        {categoryOptions.map((category) => (
+          <button
+            key={category}
+            type="button"
+            onClick={() => {
+              setCategoryFilter(category);
+              setOpenFilter(null);
+            }}
+            className={`w-full rounded-lg px-3 py-2.5 text-left text-sm transition ${
+              categoryFilter === category
+                ? "bg-indigo-50 font-semibold text-indigo-600"
+                : "text-gray-700 hover:bg-gray-50"
+            }`}
+          >
+            <span className="block truncate">
+              {category}
+            </span>
+          </button>
+        ))}
+      </div>
+    )}
+  </div>
+
+  {/* STATUS */}
+
+  <div className="relative min-w-0">
+    <button
+      type="button"
+      onClick={() =>
+        setOpenFilter(
+          openFilter === "status"
+            ? null
+            : "status"
+        )
+      }
+      aria-haspopup="listbox"
+      aria-expanded={openFilter === "status"}
+      className="flex h-11 w-full min-w-0 items-center justify-between gap-1.5 rounded-xl border border-gray-200 bg-white px-2.5 text-left text-sm text-gray-700 outline-none transition hover:border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 sm:gap-2 sm:px-3"
+    >
+      <span className="min-w-0 truncate">
+        {statusFilter || "All Statuses"}
+      </span>
+
+      <ChevronDown
+        size={17}
+        className={`shrink-0 text-gray-500 transition-transform ${
+          openFilter === "status"
+            ? "rotate-180"
+            : ""
+        }`}
+      />
+    </button>
+
+    {openFilter === "status" && (
+      <div className="absolute left-0 right-0 top-full z-50 mt-2 max-h-60 overflow-y-auto rounded-xl border border-gray-200 bg-white p-1.5 shadow-xl">
+        <button
+          type="button"
+          onClick={() => {
+            setStatusFilter("");
+            setOpenFilter(null);
+          }}
+          className={`w-full rounded-lg px-3 py-2.5 text-left text-sm transition ${
+            statusFilter === ""
+              ? "bg-indigo-50 font-semibold text-indigo-600"
+              : "text-gray-700 hover:bg-gray-50"
+          }`}
+        >
+          All Statuses
+        </button>
+
+        {STATUS_OPTIONS.map((status) => (
+          <button
+            key={status}
+            type="button"
+            onClick={() => {
+              setStatusFilter(status);
+              setOpenFilter(null);
+            }}
+            className={`w-full rounded-lg px-3 py-2.5 text-left text-sm transition ${
+              statusFilter === status
+                ? "bg-indigo-50 font-semibold text-indigo-600"
+                : "text-gray-700 hover:bg-gray-50"
+            }`}
+          >
+            {status}
+          </button>
+        ))}
+      </div>
+    )}
+  </div>
+</div>
+
+
+
+        {/* CLEAR FILTERS */}
+
+        {hasFilters && (
+          <div className="mt-3 flex justify-end">
+            <button
+              type="button"
+              onClick={clearFilters}
+              className="text-sm font-medium text-indigo-600 transition hover:text-indigo-700"
+            >
+              Clear filters
+            </button>
+          </div>
+        )}
+      </div>
       </div>
 
-      {/* ===================================================
-          TABLE
-      =================================================== */}
+      {/* =====================================================
+          PROJECT TABLE
+      ===================================================== */}
 
-      <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/80">
+      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[900px]">
             <thead>
-              <tr className="border-b border-slate-800 text-left">
-                <th className="px-5 py-4 text-s font-bold uppercase tracking-wider text-slate-300">
+              <tr className="border-b border-gray-200 bg-gray-50">
+                <th className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
                   Project
                 </th>
 
-                <th className="px-5 py-4 text-s font-bold uppercase tracking-wider text-slate-300">
+                <th className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
                   Category
                 </th>
 
-                <th className="px-5 py-4 text-s font-bold uppercase tracking-wider text-slate-300">
+                <th className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
                   Client
                 </th>
 
-                <th className="px-5 py-4 text-s font-bold uppercase tracking-wider text-slate-300">
+                <th className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                  Year
+                </th>
+
+                <th className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
                   Status
                 </th>
 
-                <th className="px-5 py-4 text-right text-s font-bold uppercase tracking-wider text-slate-300">
+                <th className="px-5 py-4 text-right text-xs font-semibold uppercase tracking-wider text-gray-500">
                   Actions
                 </th>
               </tr>
             </thead>
 
             <tbody>
-              {filteredProjects.length >
-              0 ? (
+              {filteredProjects.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={6}
+                    className="px-5 py-12 text-center"
+                  >
+                    <div className="flex flex-col items-center justify-center">
+                      <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
+                        <Search
+                          size={20}
+                          className="text-gray-400"
+                        />
+                      </div>
+
+                      <p className="text-sm font-medium text-gray-700">
+                        No projects found
+                      </p>
+
+                      <p className="mt-1 text-sm text-gray-500">
+                        Try changing your search or filters.
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
                 filteredProjects.map(
                   (project) => (
                     <tr
                       key={project.id}
-                      className="border-b border-slate-800/70 transition hover:bg-slate-800/30"
+                      className="border-b border-gray-100 transition hover:bg-gray-50"
                     >
+                      {/* PROJECT */}
+
                       <td className="px-5 py-4">
-                        <div className="flex items-center gap-4">
-                          <div className="h-14 w-20 shrink-0 overflow-hidden rounded-lg bg-slate-800">
+                        <div className="flex items-center gap-3">
+                          <div className="h-12 w-16 shrink-0 overflow-hidden rounded-lg bg-gray-100">
                             {project.image ? (
                               <img
-                                src={
-                                  project.image
-                                }
+                                src={project.image}
                                 alt={
-                                  project.title
+                                  project.title ||
+                                  "Project"
                                 }
                                 className="h-full w-full object-cover"
                               />
                             ) : (
-                              <div className="flex h-full items-center justify-center text-slate-600">
+                              <div className="flex h-full w-full items-center justify-center">
                                 <ImagePlus
-                                  size={20}
+                                  size={18}
+                                  className="text-gray-400"
                                 />
                               </div>
                             )}
                           </div>
 
-                          <div>
-                            <p className="font-bold text-white">
-                              {
-                                project.title
-                              }
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-semibold text-gray-900">
+                              {project.title}
                             </p>
 
-                            {project.year && (
-                              <p className="mt-1 text-s text-slate-400">
+                            {project.shortDescription && (
+                              <p className="mt-1 max-w-xs truncate text-xs text-gray-500">
                                 {
-                                  project.year
+                                  project.shortDescription
                                 }
                               </p>
                             )}
@@ -793,143 +875,308 @@ function Projects({
                         </div>
                       </td>
 
-                      <td className="px-5 py-4 text-m text-slate-300">
-                        {project.category ||
-                          "-"}
-                      </td>
-
-                      <td className="px-5 py-4 text-m text-slate-300">
-                        {project.client ||
-                          "-"}
-                      </td>
+                      {/* CATEGORY */}
 
                       <td className="px-5 py-4">
-                        <span className="inline-flex rounded-full bg-indigo-500/10 px-3 py-1 text-s font-bold text-indigo-400">
-                          {project.status ||
-                            "Completed"}
+                        <span className="text-sm text-gray-700">
+                          {project.category ||
+                            "—"}
                         </span>
                       </td>
+
+                      {/* CLIENT */}
+
+                      <td className="px-5 py-4">
+                        <span className="text-sm text-gray-700">
+                          {project.client || "—"}
+                        </span>
+                      </td>
+
+                      {/* YEAR */}
+
+                      <td className="px-5 py-4">
+                        <span className="text-sm text-gray-700">
+                          {project.year || "—"}
+                        </span>
+                      </td>
+
+                      {/* STATUS */}
+
+                      <td className="px-5 py-4">
+                        <span
+                          className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${getStatusClasses(
+                            project.status
+                          )}`}
+                        >
+                          {project.status ||
+                            "—"}
+                        </span>
+                      </td>
+
+                      {/* ACTIONS */}
 
                       <td className="px-5 py-4">
                         <div className="flex justify-end gap-2">
                           <button
                             type="button"
                             onClick={() =>
-                              openEditModal(
+                              setViewingProject(
                                 project
                               )
                             }
-                            className="rounded-lg p-2 text-slate-400 transition hover:bg-indigo-500/10 hover:text-indigo-400"
-                            title="Edit project"
+                            title="View project"
+                            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-600 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-600"
                           >
-                            <Pencil
-                              size={17}
-                            />
+                            <Eye size={16} />
                           </button>
 
                           <button
                             type="button"
                             onClick={() =>
-                              handleDelete(
-                                project.id
-                              )
+                              handleEdit(project)
                             }
-                            className="rounded-lg p-2 text-slate-400 transition hover:bg-red-500/10 hover:text-red-400"
-                            title="Delete project"
+                            title="Edit project"
+                            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-600 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
                           >
-                            <Trash2
-                              size={17}
-                            />
+                            <Pencil size={16} />
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              handleDelete(project)
+                            }
+                            title="Delete project"
+                            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-600 transition hover:border-red-200 hover:bg-red-50 hover:text-red-600"
+                          >
+                            <Trash2 size={16} />
                           </button>
                         </div>
                       </td>
                     </tr>
                   )
                 )
-              ) : (
-                <tr>
-                  <td
-                    colSpan="5"
-                    className="px-5 py-16 text-center"
-                  >
-                    <p className="font-semibold text-slate-400">
-                      No projects found.
-                    </p>
-
-                    <p className="mt-1 text-sm text-slate-600">
-                      Add a project or
-                      change your search.
-                    </p>
-                  </td>
-                </tr>
               )}
             </tbody>
           </table>
         </div>
       </div>
 
-      {/* ===================================================
-          ADD / EDIT MODAL
-      =================================================== */}
+      {/* =====================================================
+          VIEW PROJECT MODAL
+      ===================================================== */}
+
+      {viewingProject && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4"
+          onMouseDown={(event) => {
+            if (
+              event.target === event.currentTarget
+            ) {
+              setViewingProject(null);
+            }
+          }}
+        >
+          <div
+            ref={viewModalRef}
+            className="custom-modal-scrollbar max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white shadow-2xl"
+          >
+            {/* MODAL HEADER */}
+
+            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-white px-5 py-4">
+              <div className="min-w-0 pr-4">
+                <h2 className="truncate text-lg font-bold text-gray-900">
+                  Project Details
+                </h2>
+              </div>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setViewingProject(null)
+                }
+                className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-gray-500 transition hover:bg-gray-100 hover:text-gray-700"
+              >
+                <X size={19} />
+              </button>
+            </div>
+
+            {/* MODAL BODY */}
+
+            <div className="space-y-6 p-5">
+              {/* IMAGE */}
+
+              {viewingProject.image && (
+                <div className="overflow-hidden rounded-xl border border-gray-200">
+                  <img
+                    src={viewingProject.image}
+                    alt={
+                      viewingProject.title ||
+                      "Project"
+                    }
+                    className="max-h-80 w-full object-cover"
+                  />
+                </div>
+              )}
+
+              {/* TITLE */}
+
+              <div>
+                <h3 className="text-2xl font-bold text-gray-900">
+                  {viewingProject.title}
+                </h3>
+
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {viewingProject.category && (
+                    <span className="rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-600">
+                      {viewingProject.category}
+                    </span>
+                  )}
+
+                  {viewingProject.status && (
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs font-semibold ${getStatusClasses(
+                        viewingProject.status
+                      )}`}
+                    >
+                      {viewingProject.status}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* DETAILS GRID */}
+
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="rounded-xl bg-gray-50 p-4">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+                    Client
+                  </p>
+
+                  <p className="mt-1 text-sm font-medium text-gray-900">
+                    {viewingProject.client ||
+                      "—"}
+                  </p>
+                </div>
+
+                <div className="rounded-xl bg-gray-50 p-4">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+                    Year
+                  </p>
+
+                  <p className="mt-1 text-sm font-medium text-gray-900">
+                    {viewingProject.year ||
+                      "—"}
+                  </p>
+                </div>
+              </div>
+
+              {/* SHORT DESCRIPTION */}
+
+              {viewingProject.shortDescription && (
+                <div>
+                  <h4 className="mb-2 text-sm font-semibold text-gray-900">
+                    Short Description
+                  </h4>
+
+                  <p className="text-sm leading-6 text-gray-600">
+                    {
+                      viewingProject.shortDescription
+                    }
+                  </p>
+                </div>
+              )}
+
+              {/* DESCRIPTION */}
+
+              {viewingProject.description && (
+                <div>
+                  <h4 className="mb-2 text-sm font-semibold text-gray-900">
+                    Description
+                  </h4>
+
+                  <p className="whitespace-pre-wrap text-sm leading-6 text-gray-600">
+                    {viewingProject.description}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =====================================================
+          ADD / EDIT PROJECT MODAL
+      ===================================================== */}
 
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
-          <div className="max-h-[95vh] w-full max-w-3xl overflow-y-auto rounded-2xl border border-slate-200 bg-white shadow-2xl">
-
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4"
+          onMouseDown={(event) => {
+            if (
+              event.target === event.currentTarget
+            ) {
+              setShowModal(false);
+            }
+          }}
+        >
+          <div className="custom-modal-scrollbar max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white shadow-2xl">
             {/* MODAL HEADER */}
-            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white px-6 py-5">
+
+            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-white px-5 py-4">
               <div>
-                <h2 className="text-xl font-black text-slate-900">
+                <h2 className="text-lg font-bold text-gray-900">
                   {editingProject
                     ? "Edit Project"
                     : "Add Project"}
                 </h2>
 
-                <p className="mt-1 text-sm text-slate-500">
-                  Fill in the project
-                  details below.
+                <p className="mt-1 text-xs text-gray-500">
+                  {editingProject
+                    ? "Update project information."
+                    : "Add a new project to your portfolio."}
                 </p>
               </div>
 
               <button
                 type="button"
-                onClick={closeModal}
-                className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
-                aria-label="Close"
+                onClick={() =>
+                  setShowModal(false)
+                }
+                className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 transition hover:bg-gray-100 hover:text-gray-700"
               >
-                <X size={20} />
+                <X size={19} />
               </button>
             </div>
 
             {/* FORM */}
+
             <form
               onSubmit={handleSubmit}
-              className="space-y-5 bg-white p-6"
+              className="space-y-5 p-5"
             >
-              {/* =================================================
-                  PROJECT TITLE
-              ================================================= */}
+              {/* TITLE */}
 
               <div>
-                <label className="mb-2 block text-sm font-bold text-slate-400">
-                  Project Title *
+                <label className="mb-1.5 block text-sm font-semibold text-gray-700">
+                  Project Title
                 </label>
 
                 <input
                   ref={titleInputRef}
                   type="text"
-                  name="title"
                   value={form.title}
-                  onChange={handleChange}
-                  onKeyDown={
-                    handleTextKeyDown
+                  onChange={(event) =>
+                    handleChange(
+                      "title",
+                      event.target.value
+                    )
                   }
-                  maxLength={100}
                   placeholder="Enter project title"
-                  className={`w-full rounded-xl border bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 ${
+                  className={`h-11 w-full rounded-xl border bg-white px-3 text-sm text-gray-900 outline-none transition focus:ring-2 ${
                     errors.title
-                      ? "border-red-500"
-                      : "border-slate-300 focus:border-indigo-500"
+                      ? "border-red-300 focus:border-red-500 focus:ring-red-100"
+                      : "border-gray-200 focus:border-indigo-500 focus:ring-indigo-100"
                   }`}
                 />
 
@@ -940,30 +1187,28 @@ function Projects({
                 )}
               </div>
 
-              {/* =================================================
-                  CATEGORY + CLIENT
-              ================================================= */}
+              {/* CATEGORY + CLIENT */}
 
-              <div className="grid gap-5 md:grid-cols-2">
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                 <div>
-                  <label className="mb-2 block text-sm font-bold text-slate-700">
-                    Category *
+                  <label className="mb-1.5 block text-sm font-semibold text-gray-700">
+                    Category
                   </label>
 
                   <input
                     type="text"
-                    name="category"
                     value={form.category}
-                    onChange={handleChange}
-                    onKeyDown={
-                      handleTextKeyDown
+                    onChange={(event) =>
+                      handleChange(
+                        "category",
+                        event.target.value
+                      )
                     }
-                    maxLength={50}
-                    placeholder="Web Development"
-                    className={`w-full rounded-xl border bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 ${
+                    placeholder="e.g. Web Development"
+                    className={`h-11 w-full rounded-xl border bg-white px-3 text-sm text-gray-900 outline-none transition focus:ring-2 ${
                       errors.category
-                        ? "border-red-500"
-                        : "border-slate-300 focus:border-indigo-500"
+                        ? "border-red-300 focus:border-red-500 focus:ring-red-100"
+                        : "border-gray-200 focus:border-indigo-500 focus:ring-indigo-100"
                     }`}
                   />
 
@@ -975,24 +1220,24 @@ function Projects({
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm font-bold text-slate-700">
+                  <label className="mb-1.5 block text-sm font-semibold text-gray-700">
                     Client
                   </label>
 
                   <input
                     type="text"
-                    name="client"
                     value={form.client}
-                    onChange={handleChange}
-                    onKeyDown={
-                      handleTextKeyDown
+                    onChange={(event) =>
+                      handleChange(
+                        "client",
+                        event.target.value
+                      )
                     }
-                    maxLength={100}
-                    placeholder="Client name"
-                    className={`w-full rounded-xl border bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 ${
+                    placeholder="Enter client name"
+                    className={`h-11 w-full rounded-xl border bg-white px-3 text-sm text-gray-900 outline-none transition focus:ring-2 ${
                       errors.client
-                        ? "border-red-500"
-                        : "border-slate-300 focus:border-indigo-500"
+                        ? "border-red-300 focus:border-red-500 focus:ring-red-100"
+                        : "border-gray-200 focus:border-indigo-500 focus:ring-indigo-100"
                     }`}
                   />
 
@@ -1004,31 +1249,29 @@ function Projects({
                 </div>
               </div>
 
-              {/* =================================================
-                  YEAR + STATUS
-              ================================================= */}
+              {/* YEAR + STATUS */}
 
-              <div className="grid gap-5 md:grid-cols-2">
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                 <div>
-                  <label className="mb-2 block text-sm font-bold text-slate-700">
+                  <label className="mb-1.5 block text-sm font-semibold text-gray-700">
                     Year
                   </label>
 
                   <input
                     type="text"
-                    name="year"
-                    value={form.year}
-                    onChange={handleChange}
-                    onKeyDown={
-                      handleYearKeyDown
-                    }
-                    maxLength={4}
                     inputMode="numeric"
+                    value={form.year}
+                    onChange={(event) =>
+                      handleChange(
+                        "year",
+                        event.target.value
+                      )
+                    }
                     placeholder="2026"
-                    className={`w-full rounded-xl border bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 ${
+                    className={`h-11 w-full rounded-xl border bg-white px-3 text-sm text-gray-900 outline-none transition focus:ring-2 ${
                       errors.year
-                        ? "border-red-500"
-                        : "border-slate-300 focus:border-indigo-500"
+                        ? "border-red-300 focus:border-red-500 focus:ring-red-100"
+                        : "border-gray-200 focus:border-indigo-500 focus:ring-indigo-100"
                     }`}
                   />
 
@@ -1040,15 +1283,19 @@ function Projects({
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm font-bold text-slate-700">
+                  <label className="mb-1.5 block text-sm font-semibold text-gray-700">
                     Status
                   </label>
 
                   <select
-                    name="status"
                     value={form.status}
-                    onChange={handleChange}
-                    className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-indigo-500"
+                    onChange={(event) =>
+                      handleChange(
+                        "status",
+                        event.target.value
+                      )
+                    }
+                    className="h-11 w-full rounded-xl border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
                   >
                     {STATUS_OPTIONS.map(
                       (status) => (
@@ -1064,184 +1311,155 @@ function Projects({
                 </div>
               </div>
 
-              {/* =================================================
-                  SHORT DESCRIPTION
-              ================================================= */}
+              {/* SHORT DESCRIPTION */}
 
               <div>
-                <label className="mb-2 block text-sm font-bold text-slate-700">
+                <label className="mb-1.5 block text-sm font-semibold text-gray-700">
                   Short Description
                 </label>
 
-                <input
-                  type="text"
-                  name="shortDescription"
-                  value={
-                    form.shortDescription
+                <textarea
+                  value={form.shortDescription}
+                  onChange={(event) =>
+                    handleChange(
+                      "shortDescription",
+                      event.target.value
+                    )
                   }
-                  onChange={handleChange}
-                  maxLength={200}
-                  placeholder="Short project summary"
-                  className={`w-full rounded-xl border bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 ${
+                  placeholder="Enter a short description"
+                  rows={3}
+                  className={`w-full resize-none rounded-xl border bg-white px-3 py-2.5 text-sm text-gray-900 outline-none transition focus:ring-2 ${
                     errors.shortDescription
-                      ? "border-red-500"
-                      : "border-slate-300 focus:border-indigo-500"
+                      ? "border-red-300 focus:border-red-500 focus:ring-red-100"
+                      : "border-gray-200 focus:border-indigo-500 focus:ring-indigo-100"
                   }`}
                 />
 
-                <div className="mt-1 flex justify-between">
-                  {errors.shortDescription ? (
-                    <p className="text-xs text-red-500">
-                      {
-                        errors.shortDescription
-                      }
-                    </p>
-                  ) : (
-                    <span />
-                  )}
-
-                  <span className="text-xs text-slate-400">
-                    {
-                      form
-                        .shortDescription
-                        .length
-                    }
-                    /200
-                  </span>
-                </div>
+                {errors.shortDescription && (
+                  <p className="mt-1 text-xs text-red-500">
+                    {errors.shortDescription}
+                  </p>
+                )}
               </div>
 
-              {/* =================================================
-                  DESCRIPTION
-              ================================================= */}
+              {/* DESCRIPTION */}
 
               <div>
-                <label className="mb-2 block text-sm font-bold text-slate-700">
-                  Description *
+                <label className="mb-1.5 block text-sm font-semibold text-gray-700">
+                  Description
                 </label>
 
                 <textarea
-                  name="description"
                   value={form.description}
-                  onChange={handleChange}
-                  onKeyDown={
-                    handleDescriptionKeyDown
+                  onChange={(event) =>
+                    handleChange(
+                      "description",
+                      event.target.value
+                    )
                   }
-                  maxLength={1000}
+                  placeholder="Enter project description"
                   rows={6}
-                  placeholder="Describe the project..."
-                  className={`w-full resize-none rounded-xl border bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 ${
+                  className={`w-full resize-none rounded-xl border bg-white px-3 py-2.5 text-sm text-gray-900 outline-none transition focus:ring-2 ${
                     errors.description
-                      ? "border-red-500"
-                      : "border-slate-300 focus:border-indigo-500"
+                      ? "border-red-300 focus:border-red-500 focus:ring-red-100"
+                      : "border-gray-200 focus:border-indigo-500 focus:ring-indigo-100"
                   }`}
                 />
 
-                <div className="mt-1 flex justify-between">
-                  {errors.description ? (
-                    <p className="text-xs text-red-500">
-                      {
-                        errors.description
-                      }
-                    </p>
-                  ) : (
-                    <span />
-                  )}
-
-                  <span className="text-xs text-slate-400">
-                    {
-                      form.description
-                        .length
-                    }
-                    /1000
-                  </span>
-                </div>
+                {errors.description && (
+                  <p className="mt-1 text-xs text-red-500">
+                    {errors.description}
+                  </p>
+                )}
               </div>
 
-              {/* =================================================
-                  IMAGE UPLOAD
-              ================================================= */}
+              {/* IMAGE */}
 
               <div>
-                <label className="mb-2 block text-sm font-bold text-slate-700">
+                <label className="mb-1.5 block text-sm font-semibold text-gray-700">
                   Project Image
                 </label>
 
-                <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center transition hover:border-indigo-500 hover:bg-indigo-50/30">
-                  <ImagePlus
-                    size={30}
-                    className="text-slate-400"
-                  />
+                <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 p-4">
+                  {form.image ? (
+                    <div className="relative overflow-hidden rounded-xl">
+                      <img
+                        src={form.image}
+                        alt="Project preview"
+                        className="h-48 w-full object-cover"
+                      />
 
-                  <span className="mt-2 text-sm font-semibold text-slate-700">
-                    Click to upload image
-                  </span>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setForm((prev) => ({
+                            ...prev,
+                            image: "",
+                          }))
+                        }
+                        className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white transition hover:bg-black/80"
+                      >
+                        <X size={17} />
+                      </button>
+                    </div>
+                  ) : (
+                    <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border border-gray-200 bg-white px-4 py-8 text-center transition hover:border-indigo-300 hover:bg-indigo-50/30">
+                      <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-indigo-50">
+                        <ImagePlus
+                          size={21}
+                          className="text-indigo-600"
+                        />
+                      </div>
 
-                  <span className="mt-1 text-xs text-slate-400">
-                    JPG, PNG, WEBP —
-                    maximum 10 MB
-                  </span>
+                      <span className="text-sm font-semibold text-gray-700">
+                        Choose project image
+                      </span>
 
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={
-                      handleImageChange
-                    }
-                    className="hidden"
-                  />
-                </label>
+                      <span className="mt-1 text-xs text-gray-500">
+                        JPG, PNG, WEBP up to 10MB
+                      </span>
+
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={
+                          handleImageChange
+                        }
+                        className="hidden"
+                      />
+                    </label>
+                  )}
+                </div>
 
                 {imageError && (
-                  <p className="mt-2 text-xs text-red-500">
+                  <p className="mt-1 text-xs text-red-500">
                     {imageError}
                   </p>
                 )}
 
-                {/* IMAGE PREVIEW */}
-                {form.image && (
-                  <div className="relative mt-4 overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
-                    <img
-                      src={form.image}
-                      alt="Project preview"
-                      className="h-48 w-full object-cover"
-                    />
-
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setForm(
-                          (current) => ({
-                            ...current,
-                            image: "",
-                          })
-                        )
-                      }
-                      className="absolute right-3 top-3 rounded-lg bg-black/70 p-2 text-white transition hover:bg-red-500"
-                      aria-label="Remove image"
-                    >
-                      <X size={17} />
-                    </button>
-                  </div>
+                {errors.image && (
+                  <p className="mt-1 text-xs text-red-500">
+                    {errors.image}
+                  </p>
                 )}
               </div>
 
-              {/* =================================================
-                  BUTTONS
-              ================================================= */}
+              {/* BUTTONS */}
 
-              <div className="flex flex-col-reverse gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:justify-end">
+              <div className="flex flex-col-reverse gap-3 border-t border-gray-200 pt-5 sm:flex-row sm:justify-end">
                 <button
                   type="button"
-                  onClick={closeModal}
-                  className="rounded-xl border border-slate-300 bg-white px-5 py-3 font-bold text-slate-700 transition hover:bg-slate-100"
+                  onClick={() =>
+                    setShowModal(false)
+                  }
+                  className="w-full rounded-xl border border-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 sm:w-auto"
                 >
                   Cancel
                 </button>
 
                 <button
                   type="submit"
-                  className="rounded-xl bg-indigo-600 px-5 py-3 font-bold text-white transition hover:bg-indigo-500"
+                  className="w-full rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 sm:w-auto"
                 >
                   {editingProject
                     ? "Update Project"
@@ -1257,4 +1475,3 @@ function Projects({
 }
 
 export default Projects;
-

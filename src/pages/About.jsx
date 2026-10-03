@@ -1,9 +1,13 @@
+
 import {
   CheckCircle2,
   Target,
   Eye,
   Heart,
+  ArrowRight,
 } from "lucide-react";
+
+import { Link } from "react-router-dom";
 
 // ======================================================
 // LOCAL ASSETS
@@ -36,43 +40,45 @@ function About({ team = [] }) {
           ABOUT
       ================================================== */}
 
-      <section className="bg-white py-20 sm:py-24">
-        <div className="mx-auto grid max-w-7xl items-center gap-14 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
+      <section className="bg-white py-16 sm:py-20">
+        <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:gap-14 lg:px-8">
 
           {/* IMAGE */}
 
-          <div>
-            <img
-              src={aboutTeam}
-              alt="Our team"
-              className="
-                h-[400px]
-                w-full
-                rounded-3xl
-                object-cover
-                shadow-lg
-                sm:h-[500px]
-              "
-            />
+          <div className="flex items-center justify-center">
+            <div className="w-full overflow-hidden rounded-3xl bg-slate-50 p-2 shadow-lg">
+              <img
+                src={aboutTeam}
+                alt="Our team"
+                className="
+                  h-[300px]
+                  w-full
+                  rounded-2xl
+                  object-contain
+                  sm:h-[380px]
+                  lg:h-[420px]
+                "
+              />
+            </div>
           </div>
 
           {/* CONTENT */}
 
           <div>
-            <span className="text-m font-bold uppercase tracking-widest text-indigo-600">
+            <span className="text-xs font-bold uppercase tracking-widest text-indigo-600 sm:text-sm">
               Who We Are
             </span>
 
-            <h2 className="mt-4 text-3xl font-black text-slate-900 sm:text-5xl">
+            <h2 className="mt-4 text-3xl font-black leading-tight text-slate-900 sm:text-4xl lg:text-5xl">
               A team focused on technology, design and business growth.
             </h2>
 
-            <p className="mt-6 text-lg leading-8 text-slate-600">
+            <p className="mt-5 text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">
               We help organizations build strong digital products through a
               combination of strategy, design and technology.
             </p>
 
-            <p className="mt-4 text-lg leading-8 text-slate-600">
+            <p className="mt-4 text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">
               From a simple business website to a complex web application, we
               focus on creating solutions that are easy to use, scalable and
               aligned with business objectives.
@@ -80,7 +86,7 @@ function About({ team = [] }) {
 
             {/* FEATURES */}
 
-            <div className="mt-8 space-y-4">
+            <div className="mt-7 space-y-3">
               {[
                 "Experienced technology team",
                 "Transparent communication",
@@ -92,11 +98,11 @@ function About({ team = [] }) {
                   className="flex items-center gap-3"
                 >
                   <CheckCircle2
-                    size={22}
+                    size={20}
                     className="shrink-0 text-indigo-600"
                   />
 
-                  <span className="font-medium text-lg text-slate-700">
+                  <span className="text-base font-medium text-slate-700 sm:text-lg">
                     {item}
                   </span>
                 </div>
@@ -110,7 +116,7 @@ function About({ team = [] }) {
           MISSION / VALUES
       ================================================== */}
 
-      <section className="bg-slate-50 py-20">
+      <section className="bg-slate-50 py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
           <SectionTitle
@@ -119,7 +125,7 @@ function About({ team = [] }) {
             description="The principles behind the way we build digital products."
           />
 
-          <div className="mt-14 grid gap-6 min-[450px]:grid-cols-2 md:grid-cols-3">
+          <div className="mt-12 grid gap-5 min-[450px]:grid-cols-2 md:grid-cols-3">
             {[
               {
                 icon: Target,
@@ -145,23 +151,24 @@ function About({ team = [] }) {
                   className="
                     rounded-2xl
                     bg-white
-                    p-8
+                    p-6
                     shadow-sm
                     transition-all
                     duration-300
-                    hover:-translate-y-2
-                    hover:shadow-xl
+                    hover:-translate-y-1
+                    hover:shadow-lg
+                    sm:p-7
                   "
                 >
-                  <div className="gratech-icon-flip flex h-14 w-14 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
-                    <Icon size={27} />
+                  <div className="gratech-icon-flip flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 sm:h-14 sm:w-14">
+                    <Icon size={25} />
                   </div>
 
-                  <h3 className="mt-6 text-2xl font-bold text-slate-900">
+                  <h3 className="mt-5 text-xl font-bold text-slate-900 sm:text-2xl">
                     {item.title}
                   </h3>
 
-                  <p className="mt-3 text-m leading-7 text-slate-600">
+                  <p className="mt-3 text-base leading-7 text-slate-600">
                     {item.text}
                   </p>
                 </div>
@@ -175,7 +182,7 @@ function About({ team = [] }) {
           TEAM
       ================================================== */}
 
-      <section className="bg-white py-20 sm:py-24">
+      <section className="bg-white py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
           <SectionTitle
@@ -184,7 +191,7 @@ function About({ team = [] }) {
             description="A multidisciplinary team working together to create great digital experiences."
           />
 
-          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {team.slice(0, 4).map((member) => (
               <TeamCard
                 key={member.id}
@@ -195,6 +202,135 @@ function About({ team = [] }) {
 
         </div>
       </section>
+
+      
+{/* ======================================================
+    CTA
+====================================================== */}
+
+
+<section className="bg-indigo-600 py-10 sm:py-14 lg:py-20">
+  <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div
+      className="
+        w-full
+        overflow-hidden
+        rounded-2xl
+        bg-indigo-700
+        px-5
+        py-8
+        text-left
+        shadow-xl
+        sm:rounded-3xl
+        sm:px-8
+        sm:py-12
+        sm:text-center
+        md:px-10
+        md:py-14
+        lg:px-16
+        lg:py-16
+      "
+    >
+      {/* Badge */}
+      <span
+        className="
+          inline-block
+          text-[10px]
+          font-bold
+          uppercase
+          tracking-[0.15em]
+          text-indigo-200
+          min-[400px]:text-xs
+          sm:text-sm
+          sm:tracking-[0.2em]
+        "
+      >
+        Let's Work Together
+      </span>
+
+      {/* Heading */}
+      <h2
+        className="
+          mt-3
+          w-full
+          max-w-3xl
+          text-2xl
+          font-black
+          leading-tight
+          text-white
+          min-[400px]:text-3xl
+          sm:mx-auto
+          sm:mt-4
+          sm:text-4xl
+          lg:text-5xl
+        "
+      >
+        Have an idea? Let's turn it into a digital solution.
+      </h2>
+
+      {/* Description */}
+      <p
+        className="
+          mt-4
+          w-full
+          max-w-2xl
+          text-sm
+          leading-6
+          text-indigo-100
+          min-[400px]:text-base
+          sm:mx-auto
+          sm:mt-5
+          sm:text-lg
+          sm:leading-8
+        "
+      >
+        Whether you need a new website, application or digital strategy,
+        our team is ready to help you build something valuable.
+      </p>
+
+      {/* Button */}
+      <div
+        className="
+          mt-6
+          flex
+          w-full
+          justify-start
+          sm:mt-8
+          sm:justify-center
+        "
+      >
+        <Link
+          to="/contact"
+          className="
+            inline-flex
+            w-auto
+            items-center
+            justify-center
+            rounded-xl
+            border
+            border-white/30
+            px-5
+            py-3
+            text-sm
+            font-bold
+            text-white
+            transition-all
+            duration-300
+            hover:bg-white/10
+            active:scale-[0.98]
+            min-[400px]:px-6
+          "
+        >
+          Contact Us
+          <ArrowRight className="ml-2 h-4 w-4" />
+        </Link>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
     </>
   );
 }

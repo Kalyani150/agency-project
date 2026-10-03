@@ -3,8 +3,6 @@ import { useEffect, useState } from "react";
 
 import {
   ArrowRight,
-  ChevronLeft,
-  ChevronRight,
   X,
 } from "lucide-react";
 
@@ -70,26 +68,6 @@ function HeroSlider() {
     return () => clearInterval(interval);
   }, []);
 
-  // ====================================================
-  // PREVIOUS
-  // ====================================================
-
-  const previous = () => {
-    setActive((current) =>
-      current === 0 ? slides.length - 1 : current - 1
-    );
-  };
-
-  // ====================================================
-  // NEXT
-  // ====================================================
-
-  const next = () => {
-    setActive((current) =>
-      current === slides.length - 1 ? 0 : current + 1
-    );
-  };
-
   const slide = slides[active];
 
   return (
@@ -121,15 +99,21 @@ function HeroSlider() {
               }`}
             />
 
-            {/* Dark overlay */}
+            {/* ==================================================
+                DARK OVERLAY
+            ================================================== */}
 
             <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/90 to-slate-950/60 sm:via-slate-950/85 sm:to-slate-950/40" />
 
-            {/* Mobile overlay */}
+            {/* ==================================================
+                MOBILE OVERLAY
+            ================================================== */}
 
             <div className="absolute inset-0 bg-slate-950/20 sm:hidden" />
 
-            {/* Decorative circle */}
+            {/* ==================================================
+                DECORATIVE CIRCLE
+            ================================================== */}
 
             <div
               className={`absolute right-5 top-24 hidden h-24 w-24 rounded-full border border-indigo-400/20 sm:right-10 sm:h-32 sm:w-32 lg:right-10 lg:top-20 lg:h-40 lg:w-40 lg:block ${
@@ -137,7 +121,9 @@ function HeroSlider() {
               }`}
             />
 
-            {/* Decorative glow */}
+            {/* ==================================================
+                DECORATIVE GLOW
+            ================================================== */}
 
             <div
               className={`absolute bottom-24 right-10 hidden h-12 w-12 rounded-full bg-indigo-500/20 blur-xl sm:right-20 lg:bottom-20 lg:right-32 lg:block ${
@@ -158,25 +144,33 @@ function HeroSlider() {
             className="gratech-hero-content w-full max-w-3xl text-white"
           >
 
-            {/* Eyebrow */}
+            {/* ==================================================
+                EYEBROW
+            ================================================== */}
 
             <span className="gratech-hero-eyebrow inline-flex max-w-full rounded-full border border-indigo-400/30 bg-indigo-500/10 px-3 py-2 text-[10px] font-bold tracking-[0.15em] text-indigo-300 sm:px-4 sm:text-xs sm:tracking-widest">
               {slide.eyebrow}
             </span>
 
-            {/* Heading */}
+            {/* ==================================================
+                HEADING
+            ================================================== */}
 
             <h1 className="mt-5 max-w-3xl text-3xl font-black leading-[1.15] tracking-tight sm:mt-6 sm:text-5xl sm:leading-tight lg:text-7xl">
               {slide.title}
             </h1>
 
-            {/* Description */}
+            {/* ==================================================
+                DESCRIPTION
+            ================================================== */}
 
             <p className="mt-5 max-w-2xl text-m leading-7 text-slate-300 sm:mt-6 sm:text-lg sm:leading-8">
               {slide.description}
             </p>
 
-            {/* Button */}
+            {/* ==================================================
+                BUTTON
+            ================================================== */}
 
             <div className="gratech-hero-buttons mt-7 flex flex-wrap gap-3 sm:mt-9 sm:gap-4">
 
@@ -193,97 +187,25 @@ function HeroSlider() {
         </div>
 
         {/* ==================================================
-            MOBILE SLIDER CONTROLS
-            Arrows + Dots together
+            SLIDER SCROLL DOTS
+            CENTERED AT BOTTOM
         ================================================== */}
 
-        <div className="absolute bottom-6 left-1/2 z-30 flex -translate-x-1/2 items-center gap-3 sm:hidden">
+        <div className="absolute bottom-6 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2  px-4 py-2 backdrop-blur-md">
 
-          {/* Previous */}
-
-          <button
-            onClick={previous}
-            aria-label="Previous slide"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white shadow-lg backdrop-blur-md transition-all duration-300 active:scale-90 hover:bg-indigo-600"
-          >
-            <ChevronLeft size={21} />
-          </button>
-
-          {/* Dots */}
-
-          <div className="flex items-center gap-2 rounded-full border border-white/10 bg-black/20 px-3 py-2 backdrop-blur-md">
-
-            {slides.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setActive(index)}
-                aria-label={`Go to slide ${index + 1}`}
-                className={`h-2 rounded-full transition-all duration-500 ${
-                  active === index
-                    ? "w-8 bg-indigo-500"
-                    : "w-2 bg-white/40 hover:bg-white"
-                }`}
-              />
-            ))}
-
-          </div>
-
-          {/* Next */}
-
-          <button
-            onClick={next}
-            aria-label="Next slide"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white shadow-lg backdrop-blur-md transition-all duration-300 active:scale-90 hover:bg-indigo-600"
-          >
-            <ChevronRight size={21} />
-          </button>
-
-        </div>
-
-        {/* ==================================================
-            DESKTOP SLIDER CONTROLS
-        ================================================== */}
-
-        <div className="absolute bottom-10 right-10 z-30 hidden items-center gap-2 sm:flex">
-
-          {/* Previous */}
-
-          <button
-            onClick={previous}
-            aria-label="Previous slide"
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white backdrop-blur transition duration-300 hover:-translate-x-1 hover:bg-indigo-600"
-          >
-            <ChevronLeft size={20} />
-          </button>
-
-          {/* Dots */}
-
-          <div className="mx-2 flex items-center gap-2">
-
-            {slides.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setActive(index)}
-                aria-label={`Go to slide ${index + 1}`}
-                className={`h-2 rounded-full transition-all duration-500 ${
-                  active === index
-                    ? "w-10 bg-indigo-500"
-                    : "w-2 bg-white/40 hover:bg-white"
-                }`}
-              />
-            ))}
-
-          </div>
-
-          {/* Next */}
-
-          <button
-            onClick={next}
-            aria-label="Next slide"
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white backdrop-blur transition duration-300 hover:translate-x-1 hover:bg-indigo-600"
-          >
-            <ChevronRight size={20} />
-          </button>
+          {slides.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setActive(index)}
+              aria-label={`Go to slide ${index + 1}`}
+              aria-current={active === index ? "true" : undefined}
+              className={`h-2 rounded-full transition-all duration-500 ${
+                active === index
+                  ? "w-8 bg-indigo-500"
+                  : "w-2 bg-white/40 hover:bg-white"
+              }`}
+            />
+          ))}
 
         </div>
       </section>

@@ -44,10 +44,9 @@ import Dashboard from "./pages/admin/Dashboard";
 import AdminServices from "./pages/admin/Services";
 import AdminProjects from "./pages/admin/Projects";
 import AdminBlogs from "./pages/admin/Blogs";
-import AdminTeam from "./pages/admin/Team";
-import AdminTestimonials from "./pages/admin/Testimonials";
+
 import AdminEnquiries from "./pages/admin/Enquiries";
-import Settings from "./pages/admin/Settings";
+
 
 // ======================================================
 // DATA
@@ -1089,27 +1088,13 @@ function App() {
               ADMIN TEAM
           ================================================== */}
 
-          <Route
-            path="team"
-            element={
-              <AdminTeam
-                {...adminProps}
-              />
-            }
-          />
+          
 
           {/* ==================================================
               ADMIN TESTIMONIALS
           ================================================== */}
 
-          <Route
-            path="testimonials"
-            element={
-              <AdminTestimonials
-                {...adminProps}
-              />
-            }
-          />
+         
 
           {/* ==================================================
               ADMIN ENQUIRIES
@@ -1128,14 +1113,7 @@ function App() {
               ADMIN SETTINGS
           ================================================== */}
 
-          <Route
-            path="settings"
-            element={
-              <Settings
-                {...adminProps}
-              />
-            }
-          />
+          
 
         </Route>
 

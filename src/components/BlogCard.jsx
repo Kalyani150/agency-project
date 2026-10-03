@@ -1,3 +1,4 @@
+
 import {
   ArrowUpRight,
   CalendarDays,
@@ -10,68 +11,212 @@ function BlogCard({ blog }) {
   return (
     <Link
       to={`/blog/${blog.id}`}
-      className="group overflow-hidden rounded-2xl border border-slate-200 bg-white transition-all duration-500 hover:-translate-y-3 hover:border-indigo-200 hover:shadow-2xl"
+      className="
+        group block w-full overflow-hidden
+        rounded-2xl border border-slate-200
+        bg-white
+        transition-all duration-500
+        hover:-translate-y-2
+        hover:border-indigo-200
+        hover:shadow-2xl
+      "
     >
+      {/* ==================================================
+          IMAGE
+      ================================================== */}
 
-      <div className="relative overflow-hidden">
-
+      <div className="relative aspect-[16/10] w-full overflow-hidden sm:aspect-[16/9]">
         <img
           src={blog.image}
           alt={blog.title}
-          className="h-60 w-full object-cover transition duration-700 ease-out group-hover:rotate-2 group-hover:scale-110 group-hover:brightness-90"
+          className="
+            h-full
+            w-full
+            object-cover
+            transition duration-700 ease-out
+            group-hover:scale-105
+            group-hover:brightness-90
+            sm:group-hover:rotate-2
+            sm:group-hover:scale-110
+          "
         />
 
-        <div className="absolute inset-0 bg-slate-950/0 transition duration-500 group-hover:bg-slate-950/20" />
+        {/* Overlay */}
 
-        <div className="absolute right-5 top-5 flex h-11 w-11 translate-y-2 items-center justify-center rounded-full bg-white text-slate-900 opacity-0 shadow-lg transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
-          <ArrowUpRight size={18} />
+        <div
+          className="
+            absolute inset-0
+            bg-slate-950/0
+            transition duration-500
+            group-hover:bg-slate-950/20
+          "
+        />
+
+        {/* Image Action */}
+
+        <div
+          className="
+            absolute right-3 top-3
+            flex h-9 w-9
+            translate-y-2
+            items-center justify-center
+            rounded-full
+            bg-white
+            text-slate-900
+            opacity-0
+            shadow-lg
+            transition-all duration-500
+            group-hover:translate-y-0
+            group-hover:opacity-100
+            sm:right-5 sm:top-5
+            sm:h-11 sm:w-11
+          "
+        >
+          <ArrowUpRight
+            size={17}
+            className="sm:h-[18px] sm:w-[18px]"
+          />
         </div>
-
       </div>
 
-      <div className="p-6">
+      {/* ==================================================
+          CONTENT
+      ================================================== */}
 
-        <span className="text-s font-bold uppercase tracking-widest text-indigo-600">
+      <div className="p-4 sm:p-5 lg:p-6">
+
+        {/* Category */}
+
+        <span className="block truncate text-xs font-bold uppercase tracking-widest text-indigo-600 sm:text-sm">
           {blog.category}
         </span>
 
-        <h3 className="mt-3 text-2xl font-bold leading-8 text-slate-900 transition-colors duration-300 group-hover:text-indigo-600">
+        {/* Title */}
+
+        <h3
+          className="
+            mt-2
+            line-clamp-2
+            text-lg
+            font-bold
+            leading-6
+            text-slate-900
+            transition-colors duration-300
+            group-hover:text-indigo-600
+            sm:mt-3
+            sm:text-xl
+            sm:leading-7
+            lg:text-2xl
+            lg:leading-8
+          "
+        >
           {blog.title}
         </h3>
 
-        <p className="mt-3 text-lg line-clamp-2 leading-7 text-slate-600">
+        {/* Excerpt */}
+
+        <p
+          className="
+            mt-2
+            line-clamp-2
+            text-sm
+            leading-6
+            text-slate-600
+            sm:mt-3
+            sm:text-base
+            sm:leading-7
+          "
+        >
           {blog.excerpt}
         </p>
 
-        <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-5 text-s text-slate-500">
+        {/* ==================================================
+            META
+        ================================================== */}
 
-          <span className="flex items-center gap-1">
-            <CalendarDays size={14} />
-            {blog.date}
+        <div
+          className="
+            mt-4
+            flex
+            flex-col
+            items-start
+            gap-2
+            border-t
+            border-slate-100
+            pt-4
+            text-xs
+            text-slate-500
+
+            min-[351px]:flex-row
+            min-[351px]:items-center
+            min-[351px]:justify-between
+
+            sm:mt-5
+            sm:gap-2
+            sm:pt-5
+            sm:text-sm
+          "
+        >
+          {/* Date */}
+
+          <span className="flex min-w-0 items-center gap-1.5">
+            <CalendarDays
+              className="shrink-0"
+              size={14}
+            />
+
+            <span className="truncate">
+              {blog.date}
+            </span>
           </span>
 
-          <span className="flex items-center gap-1">
+          {/* Read Time */}
+
+          <span className="flex shrink-0 items-center gap-1.5">
             <Clock size={14} />
-            {blog.readTime}
-          </span>
 
+            <span>
+              {blog.readTime}
+            </span>
+          </span>
         </div>
 
-        <div className="mt-5 flex items-center justify-between text-m font-bold text-indigo-600">
+        {/* ==================================================
+            READ ARTICLE
+        ================================================== */}
 
-          <span className="transition-all duration-300 group-hover:translate-x-1">
+        <div
+          className="
+            mt-4
+            flex
+            items-center
+            justify-between
+            text-sm
+            font-bold
+            text-indigo-600
+            sm:mt-5
+            sm:text-base
+          "
+        >
+          <span
+            className="
+              transition-all duration-300
+              group-hover:translate-x-1
+            "
+          >
             Read Article
           </span>
 
           <ArrowUpRight
-            size={18}
-            className="transition-transform duration-300 group-hover:rotate-45"
+            size={17}
+            className="
+              transition-transform duration-300
+              group-hover:rotate-45
+              sm:h-[18px] sm:w-[18px]
+            "
           />
-
         </div>
-
       </div>
-
     </Link>
   );
 }

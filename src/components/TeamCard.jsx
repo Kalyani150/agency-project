@@ -11,25 +11,37 @@ function TeamCard({ member }) {
         bg-white
         transition-all
         duration-500
-        hover:-translate-y-2
-        hover:shadow-2xl
+        hover:-translate-y-1
+        hover:shadow-xl
+        sm:hover:-translate-y-2
+        sm:hover:shadow-2xl
       "
     >
       {/* Image */}
-      <div className="relative w-full overflow-hidden bg-slate-100">
+      <div
+        className="
+          relative
+          aspect-[4/3]
+          w-full
+          overflow-hidden
+          bg-slate-100
+          sm:aspect-[4/3]
+          lg:aspect-[4/4]
+        "
+      >
         <img
           src={member.image}
           alt={member.name}
           className="
             block
-            h-auto
+            h-full
             w-full
-            object-contain
-            object-center
+            object-cover
+            object-top
             transition-transform
             duration-700
             ease-out
-            group-hover:scale-[1.03]
+            group-hover:scale-[1.02]
           "
         />
 
@@ -52,22 +64,42 @@ function TeamCard({ member }) {
       </div>
 
       {/* Content */}
-      <div className="p-4 text-center sm:p-5 lg:p-6">
+      <div
+        className="
+          px-3
+          py-3
+          text-center
+          min-[450px]:px-4
+          min-[450px]:py-4
+          sm:px-4
+          sm:py-4
+        "
+      >
         <h3
           className="
-            text-lg
+            text-base
             font-bold
+            leading-tight
             text-slate-900
             transition-colors
             duration-300
             group-hover:text-indigo-600
+            min-[450px]:text-lg
             sm:text-xl
           "
         >
           {member.name}
         </h3>
 
-        <p className="mt-1 text-xs text-indigo-600 sm:text-sm">
+        <p
+          className="
+            mt-1
+            text-xs
+            leading-5
+            text-indigo-600
+            sm:text-sm
+          "
+        >
           {member.role}
         </p>
       </div>
@@ -76,4 +108,3 @@ function TeamCard({ member }) {
 }
 
 export default TeamCard;
-
