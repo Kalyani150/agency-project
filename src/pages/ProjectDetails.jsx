@@ -175,301 +175,289 @@ function ProjectDetails({ projects = [] }) {
       </section>
 
       {/* ==================================================
-          PROJECT IMAGE
-      ================================================== */}
+    PROJECT IMAGE
+================================================== */}
 
-      {project.image && (
-        <section className="bg-white px-4 pt-10 sm:px-6 sm:pt-14 lg:px-8 lg:pt-16">
-          <div className="mx-auto max-w-7xl">
+{project.image && (
+  <section className="bg-white pt-10 sm:pt-14 lg:pt-16">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 shadow-sm sm:rounded-3xl">
+        <img
+          src={project.image}
+          alt={project.title}
+          className="block h-auto max-h-[650px] w-full object-cover"
+        />
+      </div>
+    </div>
+  </section>
+)}
+      {/* ==================================================
+    PROJECT CONTENT
+================================================== */}
 
-            <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 shadow-sm sm:rounded-3xl">
+<section className="bg-white py-16 sm:py-20 lg:py-24">
 
-              <img
-                src={project.image}
-                alt={project.title}
-                className="h-auto max-h-[650px] w-full object-cover"
-              />
+  <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
-            </div>
-          </div>
-        </section>
-      )}
+    <div className="grid grid-cols-1 gap-10 lg:grid-cols-3 lg:gap-12">
 
       {/* ==================================================
-          PROJECT CONTENT
+          MAIN CONTENT - PROJECT HIGHLIGHTS
       ================================================== */}
 
-      <section className="bg-white py-16 sm:py-20 lg:py-24">
+      <div className="min-w-0 lg:col-span-2">
 
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Section Label */}
 
-          <div className="grid gap-12 lg:grid-cols-3 lg:gap-16">
+        <span className="text-sm font-bold uppercase tracking-[0.18em] text-indigo-600">
+          About The Project
+        </span>
 
-            {/* ==================================================
-                LONG DESCRIPTION
-            ================================================== */}
+        {/* Heading */}
 
-            <div className="lg:col-span-2">
+        <h2 className="mt-3 text-3xl font-black text-slate-900 sm:text-4xl">
+          Project Overview
+        </h2>
 
-              <span className="text-sm font-bold uppercase tracking-[0.18em] text-indigo-600">
-                About The Project
-              </span>
+        {/* Long Description */}
 
-              <h2 className="mt-3 text-3xl font-black text-slate-900 sm:text-4xl">
-                Project Overview
-              </h2>
+        <div className="mt-8 space-y-6">
 
-              {/* LONG DESCRIPTION FROM initialProjects */}
-              <div className="mt-8 space-y-6">
+          {descriptionParagraphs.map((paragraph, index) => (
+            <p
+              key={index}
+              className="text-base leading-8 text-slate-600 sm:text-lg"
+            >
+              {paragraph.trim()}
+            </p>
+          ))}
 
-                {descriptionParagraphs.map(
-                  (paragraph, index) => (
-                    <p
-                      key={index}
-                      className="text-base leading-8 text-slate-600 sm:text-lg"
-                    >
-                      {paragraph.trim()}
-                    </p>
-                  )
-                )}
+        </div>
 
-              </div>
 
-              {/* ==================================================
-                  PROJECT HIGHLIGHTS
-              ================================================== */}
+        {/* ==================================================
+            PROJECT HIGHLIGHTS
+        ================================================== */}
 
-              <div className="mt-12">
+        <div className="mt-12">
 
-                <h3 className="text-2xl font-bold text-slate-900">
-                  Project Highlights
-                </h3>
+          <h3 className="text-2xl font-bold text-slate-900">
+            Project Highlights
+          </h3>
 
-                <div className="mt-6 space-y-5">
+          <div className="mt-6 space-y-5">
 
-                  <div className="flex items-start gap-3">
-                    <CheckCircle2
-                      size={21}
-                      className="mt-1 shrink-0 text-indigo-600"
-                    />
+            {project.highlights?.length > 0 ? (
+              project.highlights.map((highlight, index) => (
+                <div
+                  key={index}
+                  className="flex items-start gap-3"
+                >
+                  <CheckCircle2
+                    size={21}
+                    className="mt-1 shrink-0 text-indigo-600"
+                  />
 
-                    <p className="text-base leading-7 text-slate-600">
-                      Modern and responsive user experience.
-                    </p>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <CheckCircle2
-                      size={21}
-                      className="mt-1 shrink-0 text-indigo-600"
-                    />
-
-                    <p className="text-base leading-7 text-slate-600">
-                      Designed for desktop, tablet and mobile devices.
-                    </p>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <CheckCircle2
-                      size={21}
-                      className="mt-1 shrink-0 text-indigo-600"
-                    />
-
-                    <p className="text-base leading-7 text-slate-600">
-                      Focused on performance and usability.
-                    </p>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <CheckCircle2
-                      size={21}
-                      className="mt-1 shrink-0 text-indigo-600"
-                    />
-
-                    <p className="text-base leading-7 text-slate-600">
-                      Built around the specific requirements of the client.
-                    </p>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <CheckCircle2
-                      size={21}
-                      className="mt-1 shrink-0 text-indigo-600"
-                    />
-
-                    <p className="text-base leading-7 text-slate-600">
-                      Structured for future growth and scalability.
-                    </p>
-                  </div>
-
+                  <p className="text-base leading-7 text-slate-600">
+                    {highlight}
+                  </p>
                 </div>
-              </div>
-            </div>
-
-            {/* ==================================================
-                PROJECT DETAILS
-            ================================================== */}
-
-            <aside>
-
-              <div className="sticky top-24 rounded-2xl border border-slate-200 bg-slate-50 p-6 sm:p-7">
-
-                <h3 className="text-xl font-bold text-slate-900">
-                  Project Details
-                </h3>
-
-                <div className="mt-6 divide-y divide-slate-200">
-
-                  {project.client && (
-                    <div className="py-4 first:pt-0">
-
-                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                        Client
-                      </p>
-
-                      <p className="mt-2 text-base font-semibold text-slate-800">
-                        {project.client}
-                      </p>
-
-                    </div>
-                  )}
-
-                  {project.category && (
-                    <div className="py-4">
-
-                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                        Category
-                      </p>
-
-                      <p className="mt-2 text-base font-semibold text-slate-800">
-                        {project.category}
-                      </p>
-
-                    </div>
-                  )}
-
-                  {project.year && (
-                    <div className="py-4">
-
-                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                        Year
-                      </p>
-
-                      <p className="mt-2 text-base font-semibold text-slate-800">
-                        {project.year}
-                      </p>
-
-                    </div>
-                  )}
-
-                  {project.status && (
-                    <div className="py-4 last:pb-0">
-
-                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                        Status
-                      </p>
-
-                      <div className="mt-2">
-
-                        <span className="inline-flex rounded-full bg-emerald-100 px-3 py-1 text-sm font-semibold text-emerald-700">
-                          {project.status}
-                        </span>
-
-                      </div>
-
-                    </div>
-                  )}
-
-                </div>
-              </div>
-
-            </aside>
+              ))
+            ) : (
+              <p className="text-base leading-7 text-slate-500">
+                Project highlights are not available.
+              </p>
+            )}
 
           </div>
 
-          {/* ==================================================
-              PREVIOUS / NEXT
-          ================================================== */}
+        </div>
 
-          {(previousProject || nextProject) && (
-            <div className="mt-16 border-t border-slate-200 pt-8 sm:mt-20">
+      </div>
 
-              <div
-                className={`grid gap-4 ${
-                  previousProject && nextProject
-                    ? "sm:grid-cols-2"
-                    : "sm:grid-cols-1"
-                }`}
-              >
 
-                {/* PREVIOUS */}
+      {/* ==================================================
+          RIGHT SIDEBAR - PROJECT DETAILS
+      ================================================== */}
 
-                {previousProject && (
-                  <Link
-                    to={`/projects/${previousProject.id}`}
-                    className="group flex min-h-[110px] items-center justify-between rounded-2xl border border-slate-200 bg-white p-5 transition hover:-translate-y-1 hover:border-indigo-200 hover:shadow-lg sm:p-6"
-                  >
+      <aside className="min-w-0">
 
-                    <div className="min-w-0">
+        <div className="sticky top-24 rounded-2xl border border-slate-200 bg-slate-50 p-6 sm:p-7">
 
-                      <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
-                        <ArrowLeft size={15} />
-                        Previous Project
-                      </span>
+          <h3 className="text-xl font-bold text-slate-900">
+            Project Details
+          </h3>
 
-                      <p className="mt-2 truncate text-base font-bold text-slate-900 transition group-hover:text-indigo-600 sm:text-lg">
-                        {previousProject.title}
-                      </p>
+          <div className="mt-6 divide-y divide-slate-200">
 
-                    </div>
+            {/* Client */}
 
-                    <ArrowLeft
-                      size={20}
-                      className="ml-4 shrink-0 text-slate-400 transition group-hover:-translate-x-1 group-hover:text-indigo-600"
-                    />
+            {project.client && (
+              <div className="py-4 first:pt-0">
 
-                  </Link>
-                )}
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                  Client
+                </p>
 
-                {/* NEXT */}
-
-                {nextProject && (
-                  <Link
-                    to={`/projects/${nextProject.id}`}
-                    className={`group flex min-h-[110px] items-center justify-between rounded-2xl border border-slate-200 bg-white p-5 text-right transition hover:-translate-y-1 hover:border-indigo-200 hover:shadow-lg sm:p-6 ${
-                      !previousProject
-                        ? "sm:col-start-2"
-                        : ""
-                    }`}
-                  >
-
-                    <div className="min-w-0 flex-1">
-
-                      <span className="flex items-center justify-end gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
-                        Next Project
-                        <ArrowRight size={15} />
-                      </span>
-
-                      <p className="mt-2 truncate text-base font-bold text-slate-900 transition group-hover:text-indigo-600 sm:text-lg">
-                        {nextProject.title}
-                      </p>
-
-                    </div>
-
-                    <ArrowRight
-                      size={20}
-                      className="ml-4 shrink-0 text-slate-400 transition group-hover:translate-x-1 group-hover:text-indigo-600"
-                    />
-
-                  </Link>
-                )}
+                <p className="mt-2 text-base font-semibold text-slate-800">
+                  {project.client}
+                </p>
 
               </div>
-            </div>
+            )}
+
+
+            {/* Category */}
+
+            {project.category && (
+              <div className="py-4">
+
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                  Category
+                </p>
+
+                <p className="mt-2 text-base font-semibold text-slate-800">
+                  {project.category}
+                </p>
+
+              </div>
+            )}
+
+
+            {/* Year */}
+
+            {project.year && (
+              <div className="py-4">
+
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                  Year
+                </p>
+
+                <p className="mt-2 text-base font-semibold text-slate-800">
+                  {project.year}
+                </p>
+
+              </div>
+            )}
+
+
+            {/* Status */}
+
+            {project.status && (
+              <div className="py-4 last:pb-0">
+
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                  Status
+                </p>
+
+                <div className="mt-2">
+
+                  <span className="inline-flex rounded-full bg-emerald-100 px-3 py-1 text-sm font-semibold text-emerald-700">
+                    {project.status}
+                  </span>
+
+                </div>
+
+              </div>
+            )}
+
+          </div>
+
+        </div>
+
+      </aside>
+
+    </div>
+
+
+    {/* ==================================================
+        PREVIOUS / NEXT PROJECT
+    ================================================== */}
+
+    {(previousProject || nextProject) && (
+      <div className="mt-16 border-t border-slate-200 pt-8 sm:mt-20">
+
+        <div
+          className={`grid gap-4 ${
+            previousProject && nextProject
+              ? "sm:grid-cols-2"
+              : "sm:grid-cols-1"
+          }`}
+        >
+
+          {/* ==================================================
+              PREVIOUS PROJECT
+          ================================================== */}
+
+          {previousProject && (
+            <Link
+              to={`/projects/${previousProject.id}`}
+              className="group flex min-h-[110px] items-center justify-between rounded-2xl border border-slate-200 bg-white p-5 transition hover:-translate-y-1 hover:border-indigo-200 hover:shadow-lg sm:p-6"
+            >
+
+              <div className="min-w-0">
+
+                <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
+                  <ArrowLeft size={15} />
+                  Previous Project
+                </span>
+
+                <p className="mt-2 truncate text-base font-bold text-slate-900 transition group-hover:text-indigo-600 sm:text-lg">
+                  {previousProject.title}
+                </p>
+
+              </div>
+
+              <ArrowLeft
+                size={20}
+                className="ml-4 shrink-0 text-slate-400 transition group-hover:-translate-x-1 group-hover:text-indigo-600"
+              />
+
+            </Link>
+          )}
+
+
+          {/* ==================================================
+              NEXT PROJECT
+          ================================================== */}
+
+          {nextProject && (
+            <Link
+              to={`/projects/${nextProject.id}`}
+              className={`group flex min-h-[110px] items-center justify-between rounded-2xl border border-slate-200 bg-white p-5 text-right transition hover:-translate-y-1 hover:border-indigo-200 hover:shadow-lg sm:p-6 ${
+                !previousProject ? "sm:col-start-2" : ""
+              }`}
+            >
+
+              <div className="min-w-0 flex-1">
+
+                <span className="flex items-center justify-end gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
+                  Next Project
+                  <ArrowRight size={15} />
+                </span>
+
+                <p className="mt-2 truncate text-base font-bold text-slate-900 transition group-hover:text-indigo-600 sm:text-lg">
+                  {nextProject.title}
+                </p>
+
+              </div>
+
+              <ArrowRight
+                size={20}
+                className="ml-4 shrink-0 text-slate-400 transition group-hover:translate-x-1 group-hover:text-indigo-600"
+              />
+
+            </Link>
           )}
 
         </div>
-      </section>
+
+      </div>
+    )}
+
+  </div>
+
+</section>
     </main>
   );
 }

@@ -126,6 +126,14 @@ The project was also optimized for different screen sizes. On mobile devices, co
 
 Overall, the project combines modern web development techniques, responsive design and user-focused functionality to create a reliable and professional e-commerce platform that can grow with the business.
 `,
+
+highlights: [
+  "Modern and user-friendly online shopping experience.",
+  "Responsive product browsing across desktop, tablet and mobile devices.",
+  "Organized product categories and detailed product information.",
+  "Clear call-to-action elements and accessible navigation.",
+  "Scalable structure for adding products, categories and future features.",
+],
   },
 
   {
@@ -157,6 +165,15 @@ The project was developed with scalability in mind. New modules, dashboard secti
 
 Overall, the platform provides a centralized environment for managing business information, monitoring activities and improving the efficiency of everyday workflows.
 `,
+
+highlights: [
+  "Centralized platform for managing daily business activities.",
+  "Structured dashboard with summary cards, tables and activity sections.",
+  "Responsive interface for desktop, tablet and mobile devices.",
+  "Organized data management with searchable records and structured tables.",
+  "Scalable architecture for adding new modules and business features.",
+],
+
   },
 
   {
@@ -190,6 +207,14 @@ The website architecture was also designed with future growth in mind. Additiona
 
 Overall, the project delivers a modern and professional corporate website that combines strong visual presentation, responsive design and clear information architecture.
 `,
+
+highlights: [
+  "Simple and convenient mobile-first user experience.",
+  "Efficient navigation between different application sections.",
+  "Touch-friendly buttons, input fields, menus and interactive components.",
+  "Modern interface with clear typography, spacing and recognizable icons.",
+  "Scalable and lightweight architecture designed for future features.",
+],
   },
 
   {
@@ -221,6 +246,14 @@ Performance was also considered during development. Screens and components were 
 
 The final application provides a modern digital experience that combines usability, responsive design and scalable architecture for future development.
 `,
+
+highlights: [
+  "Simple and convenient mobile-first user experience.",
+  "Efficient navigation between different application sections.",
+  "Touch-friendly buttons, input fields, menus and interactive components.",
+  "Modern interface with clear typography, spacing and recognizable icons.",
+  "Scalable and lightweight architecture designed for future features.",
+],
   },
 ];
 

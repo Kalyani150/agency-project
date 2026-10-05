@@ -35,14 +35,6 @@ function CTA() {
             <div className="flex flex-wrap gap-4 lg:justify-end">
 
               <Link
-                to="/get-quote"
-                className="flex items-center text-lg gap-2 rounded-lg bg-white px-7 py-4 font-bold text-indigo-700 hover:bg-slate-100"
-              >
-                Get Started
-                <ArrowRight size={19} />
-              </Link>
-
-              <Link
                 to="/contact"
                 className="flex items-center text-lg gap-2 rounded-lg border border-white/30 px-7 py-4 font-bold text-white hover:bg-white/10"
               >

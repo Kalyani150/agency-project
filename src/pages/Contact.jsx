@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   Mail,
@@ -26,10 +25,21 @@ function Contact({
   };
 
   const [form, setForm] = useState(initialForm);
-
   const [errors, setErrors] = useState({});
-
   const [submitted, setSubmitted] = useState(false);
+
+  /* =========================================================
+     SCROLL TO TOP AFTER SUCCESSFUL SUBMISSION
+  ========================================================= */
+
+  useEffect(() => {
+    if (submitted) {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
+  }, [submitted]);
 
   /* =========================================================
      VALIDATE FORM
@@ -38,77 +48,43 @@ function Contact({
   const validateForm = () => {
     const newErrors = {};
 
-    /* ---------------------------------------------------------
-       NAME
-    --------------------------------------------------------- */
-
     if (!form.name.trim()) {
       newErrors.name = "Name is required.";
-    } else if (
-      !/^[A-Za-z\s.'-]+$/.test(form.name.trim())
-    ) {
+    } else if (!/^[A-Za-z\s.'-]+$/.test(form.name.trim())) {
       newErrors.name =
         "Name can contain letters, spaces, apostrophes, dots and hyphens only.";
     } else if (form.name.trim().length < 2) {
       newErrors.name = "Please enter a valid name.";
     }
 
-    /* ---------------------------------------------------------
-       EMAIL
-    --------------------------------------------------------- */
-
     if (!form.email.trim()) {
-      newErrors.email =
-        "Email address is required.";
+      newErrors.email = "Email address is required.";
     } else if (
       !/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(
         form.email.trim()
       )
     ) {
-      newErrors.email =
-        "Please enter a valid email address.";
+      newErrors.email = "Please enter a valid email address.";
     }
 
-    /* ---------------------------------------------------------
-       PHONE
-    --------------------------------------------------------- */
-
     if (!form.phone.trim()) {
-      newErrors.phone =
-        "Phone number is required.";
+      newErrors.phone = "Phone number is required.";
     } else if (!/^\d{10}$/.test(form.phone)) {
       newErrors.phone =
         "Phone number must contain exactly 10 digits.";
     }
 
-    /* ---------------------------------------------------------
-       SERVICE
-    --------------------------------------------------------- */
-
     if (!form.service) {
-      newErrors.service =
-        "Please select a service.";
+      newErrors.service = "Please select a service.";
     }
-
-    /* ---------------------------------------------------------
-       BUDGET
-    --------------------------------------------------------- */
 
     if (!form.budget) {
-      newErrors.budget =
-        "Please select your budget.";
+      newErrors.budget = "Please select your budget.";
     }
 
-    /* ---------------------------------------------------------
-       MESSAGE
-    --------------------------------------------------------- */
-
     if (!form.message.trim()) {
-      newErrors.message =
-        "Please tell us about your project.";
-    } else if (
-      form.message.trim().length < 10
-    ) {
+      newErrors.message = "Please tell us about your project.";
+    } else if (form.message.trim().length < 10) {
       newErrors.message =
         "Message should contain at least 10 characters.";
     }
@@ -127,93 +103,34 @@ function Contact({
 
     let newValue = value;
 
-    /* ---------------------------------------------------------
-       NAME
-
-       Allowed:
-       A-Z
-       a-z
-       spaces
-       apostrophe
-       dot
-       hyphen
-    --------------------------------------------------------- */
-
     if (name === "name") {
-      newValue = value.replace(
-        /[^A-Za-z\s.'-]/g,
-        ""
-      );
+      newValue = value.replace(/[^A-Za-z\s.'-]/g, "");
     }
 
-    /* ---------------------------------------------------------
-       EMAIL
-
-       Allowed:
-       A-Z
-       a-z
-       0-9
-       @
-       .
-       _
-       -
-       +
-
-       Spaces and other special characters are removed.
-    --------------------------------------------------------- */
-
     if (name === "email") {
-      newValue = value.replace(
-        /[^A-Za-z0-9@._+-]/g,
-        ""
-      );
+      newValue = value.replace(/[^A-Za-z0-9@._+-]/g, "");
 
-      /*
-        Allow only ONE @ symbol.
-      */
-
-      const firstAtIndex =
-        newValue.indexOf("@");
+      const firstAtIndex = newValue.indexOf("@");
 
       if (firstAtIndex !== -1) {
-        const beforeAt =
-          newValue.slice(0, firstAtIndex);
+        const beforeAt = newValue.slice(0, firstAtIndex);
 
-        const afterAt =
-          newValue
-            .slice(firstAtIndex + 1)
-            .replace(/@/g, "");
+        const afterAt = newValue
+          .slice(firstAtIndex + 1)
+          .replace(/@/g, "");
 
-        newValue =
-          `${beforeAt}@${afterAt}`;
+        newValue = `${beforeAt}@${afterAt}`;
       }
     }
 
-    /* ---------------------------------------------------------
-       PHONE
-
-       Only numbers are allowed.
-       Maximum 10 digits.
-    --------------------------------------------------------- */
-
     if (name === "phone") {
-      newValue = value
-        .replace(/\D/g, "")
-        .slice(0, 10);
+      newValue = value.replace(/\D/g, "").slice(0, 10);
     }
-
-    /* ---------------------------------------------------------
-       UPDATE FORM
-    --------------------------------------------------------- */
 
     setForm((previousForm) => ({
       ...previousForm,
       [name]: newValue,
     }));
-
-    /* ---------------------------------------------------------
-       CLEAR FIELD ERROR
-    --------------------------------------------------------- */
 
     if (errors[name]) {
       setErrors((previousErrors) => ({
@@ -221,10 +138,6 @@ function Contact({
         [name]: "",
       }));
     }
-
-    /* ---------------------------------------------------------
-       HIDE SUCCESS MESSAGE WHEN EDITING
-    --------------------------------------------------------- */
 
     if (submitted) {
       setSubmitted(false);
@@ -240,37 +153,19 @@ function Contact({
 
     const fieldErrors = {};
 
-    /* ---------------------------------------------------------
-       NAME
-    --------------------------------------------------------- */
-
     if (name === "name") {
       if (!form.name.trim()) {
-        fieldErrors.name =
-          "Name is required.";
-      } else if (
-        !/^[A-Za-z\s.'-]+$/.test(
-          form.name.trim()
-        )
-      ) {
-        fieldErrors.name =
-          "Please enter a valid name.";
-      } else if (
-        form.name.trim().length < 2
-      ) {
-        fieldErrors.name =
-          "Please enter a valid name.";
+        fieldErrors.name = "Name is required.";
+      } else if (!/^[A-Za-z\s.'-]+$/.test(form.name.trim())) {
+        fieldErrors.name = "Please enter a valid name.";
+      } else if (form.name.trim().length < 2) {
+        fieldErrors.name = "Please enter a valid name.";
       }
     }
 
-    /* ---------------------------------------------------------
-       EMAIL
-    --------------------------------------------------------- */
-
     if (name === "email") {
       if (!form.email.trim()) {
-        fieldErrors.email =
-          "Email address is required.";
+        fieldErrors.email = "Email address is required.";
       } else if (
         !/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(
           form.email.trim()
@@ -281,65 +176,32 @@ function Contact({
       }
     }
 
-    /* ---------------------------------------------------------
-       PHONE
-    --------------------------------------------------------- */
-
     if (name === "phone") {
       if (!form.phone.trim()) {
-        fieldErrors.phone =
-          "Phone number is required.";
-      } else if (
-        !/^\d{10}$/.test(form.phone)
-      ) {
+        fieldErrors.phone = "Phone number is required.";
+      } else if (!/^\d{10}$/.test(form.phone)) {
         fieldErrors.phone =
           "Phone number must contain exactly 10 digits.";
       }
     }
 
-    /* ---------------------------------------------------------
-       SERVICE
-    --------------------------------------------------------- */
-
-    if (
-      name === "service" &&
-      !form.service
-    ) {
-      fieldErrors.service =
-        "Please select a service.";
+    if (name === "service" && !form.service) {
+      fieldErrors.service = "Please select a service.";
     }
 
-    /* ---------------------------------------------------------
-       BUDGET
-    --------------------------------------------------------- */
-
-    if (
-      name === "budget" &&
-      !form.budget
-    ) {
-      fieldErrors.budget =
-        "Please select your budget.";
+    if (name === "budget" && !form.budget) {
+      fieldErrors.budget = "Please select your budget.";
     }
-
-    /* ---------------------------------------------------------
-       MESSAGE
-    --------------------------------------------------------- */
 
     if (name === "message") {
       if (!form.message.trim()) {
         fieldErrors.message =
           "Please tell us about your project.";
-      } else if (
-        form.message.trim().length < 10
-      ) {
+      } else if (form.message.trim().length < 10) {
         fieldErrors.message =
           "Message should contain at least 10 characters.";
       }
     }
-
-    /* ---------------------------------------------------------
-       UPDATE ERRORS
-    --------------------------------------------------------- */
 
     setErrors((previousErrors) => ({
       ...previousErrors,
@@ -359,10 +221,6 @@ function Contact({
     if (!isValid) {
       return;
     }
-
-    /* ---------------------------------------------------------
-       CREATE ENQUIRY
-    --------------------------------------------------------- */
 
     const enquiry = {
       id: nextId(enquiries),
@@ -386,24 +244,14 @@ function Contact({
       status: "New",
     };
 
-    /* ---------------------------------------------------------
-       ADD ENQUIRY TO DASHBOARD
-    --------------------------------------------------------- */
-
     if (typeof addEnquiry === "function") {
       addEnquiry(enquiry);
-    } else if (
-      typeof setEnquiries === "function"
-    ) {
+    } else if (typeof setEnquiries === "function") {
       setEnquiries((previousEnquiries) => [
         enquiry,
         ...previousEnquiries,
       ]);
     }
-
-    /* ---------------------------------------------------------
-       RESET FORM
-    --------------------------------------------------------- */
 
     setForm(initialForm);
 
@@ -411,41 +259,31 @@ function Contact({
 
     setSubmitted(true);
 
-    /* ---------------------------------------------------------
-       HIDE SUCCESS MESSAGE
-    --------------------------------------------------------- */
-
     setTimeout(() => {
       setSubmitted(false);
     }, 4000);
   };
 
+  /* =========================================================
+     RETURN
+  ========================================================= */
+
   return (
     <>
-      {/* =====================================================
-          PAGE HERO
-      ====================================================== */}
-
       <PageHero
         badge="Contact Us"
         title="Let's Talk About Your Project"
         description="Tell us about your project and our team will get back to you."
       />
 
-      {/* =====================================================
-          CONTACT SECTION
-      ====================================================== */}
-
       <section className="bg-white py-12 sm:py-16 lg:py-20">
         <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-5 lg:gap-12 lg:px-8">
 
-          {/* =================================================
-              CONTACT INFORMATION
-          ================================================== */}
+          {/* CONTACT INFORMATION */}
 
           <div className="lg:col-span-2">
 
-            <span className="text-m font-bold uppercase tracking-widest text-indigo-600">
+            <span className="text-sm font-bold uppercase tracking-widest text-indigo-600">
               Get In Touch
             </span>
 
@@ -461,60 +299,58 @@ function Contact({
 
             <div className="mt-9 space-y-6">
 
-              {/* EMAIL */}
-
               <div className="flex gap-4">
-
                 <div className="gratech-icon-flip flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
                   <Mail size={21} />
                 </div>
 
-                <div className="min-w-0">
+                {/* EMAIL */}
 
-                  <p className="font-bold text-slate-900">
-                    Email
-                  </p>
 
-                  <p className="mt-1 break-all text-slate-600">
-                    hello@novaagency.com
-                  </p>
 
-                </div>
+  <div className="min-w-0">
+    <p className="font-bold text-slate-900">
+      Email
+    </p>
+
+    <a
+      href="mailto:hello@novaagency.com"
+      className="mt-1 block break-all text-slate-600 transition hover:text-indigo-600"
+    >
+      hello@novaagency.com
+    </a>
+  </div>
+</div>
+
+
+{/* PHONE */}
+
+<div className="flex gap-4">
+  <div className="gratech-icon-flip flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+    <Phone size={21} />
+  </div>
+
+  <div>
+    <p className="font-bold text-slate-900">
+      Phone
+    </p>
+
+    <a
+      href="tel:+919876543210"
+      className="mt-1 block text-slate-600 transition hover:text-indigo-600"
+    >
+      +91 98765 43210
+    </a>
+  </div>
 
               </div>
 
-              {/* PHONE */}
-
               <div className="flex gap-4">
-
-                <div className="gratech-icon-flip flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
-                  <Phone size={21} />
-                </div>
-
-                <div>
-
-                  <p className="font-bold text-slate-900">
-                    Phone
-                  </p>
-
-                  <p className="mt-1 text-slate-600">
-                    +91 98765 43210
-                  </p>
-
-                </div>
-
-              </div>
-
-              {/* LOCATION */}
-
-              <div className="flex gap-4">
-
                 <div className="gratech-icon-flip flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
                   <MapPin size={21} />
                 </div>
 
                 <div>
-
                   <p className="font-bold text-slate-900">
                     Location
                   </p>
@@ -522,27 +358,20 @@ function Contact({
                   <p className="mt-1 text-slate-600">
                     Hyderabad, Telangana, India
                   </p>
-
                 </div>
-
               </div>
 
             </div>
           </div>
 
-          {/* =================================================
-              FORM
-          ================================================== */}
+          {/* FORM */}
 
           <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5 sm:p-8 lg:col-span-3">
 
-            {/* SUCCESS MESSAGE */}
-
             {submitted && (
               <div className="mb-6 rounded-xl border border-green-200 bg-green-50 px-5 py-4 text-sm font-semibold text-green-700">
-                Thank you! Your enquiry has been
-                submitted successfully and has been
-                added to the dashboard.
+                Thank you! Your enquiry has been submitted
+                successfully and has been added to the dashboard.
               </div>
             )}
 
@@ -552,19 +381,14 @@ function Contact({
               className="space-y-5"
             >
 
-              {/* =============================================
-                  NAME + EMAIL
-              ============================================== */}
+              {/* NAME + EMAIL */}
 
               <div className="grid gap-5 sm:grid-cols-2">
 
-                {/* NAME */}
-
                 <div>
-
                   <label
                     htmlFor="name"
-                    className="mb-2 block text-m font-semibold text-slate-700"
+                    className="mb-2 block text-sm font-semibold text-slate-700"
                   >
                     Your Name
                   </label>
@@ -592,16 +416,12 @@ function Contact({
                       {errors.name}
                     </p>
                   )}
-
                 </div>
 
-                {/* EMAIL */}
-
                 <div>
-
                   <label
                     htmlFor="email"
-                    className="mb-2 block text-m font-semibold text-slate-700"
+                    className="mb-2 block text-sm font-semibold text-slate-700"
                   >
                     Email Address
                   </label>
@@ -627,31 +447,23 @@ function Contact({
                     }`}
                   />
 
-                 
-
                   {errors.email && (
                     <p className="mt-1 text-xs font-medium text-red-600">
                       {errors.email}
                     </p>
                   )}
-
                 </div>
 
               </div>
 
-              {/* =============================================
-                  PHONE + SERVICE
-              ============================================== */}
+              {/* PHONE + SERVICE */}
 
               <div className="grid gap-5 sm:grid-cols-2">
 
-                {/* PHONE */}
-
                 <div>
-
                   <label
                     htmlFor="phone"
-                    className="mb-2 block text-m font-semibold text-slate-700"
+                    className="mb-2 block text-sm font-semibold text-slate-700"
                   >
                     Phone Number
                   </label>
@@ -685,16 +497,12 @@ function Contact({
                       {errors.phone}
                     </p>
                   )}
-
                 </div>
 
-                {/* SERVICE */}
-
                 <div>
-
                   <label
                     htmlFor="service"
-                    className="mb-2 block text-m font-semibold text-slate-700"
+                    className="mb-2 block text-sm font-semibold text-slate-700"
                   >
                     Service
                   </label>
@@ -741,20 +549,16 @@ function Contact({
                       {errors.service}
                     </p>
                   )}
-
                 </div>
 
               </div>
 
-              {/* =============================================
-                  BUDGET
-              ============================================== */}
+              {/* BUDGET */}
 
               <div>
-
                 <label
                   htmlFor="budget"
-                  className="mb-2 block text-m font-semibold text-slate-700"
+                  className="mb-2 block text-sm font-semibold text-slate-700"
                 >
                   Budget
                 </label>
@@ -798,18 +602,14 @@ function Contact({
                     {errors.budget}
                   </p>
                 )}
-
               </div>
 
-              {/* =============================================
-                  MESSAGE
-              ============================================== */}
+              {/* MESSAGE */}
 
               <div>
-
                 <label
                   htmlFor="message"
-                  className="mb-2 block text-m font-semibold text-slate-700"
+                  className="mb-2 block text-sm font-semibold text-slate-700"
                 >
                   Project Details
                 </label>
@@ -835,12 +635,9 @@ function Contact({
                     {errors.message}
                   </p>
                 )}
-
               </div>
 
-              {/* =============================================
-                  SEND BUTTON
-              ============================================== */}
+              {/* SEND BUTTON */}
 
               <button
                 type="submit"

@@ -1,4 +1,3 @@
-
 import { useEffect, useMemo, useState } from "react";
 import {
   Plus,
@@ -45,27 +44,21 @@ function Blogs({ blogs = [], setBlogs }) {
   // ======================================================
 
   useEffect(() => {
-    const modalOpen =
-      showModal || Boolean(viewingBlog);
+    const modalOpen = showModal || Boolean(viewingBlog);
 
     if (!modalOpen) {
       return;
     }
 
-    const originalOverflow =
-      document.body.style.overflow;
-
+    const originalOverflow = document.body.style.overflow;
     const originalHtmlOverflow =
       document.documentElement.style.overflow;
 
     document.body.style.overflow = "hidden";
-    document.documentElement.style.overflow =
-      "hidden";
+    document.documentElement.style.overflow = "hidden";
 
     return () => {
-      document.body.style.overflow =
-        originalOverflow;
-
+      document.body.style.overflow = originalOverflow;
       document.documentElement.style.overflow =
         originalHtmlOverflow;
     };
@@ -192,16 +185,18 @@ function Blogs({ blogs = [], setBlogs }) {
   // ALLOWED CHARACTER HELPERS
   // ======================================================
 
+  // Blog title does NOT allow numbers
   const allowTitleCharacters = (value) => {
     return value.replace(
-      /[^a-zA-Z0-9\s.,!?'"()&:/\-]/g,
+      /[^a-zA-Z\s.,!?'"()&:/\-]/g,
       ""
     );
   };
 
+  // Category does NOT allow numbers
   const allowCategoryCharacters = (value) => {
     return value.replace(
-      /[^a-zA-Z0-9\s&/\-]/g,
+      /[^a-zA-Z\s&/\-]/g,
       ""
     );
   };
@@ -228,6 +223,42 @@ function Blogs({ blogs = [], setBlogs }) {
   };
 
   // ======================================================
+  // PREVENT NUMBER KEYS
+  // ======================================================
+
+  const handleTextKeyDown = (e) => {
+    // Allow navigation and editing keys
+    const allowedKeys = [
+      "Backspace",
+      "Delete",
+      "Tab",
+      "Enter",
+      "Escape",
+      "ArrowLeft",
+      "ArrowRight",
+      "ArrowUp",
+      "ArrowDown",
+      "Home",
+      "End",
+    ];
+
+    if (allowedKeys.includes(e.key)) {
+      return;
+    }
+
+    // Allow Ctrl / Cmd shortcuts
+    // Example: Ctrl+A, Ctrl+C, Ctrl+V
+    if (e.ctrlKey || e.metaKey) {
+      return;
+    }
+
+    // Block number keys 0-9
+    if (/^[0-9]$/.test(e.key)) {
+      e.preventDefault();
+    }
+  };
+
+  // ======================================================
   // HANDLE CHANGE
   // ======================================================
 
@@ -238,29 +269,24 @@ function Blogs({ blogs = [], setBlogs }) {
 
     switch (name) {
       case "title":
-        cleanedValue =
-          allowTitleCharacters(value);
+        cleanedValue = allowTitleCharacters(value);
         break;
 
       case "category":
-        cleanedValue =
-          allowCategoryCharacters(value);
+        cleanedValue = allowCategoryCharacters(value);
         break;
 
       case "author":
-        cleanedValue =
-          allowAuthorCharacters(value);
+        cleanedValue = allowAuthorCharacters(value);
         break;
 
       case "readTime":
-        cleanedValue =
-          allowReadTimeCharacters(value);
+        cleanedValue = allowReadTimeCharacters(value);
         break;
 
       case "excerpt":
       case "content":
-        cleanedValue =
-          allowTextCharacters(value);
+        cleanedValue = allowTextCharacters(value);
         break;
 
       default:
@@ -309,8 +335,7 @@ function Blogs({ blogs = [], setBlogs }) {
     if (editingBlog) {
       setBlogs((previousBlogs) =>
         previousBlogs.map((blog) =>
-          String(blog.id) ===
-          String(editingBlog.id)
+          String(blog.id) === String(editingBlog.id)
             ? {
                 ...blog,
                 ...cleanBlog,
@@ -886,6 +911,7 @@ function Blogs({ blogs = [], setBlogs }) {
                   name="title"
                   value={form.title}
                   onChange={handleChange}
+                  onKeyDown={handleTextKeyDown}
                   placeholder="Enter blog title"
                   required
                 />
@@ -898,6 +924,7 @@ function Blogs({ blogs = [], setBlogs }) {
                     name="category"
                     value={form.category}
                     onChange={handleChange}
+                    onKeyDown={handleTextKeyDown}
                     placeholder="Technology"
                     required
                   />
@@ -1177,6 +1204,7 @@ function Input({
   type = "text",
   value,
   onChange,
+  onKeyDown,
   placeholder,
   required = false,
 }) {
@@ -1197,6 +1225,7 @@ function Input({
         name={name}
         value={value}
         onChange={onChange}
+        onKeyDown={onKeyDown}
         placeholder={placeholder}
         required={required}
         className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 sm:text-base"
