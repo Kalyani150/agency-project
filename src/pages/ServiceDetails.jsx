@@ -267,6 +267,8 @@ const defaultContent = {
     "From the initial idea through planning, development, testing and launch, we provide support throughout the project lifecycle.",
   ],
 
+
+  
   bulletTitle: "How We Work",
 
   bullets: [
