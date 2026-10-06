@@ -13,6 +13,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 
+
 import {
   Link,
   NavLink,
@@ -185,11 +186,11 @@ function PublicNavbar() {
           HEADER
       ================================================== */}
 
-      <header
-        className={`gratech-header sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur ${
-          scrolled ? "gratech-header-scrolled" : ""
-        }`}
-      >
+     <header
+  className={`gratech-header sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur ${
+    scrolled ? "gratech-header-scrolled" : ""
+  }`}
+>
         <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
 
           {/* ==================================================
@@ -320,16 +321,7 @@ function PublicNavbar() {
               </NavLink>
             ))}
 
-            {/* GET QUOTE */}
-
-            <Link
-              to="/get-quote"
-              onClick={() => setServicesOpen(false)}
-              className="flex items-center gap-2 rounded-lg bg-indigo-600 px-5 py-3 text-base font-bold text-white transition hover:bg-indigo-700"
-            >
-              Get Quote
-              <ArrowRight size={16} />
-            </Link>
+           
           </nav>
 
           {/* ==================================================
@@ -340,14 +332,6 @@ function PublicNavbar() {
 
             {/* SEARCH */}
 
-            <button
-              type="button"
-              onClick={() => setSearchOpen(true)}
-              className="rounded-lg p-2 text-slate-700 transition hover:bg-slate-100"
-              aria-label="Open search"
-            >
-              <Search size={20} />
-            </button>
 
             {/* MENU */}
 
@@ -375,134 +359,130 @@ function PublicNavbar() {
         ================================================== */}
 
         {mobileOpen && (
-          <div className="border-t border-slate-200 bg-white lg:hidden">
+  <>
+    {/* Mobile backdrop */}
+    <div
+      className="fixed inset-0 top-20 z-40 bg-slate-950/30 lg:hidden"
+      onClick={closeMobileMenu}
+    />
 
-            <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6">
+    {/* Mobile menu */}
+    <div className="absolute left-0 right-0 top-20 z-50 border-t border-slate-200 bg-white shadow-xl lg:hidden">
+      <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6">
+        <nav className="flex max-h-[calc(100vh-5rem)] flex-col gap-1 overflow-y-auto">
 
-              <nav className="flex flex-col gap-1">
+          {/* HOME */}
+          <NavLink
+            to="/"
+            onClick={closeMobileMenu}
+            className={({ isActive }) =>
+              `rounded-lg px-4 py-3 text-sm font-semibold transition ${
+                isActive
+                  ? "bg-indigo-50 text-indigo-600"
+                  : "text-slate-700 hover:bg-slate-50"
+              }`
+            }
+          >
+            Home
+          </NavLink>
 
-                {/* HOME */}
+          {/* ABOUT */}
+          <NavLink
+            to="/about"
+            onClick={closeMobileMenu}
+            className={({ isActive }) =>
+              `rounded-lg px-4 py-3 text-sm font-semibold transition ${
+                isActive
+                  ? "bg-indigo-50 text-indigo-600"
+                  : "text-slate-700 hover:bg-slate-50"
+              }`
+            }
+          >
+            About
+          </NavLink>
 
-                <NavLink
-                  to="/"
-                  onClick={closeMobileMenu}
-                  className={({ isActive }) =>
-                    `rounded-lg px-4 py-3 text-sm font-semibold ${
-                      isActive
-                        ? "bg-indigo-50 text-indigo-600"
-                        : "text-slate-700"
-                    }`
-                  }
-                >
-                  Home
-                </NavLink>
+          {/* SERVICES */}
+          <div ref={mobileServicesRef}>
+            <div className="flex items-center">
+              <NavLink
+                to="/services"
+                onClick={closeMobileMenu}
+                className={({ isActive }) =>
+                  `flex-1 rounded-lg px-4 py-3 text-sm font-semibold transition ${
+                    isActive
+                      ? "bg-indigo-50 text-indigo-600"
+                      : "text-slate-700 hover:bg-slate-50"
+                  }`
+                }
+              >
+                Services
+              </NavLink>
 
-                {/* ABOUT */}
-
-                <NavLink
-                  to="/about"
-                  onClick={closeMobileMenu}
-                  className={({ isActive }) =>
-                    `rounded-lg px-4 py-3 text-sm font-semibold ${
-                      isActive
-                        ? "bg-indigo-50 text-indigo-600"
-                        : "text-slate-700"
-                    }`
-                  }
-                >
-                  About
-                </NavLink>
-
-                {/* MOBILE SERVICES */}
-
-                <div
-                  ref={mobileServicesRef}
-                  className="relative"
-                >
-                  <div className="flex items-center rounded-lg">
-
-                    <NavLink
-                      to="/services"
-                      onClick={() => {
-                        setMobileOpen(false);
-                        setServicesOpen(false);
-                      }}
-                      className={({ isActive }) =>
-                        `flex-1 rounded-lg px-4 py-3 text-sm font-semibold ${
-                          isActive
-                            ? "bg-indigo-50 text-indigo-600"
-                            : "text-slate-700"
-                        }`
-                      }
-                    >
-                      Services
-                    </NavLink>
-
-                    <button
-                      type="button"
-                      onClick={toggleServices}
-                      className="rounded-lg p-3 text-slate-700 transition hover:bg-slate-100"
-                      aria-label="Toggle services dropdown"
-                      aria-expanded={servicesOpen}
-                    >
-                      <ChevronDown
-                        size={17}
-                        className={`transition-transform duration-200 ${
-                          servicesOpen ? "rotate-180" : ""
-                        }`}
-                      />
-                    </button>
-                  </div>
-
-                  {servicesOpen && (
-                    <div className="ml-4 border-l border-indigo-200 pl-3">
-                      {services.map((service) => (
-                        <Link
-                          key={service.path}
-                          to={service.path}
-                          onClick={closeMobileMenu}
-                          className="block px-4 py-3 text-sm text-slate-600 transition hover:text-indigo-600"
-                        >
-                          {service.name}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* PROJECTS / TEAM / BLOG / CONTACT */}
-
-                {navItems.slice(2).map((item) => (
-                  <NavLink
-                    key={item.path}
-                    to={item.path}
-                    onClick={closeMobileMenu}
-                    className={({ isActive }) =>
-                      `rounded-lg px-4 py-3 text-sm font-semibold ${
-                        isActive
-                          ? "bg-indigo-50 text-indigo-600"
-                          : "text-slate-700"
-                      }`
-                    }
-                  >
-                    {item.name}
-                  </NavLink>
-                ))}
-
-                {/* GET QUOTE */}
-
-                <Link
-                  to="/get-quote"
-                  onClick={closeMobileMenu}
-                  className="mt-3 flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-5 py-4 text-sm font-bold text-white transition hover:bg-indigo-700"
-                >
-                  Get Quote
-                  <ArrowRight size={17} />
-                </Link>
-              </nav>
+              <button
+                type="button"
+                onClick={toggleServices}
+                className="rounded-lg p-3 text-slate-700 hover:bg-slate-100"
+                aria-label="Toggle services dropdown"
+                aria-expanded={servicesOpen}
+              >
+                <ChevronDown
+                  size={17}
+                  className={`transition-transform duration-200 ${
+                    servicesOpen ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
             </div>
+
+            {/* SERVICES DROPDOWN */}
+            {servicesOpen && (
+              <div className="ml-4 mt-1 border-l-2 border-indigo-100 pl-3">
+                {services.map((service) => (
+                  <Link
+                    key={service.path}
+                    to={service.path}
+                    onClick={closeMobileMenu}
+                    className="block rounded-lg px-4 py-3 text-sm text-slate-600 transition hover:bg-indigo-50 hover:text-indigo-600"
+                  >
+                    {service.name}
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
-        )}
+
+          {/* PROJECTS / TEAM / BLOG / CONTACT */}
+          {navItems.slice(2).map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              onClick={closeMobileMenu}
+              className={({ isActive }) =>
+                `rounded-lg px-4 py-3 text-sm font-semibold transition ${
+                  isActive
+                    ? "bg-indigo-50 text-indigo-600"
+                    : "text-slate-700 hover:bg-slate-50"
+                }`
+              }
+            >
+              {item.name}
+            </NavLink>
+          ))}
+
+          {/* GET QUOTE */}
+          <Link
+            to="/get-quote"
+            onClick={closeMobileMenu}
+            className="mt-3 flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-5 py-3.5 text-sm font-bold text-white transition hover:bg-indigo-700"
+          >
+            Get Quote
+            <ArrowRight size={17} />
+          </Link>
+        </nav>
+      </div>
+    </div>
+  </>
+)}
       </header>
 
       {/* ==================================================

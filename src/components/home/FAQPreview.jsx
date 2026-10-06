@@ -38,7 +38,8 @@ function FAQPreview() {
   const [open, setOpen] = useState(0);
 
   return (
-    <section className="bg-slate-50 py-20 sm:py-24">
+    <section className="bg-slate-50 py-14 sm:py-18">
+      
 
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
 

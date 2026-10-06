@@ -16,7 +16,7 @@ const technologies = [
 
 function Technologies() {
   return (
-    <section className="overflow-hidden bg-white py-20 sm:py-24">
+   <section className="overflow-hidden bg-white py-12 sm:py-16">
 
       {/* ==================================================
           MAIN CONTAINER
@@ -56,7 +56,7 @@ function Technologies() {
             TECHNOLOGY SCROLLER
         ================================================== */}
 
-        <div className="relative mt-12 overflow-hidden">
+         <div className="relative mt-8 overflow-hidden">
 
           {/* ==================================================
               LEFT FADE

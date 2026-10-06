@@ -1,6 +1,8 @@
 /* =========================================================
    GRATECH STYLE WEBSITE ANIMATIONS
+   BALANCED / SMOOTH TIMING
    ========================================================= */
+
 
 /* ---------------------------------------------------------
    Base reveal
@@ -8,10 +10,11 @@
 
 .gratech-section-reveal {
   opacity: 0;
-  transform: translateY(45px);
+  transform: translateY(35px);
+
   transition:
-    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .gratech-section-reveal.gratech-visible {
@@ -26,10 +29,11 @@
 
 .gratech-content-reveal {
   opacity: 0;
-  transform: translateY(35px);
+  transform: translateY(28px);
+
   transition:
-    opacity 0.8s ease,
-    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 0.65s ease,
+    transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
 
   transition-delay: var(--reveal-delay, 0ms);
 }
@@ -46,12 +50,12 @@
 
 .gratech-card-reveal {
   opacity: 0;
-  transform: translateY(45px) scale(0.97);
+  transform: translateY(35px) scale(0.98);
 
   transition:
-    opacity 0.7s ease,
-    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.35s ease;
+    opacity 0.6s ease,
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.3s ease;
 
   transition-delay: var(--card-delay, 0ms);
 }
@@ -68,11 +72,11 @@
 
 .gratech-image-reveal {
   opacity: 0;
-  transform: scale(1.06);
+  transform: scale(1.04);
 
   transition:
-    opacity 1s ease,
-    transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 0.8s ease,
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .gratech-image-reveal.gratech-visible {
@@ -91,11 +95,11 @@
 
 .gratech-image-hover img {
   transition:
-    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .gratech-image-hover:hover img {
-  transform: scale(1.08);
+  transform: scale(1.06);
 }
 
 
@@ -109,7 +113,7 @@
   }
 
   50% {
-    transform: translateY(-12px);
+    transform: translateY(-10px);
   }
 
   100% {
@@ -119,7 +123,7 @@
 
 .gratech-floating-active {
   animation:
-    gratechFloat 4s ease-in-out infinite;
+    gratechFloat 3.5s ease-in-out infinite;
 }
 
 
@@ -133,7 +137,7 @@
   }
 
   50% {
-    transform: translate3d(0, -18px, 0);
+    transform: translate3d(0, -15px, 0);
   }
 
   100% {
@@ -143,7 +147,7 @@
 
 .gratech-floating-slow {
   animation:
-    gratechFloatSlow 6s ease-in-out infinite;
+    gratechFloatSlow 5s ease-in-out infinite;
 }
 
 
@@ -163,7 +167,7 @@
 
 .gratech-rotate {
   animation:
-    gratechRotate 18s linear infinite;
+    gratechRotate 14s linear infinite;
 }
 
 
@@ -177,7 +181,7 @@
   }
 
   50% {
-    transform: scale(1.06);
+    transform: scale(1.05);
   }
 
   100% {
@@ -187,7 +191,7 @@
 
 .gratech-pulse {
   animation:
-    gratechPulse 3s ease-in-out infinite;
+    gratechPulse 2.5s ease-in-out infinite;
 }
 
 
@@ -205,7 +209,6 @@
   content: "";
 
   position: absolute;
-
   top: 0;
   left: -120%;
 
@@ -216,8 +219,7 @@
 
   transform: skewX(-20deg);
 
-  transition:
-    left 0.6s ease;
+  transition: left 0.45s ease;
 
   z-index: -1;
 }
@@ -234,7 +236,7 @@
 @keyframes gratechHeroText {
   from {
     opacity: 0;
-    transform: translateY(45px);
+    transform: translateY(35px);
   }
 
   to {
@@ -245,17 +247,19 @@
 
 .gratech-hero-content {
   animation:
-    gratechHeroText 0.9s
+    gratechHeroText 0.7s
     cubic-bezier(0.22, 1, 0.36, 1)
     both;
 }
 
 
-/* Hero image */
+/* ---------------------------------------------------------
+   Hero image
+   --------------------------------------------------------- */
 
 @keyframes gratechHeroImage {
   from {
-    transform: scale(1.08);
+    transform: scale(1.06);
   }
 
   to {
@@ -265,7 +269,7 @@
 
 .gratech-hero-image {
   animation:
-    gratechHeroImage 1.8s
+    gratechHeroImage 1.2s
     cubic-bezier(0.22, 1, 0.36, 1)
     both;
 }
@@ -278,7 +282,7 @@
 @keyframes gratechHeroEyebrow {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(15px);
   }
 
   to {
@@ -289,9 +293,9 @@
 
 .gratech-hero-eyebrow {
   animation:
-    gratechHeroEyebrow 0.7s
+    gratechHeroEyebrow 0.55s
     ease-out
-    0.1s
+    0.08s
     both;
 }
 
@@ -302,9 +306,9 @@
 
 .gratech-hero-buttons {
   animation:
-    gratechHeroText 0.8s
+    gratechHeroText 0.65s
     ease-out
-    0.35s
+    0.25s
     both;
 }
 
@@ -317,7 +321,7 @@
   transform-origin: top center;
 
   animation:
-    gratechDropdown 0.25s
+    gratechDropdown 0.22s
     cubic-bezier(0.22, 1, 0.36, 1)
     both;
 }
@@ -325,7 +329,7 @@
 @keyframes gratechDropdown {
   from {
     opacity: 0;
-    transform: translateY(-10px) scale(0.97);
+    transform: translateY(-8px) scale(0.98);
   }
 
   to {
@@ -341,12 +345,12 @@
 
 .gratech-search-overlay {
   animation:
-    gratechOverlay 0.25s ease-out both;
+    gratechOverlay 0.22s ease-out both;
 }
 
 .gratech-search-box {
   animation:
-    gratechSearchBox 0.35s
+    gratechSearchBox 0.3s
     cubic-bezier(0.22, 1, 0.36, 1)
     both;
 }
@@ -364,7 +368,7 @@
 @keyframes gratechSearchBox {
   from {
     opacity: 0;
-    transform: translateY(-30px) scale(0.96);
+    transform: translateY(-20px) scale(0.98);
   }
 
   to {
@@ -380,7 +384,7 @@
 
 .gratech-faq-answer {
   animation:
-    gratechFaq 0.35s
+    gratechFaq 0.3s
     cubic-bezier(0.22, 1, 0.36, 1)
     both;
 }
@@ -388,7 +392,7 @@
 @keyframes gratechFaq {
   from {
     opacity: 0;
-    transform: translateY(-8px);
+    transform: translateY(-6px);
   }
 
   to {
@@ -405,7 +409,7 @@
 @keyframes fadeUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(18px);
   }
 
   to {
@@ -416,9 +420,13 @@
 
 .animate-fade-up {
   animation:
-    fadeUp 0.7s ease-out both;
+    fadeUp 0.6s ease-out both;
 }
 
+
+/* ---------------------------------------------------------
+   Float
+   --------------------------------------------------------- */
 
 @keyframes float {
   0%,
@@ -427,22 +435,18 @@
   }
 
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-8px);
   }
 }
 
 .animate-float {
   animation:
-    float 4s ease-in-out infinite;
+    float 3.5s ease-in-out infinite;
 }
 
 
 /* ---------------------------------------------------------
-   Accessibility
-   --------------------------------------------------------- */
-
-/* ---------------------------------------------------------
-   Icon flip (service cards) and gentle sway
+   Icon flip
    --------------------------------------------------------- */
 
 @keyframes gratechIconFlip {
@@ -457,12 +461,18 @@
 
 .gratech-icon-flip:hover,
 .group:hover .gratech-icon-flip {
-  animation: gratechIconFlip 0.8s ease-in-out;
+  animation:
+    gratechIconFlip 0.65s ease-in-out;
 }
+
+
+/* ---------------------------------------------------------
+   Gentle sway
+   --------------------------------------------------------- */
 
 @keyframes gratechSway {
   from {
-    transform: translateX(-20px);
+    transform: translateX(-15px);
   }
 
   to {
@@ -471,8 +481,10 @@
 }
 
 .gratech-sway {
-  animation: gratechSway 3s linear infinite alternate;
+  animation:
+    gratechSway 2.5s linear infinite alternate;
 }
+
 
 /* ---------------------------------------------------------
    Sticky header
@@ -480,13 +492,19 @@
 
 .gratech-header {
   transition:
-    box-shadow 0.3s ease-in-out,
-    background-color 0.3s ease-in-out;
+    box-shadow 0.25s ease-in-out,
+    background-color 0.25s ease-in-out;
 }
 
 .gratech-header-scrolled {
-  box-shadow: 0 4px 25px rgba(15, 23, 42, 0.08);
+  box-shadow:
+    0 4px 25px rgba(15, 23, 42, 0.08);
 }
+
+
+/* ---------------------------------------------------------
+   Accessibility
+   --------------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
   *,

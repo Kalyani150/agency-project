@@ -661,22 +661,7 @@ function Projects({
     );
   };
 
-  // ======================================================
-  // FILTER RESET
-  // ======================================================
-
-  const clearFilters = () => {
-    setSearch("");
-    setCategoryFilter("");
-    setStatusFilter("");
-    setOpenFilter(null);
-  };
-
-  const hasFilters =
-    search ||
-    categoryFilter ||
-    statusFilter;
-
+ 
   // ======================================================
   // VIEW MODAL OUTSIDE CLICK
   // ======================================================
@@ -866,18 +851,7 @@ function Projects({
             )}
           </div>
 
-          {/* CLEAR */}
-
-          {hasFilters && (
-            <button
-              type="button"
-              onClick={clearFilters}
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
-            >
-              <X size={16} />
-              Clear
-            </button>
-          )}
+          
         </div>
       </div>
 

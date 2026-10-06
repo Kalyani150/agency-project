@@ -187,27 +187,28 @@ function HeroSlider() {
         </div>
 
         {/* ==================================================
-            SLIDER SCROLL DOTS
-            CENTERED AT BOTTOM
-        ================================================== */}
+    SLIDER DOTS
+    EXACTLY CENTERED
+================================================== */}
 
-        <div className="absolute bottom-6 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2  px-4 py-2 backdrop-blur-md">
-
-          {slides.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setActive(index)}
-              aria-label={`Go to slide ${index + 1}`}
-              aria-current={active === index ? "true" : undefined}
-              className={`h-2 rounded-full transition-all duration-500 ${
-                active === index
-                  ? "w-8 bg-indigo-500"
-                  : "w-2 bg-white/40 hover:bg-white"
-              }`}
-            />
-          ))}
-
-        </div>
+<div className="absolute bottom-6 left-0 right-0 z-30 flex w-full justify-center">
+  <div className="flex items-center gap-2">
+    {slides.map((_, index) => (
+      <button
+        key={index}
+        type="button"
+        onClick={() => setActive(index)}
+        aria-label={`Go to slide ${index + 1}`}
+        aria-current={active === index ? "true" : undefined}
+        className={`h-2 cursor-pointer rounded-full transition-all duration-500 ${
+          active === index
+            ? "w-8 bg-indigo-500"
+            : "w-2 bg-white/40 hover:bg-white"
+        }`}
+      />
+    ))}
+  </div>
+</div>
       </section>
 
       {/* ==================================================

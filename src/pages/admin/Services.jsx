@@ -431,52 +431,54 @@ function Services({
   // SUBMIT FORM
   // ======================================================
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
+ const handleSubmit = (event) => {
+  event.preventDefault();
 
-    if (!validateForm()) {
-      return;
-    }
+  if (!validateForm()) {
+    return;
+  }
 
-    const title = form.title.trim();
-    const category = form.category.trim();
-    const description =
-      form.description.trim();
+  const title = form.title.trim();
+  const category = form.category.trim();
+  const description = form.description.trim();
 
-    if (editingService) {
-      setServices((currentServices) =>
-        currentServices.map((service) =>
-          service.id === editingService.id
-            ? {
-                ...service,
-                title,
-                category,
-                description,
-                status: form.status,
-              }
-            : service
-        )
-      );
-    } else {
-      setServices((currentServices) => {
-        const newService = {
-          id: nextId(currentServices),
-          title,
-          category,
-          description,
-          status: form.status,
-        };
+  if (editingService) {
+    // UPDATE SERVICE
+    setServices((currentServices) =>
+      currentServices.map((service) =>
+        service.id === editingService.id
+          ? {
+              ...service,
+              title,
+              category,
+              description,
+              status: form.status,
+            }
+          : service
+      )
+    );
+  } else {
+    // ADD NEW SERVICE
+    setServices((currentServices) => {
+      const newService = {
+        id: nextId(currentServices),
+        title,
+        category,
+        description,
+        status: form.status,
+        isCustom: true,
+      };
 
-        return [
-          ...currentServices,
-          newService,
-        ];
-      });
-    }
+      // New service comes FIRST
+      return [
+        newService,
+        ...currentServices,
+      ];
+    });
+  }
 
-    closeModal();
-  };
-
+  closeModal();
+};
   // ======================================================
   // DELETE SERVICE
   // ======================================================
@@ -505,12 +507,6 @@ function Services({
   // CLEAR FILTERS
   // ======================================================
 
-  const clearFilters = () => {
-    setSearch("");
-    setStatusFilter("All");
-    setCategoryFilter("All");
-    setOpenFilter(null);
-  };
 
   // ======================================================
   // UI
@@ -621,18 +617,7 @@ function Services({
             </select>
           </div>
 
-          {/* CLEAR */}
-
-          {hasActiveFilters && (
-            <button
-              type="button"
-              onClick={clearFilters}
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
-            >
-              <X size={16} />
-              Clear
-            </button>
-          )}
+          
         </div>
       </div>
 

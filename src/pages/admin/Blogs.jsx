@@ -1,3 +1,4 @@
+
 import { useEffect, useMemo, useState } from "react";
 import {
   Plus,
@@ -185,7 +186,6 @@ function Blogs({ blogs = [], setBlogs }) {
   // ALLOWED CHARACTER HELPERS
   // ======================================================
 
-  // Blog title does NOT allow numbers
   const allowTitleCharacters = (value) => {
     return value.replace(
       /[^a-zA-Z\s.,!?'"()&:/\-]/g,
@@ -193,7 +193,6 @@ function Blogs({ blogs = [], setBlogs }) {
     );
   };
 
-  // Category does NOT allow numbers
   const allowCategoryCharacters = (value) => {
     return value.replace(
       /[^a-zA-Z\s&/\-]/g,
@@ -227,7 +226,6 @@ function Blogs({ blogs = [], setBlogs }) {
   // ======================================================
 
   const handleTextKeyDown = (e) => {
-    // Allow navigation and editing keys
     const allowedKeys = [
       "Backspace",
       "Delete",
@@ -246,13 +244,10 @@ function Blogs({ blogs = [], setBlogs }) {
       return;
     }
 
-    // Allow Ctrl / Cmd shortcuts
-    // Example: Ctrl+A, Ctrl+C, Ctrl+V
     if (e.ctrlKey || e.metaKey) {
       return;
     }
 
-    // Block number keys 0-9
     if (/^[0-9]$/.test(e.key)) {
       e.preventDefault();
     }
@@ -385,20 +380,13 @@ function Blogs({ blogs = [], setBlogs }) {
   };
 
   // ======================================================
-  // CLEAR FILTERS
+  // FILTER STATE
   // ======================================================
 
-  const clearFilters = () => {
-    setSearch("");
-    setCategoryFilter("");
-    setStatusFilter("");
-    setOpenFilter(null);
-  };
-
   const hasFilters =
-    search ||
-    categoryFilter ||
-    statusFilter;
+    Boolean(search) ||
+    Boolean(categoryFilter) ||
+    Boolean(statusFilter);
 
   // ======================================================
   // RENDER
@@ -511,8 +499,6 @@ function Blogs({ blogs = [], setBlogs }) {
                   e.stopPropagation()
                 }
               >
-                {/* ALL CATEGORIES */}
-
                 <button
                   type="button"
                   onClick={() => {
@@ -527,8 +513,6 @@ function Blogs({ blogs = [], setBlogs }) {
                 >
                   All Categories
                 </button>
-
-                {/* CATEGORY OPTIONS */}
 
                 {categoryOptions.length > 0 ? (
                   categoryOptions.map(
@@ -624,10 +608,14 @@ function Blogs({ blogs = [], setBlogs }) {
                   <button
                     key={option.label}
                     type="button"
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+
                       setStatusFilter(
                         option.value
                       );
+
                       setOpenFilter(null);
                     }}
                     className={`w-full rounded-lg px-3 py-2.5 text-left text-sm transition hover:bg-indigo-50 hover:text-indigo-600 sm:text-base ${
@@ -660,14 +648,6 @@ function Blogs({ blogs = [], setBlogs }) {
               </span>{" "}
               blogs
             </p>
-
-            <button
-              type="button"
-              onClick={clearFilters}
-              className="self-start text-xs font-semibold text-indigo-600 transition hover:text-indigo-700 min-[351px]:self-auto"
-            >
-              Clear filters
-            </button>
           </div>
         )}
       </div>
@@ -727,16 +707,6 @@ function Blogs({ blogs = [], setBlogs }) {
                       <p className="mt-1 text-xs text-slate-400">
                         Try changing your search or filters.
                       </p>
-
-                      {hasFilters && (
-                        <button
-                          type="button"
-                          onClick={clearFilters}
-                          className="mt-4 rounded-lg bg-indigo-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-indigo-700"
-                        >
-                          Clear Filters
-                        </button>
-                      )}
                     </div>
                   </td>
                 </tr>
@@ -795,7 +765,6 @@ function Blogs({ blogs = [], setBlogs }) {
 
                     <td className="px-6 py-4">
                       <div className="flex justify-end gap-2">
-
                         {/* VIEW */}
 
                         <button
@@ -903,7 +872,6 @@ function Blogs({ blogs = [], setBlogs }) {
               className="min-h-0 overflow-y-auto overscroll-contain"
             >
               <div className="space-y-5 p-4 sm:p-6">
-
                 {/* BLOG TITLE */}
 
                 <Input
@@ -1075,7 +1043,6 @@ function Blogs({ blogs = [], setBlogs }) {
 
             <div className="min-h-0 overflow-y-auto overscroll-contain">
               <div className="space-y-6 p-5 sm:p-6">
-
                 {/* TITLE */}
 
                 <div>

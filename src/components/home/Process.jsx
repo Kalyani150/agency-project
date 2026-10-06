@@ -33,27 +33,27 @@ const process = [
 
 function Process() {
   return (
-    <section className="bg-slate-50 py-20 sm:py-24">
+    <section className="bg-slate-50 py-12 sm:py-16">
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
         <div className="text-center">
 
-          <span className="text-m font-bold uppercase tracking-widest text-indigo-600">
+          <span className="text-sm font-bold uppercase tracking-widest text-indigo-600">
             Our Process
           </span>
 
-          <h2 className="mt-4 text-3xl font-black text-slate-900 sm:text-5xl">
+          <h2 className="mt-3 text-3xl font-black text-slate-900 sm:text-5xl">
             How We Work
           </h2>
 
-          <p className="mx-auto text-lg mt-5 max-w-2xl leading-8 text-slate-600">
+          <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">
             A clear process helps us deliver better products and better experiences.
           </p>
 
         </div>
 
-        <div className="mt-14 grid gap-5 min-[400px]:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-10 grid gap-5 min-[400px]:grid-cols-2 lg:grid-cols-3">
 
           {process.map((item) => (
             <div
@@ -69,7 +69,7 @@ function Process() {
                 {item.title}
               </h3>
 
-              <p className="mt-3 leading-7 text-lg text-slate-600">
+              <p className="mt-3 text-lg leading-7 text-slate-600">
                 {item.text}
               </p>
 

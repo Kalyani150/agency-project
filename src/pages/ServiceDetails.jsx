@@ -345,11 +345,57 @@ function ServiceDetails({ services = [] }) {
     .replace(/\s+/g, "-");
 
   // ====================================================
-  // GET SERVICE CONTENT
+  // CHECK IF BACKEND HAS DETAILED CONTENT
   // ====================================================
 
-  const content =
-    serviceContent[serviceKey] || defaultContent;
+  const hasBackendContent =
+    Boolean(service.intro) ||
+    (Array.isArray(service.paragraphs) &&
+      service.paragraphs.length > 0) ||
+    Boolean(service.bulletTitle) ||
+    (Array.isArray(service.bullets) &&
+      service.bullets.length > 0) ||
+    (Array.isArray(service.provides) &&
+      service.provides.length > 0);
+
+  // ====================================================
+  // DETERMINE CONTENT SOURCE
+  // ====================================================
+
+  let content = null;
+
+  /*
+    IMPORTANT:
+
+    If backend has detailed content:
+      → Use backend content.
+
+    If backend does NOT have detailed content:
+      → Check predefined frontend serviceContent.
+
+    If neither exists:
+      → content remains null.
+
+    defaultContent is NOT used here.
+  */
+
+  if (hasBackendContent) {
+    content = {
+      intro: service.intro || "",
+      paragraphs: Array.isArray(service.paragraphs)
+        ? service.paragraphs
+        : [],
+      bulletTitle: service.bulletTitle || "",
+      bullets: Array.isArray(service.bullets)
+        ? service.bullets
+        : [],
+      provides: Array.isArray(service.provides)
+        ? service.provides
+        : [],
+    };
+  } else if (serviceContent[serviceKey]) {
+    content = serviceContent[serviceKey];
+  }
 
   // ====================================================
   // RENDER
@@ -391,7 +437,9 @@ function ServiceDetails({ services = [] }) {
 
           <div className="min-w-0 lg:col-span-2">
 
-            {/* Category */}
+            {/* ==================================================
+                CATEGORY
+            ================================================== */}
 
             <span
               className="
@@ -407,7 +455,9 @@ function ServiceDetails({ services = [] }) {
               {service.category}
             </span>
 
-            {/* Title */}
+            {/* ==================================================
+                TITLE
+            ================================================== */}
 
             <h2
               className="
@@ -425,201 +475,222 @@ function ServiceDetails({ services = [] }) {
             </h2>
 
             {/* ==================================================
-                INTRO
+                ONLY SHOW DETAILED CONTENT IF AVAILABLE
             ================================================== */}
 
-            <p
-              className="
-                mt-5
-                text-base
-                leading-7
-                text-slate-600
-                sm:mt-6
-                sm:text-lg
-                sm:leading-8
-              "
-            >
-              {content.intro}
-            </p>
+            {content && (
+              <>
+                {/* ==================================================
+                    INTRO
+                ================================================== */}
 
-            {/* ==================================================
-                PARAGRAPH 1
-            ================================================== */}
-
-            <p
-              className="
-                mt-5
-                text-base
-                leading-7
-                text-slate-600
-                sm:leading-8
-              "
-            >
-              {content.paragraphs[0]}
-            </p>
-
-            {/* ==================================================
-                BULLET SECTION
-            ================================================== */}
-
-            <div className="my-8 sm:my-10">
-
-              <h3
-                className="
-                  text-xl
-                  font-black
-                  text-slate-900
-                  sm:text-2xl
-                "
-              >
-                {content.bulletTitle}
-              </h3>
-
-              {/* Normal bullet points */}
-
-              <ul
-                className="
-                  mt-5
-                  list-disc
-                  space-y-3
-                  pl-5
-                  marker:text-indigo-600
-                "
-              >
-                {content.bullets.map((item) => (
-                  <li
-                    key={item}
+                {content.intro && (
+                  <p
                     className="
-                      pl-1
-                      text-sm
-                      leading-6
-                      text-slate-700
-                      sm:text-base
-                      sm:leading-7
+                      mt-5
+                      text-base
+                      leading-7
+                      text-slate-600
+                      sm:mt-6
+                      sm:text-lg
+                      sm:leading-8
                     "
                   >
-                    {item}
-                  </li>
-                ))}
-              </ul>
+                    {content.intro}
+                  </p>
+                )}
 
-            </div>
+                {/* ==================================================
+                    PARAGRAPH 1
+                ================================================== */}
 
-            {/* ==================================================
-                PARAGRAPH 2
-            ================================================== */}
-
-            <p
-              className="
-                text-base
-                leading-7
-                text-slate-600
-                sm:text-lg
-                sm:leading-8
-              "
-            >
-              {content.paragraphs[1]}
-            </p>
-
-            {/* ==================================================
-                PARAGRAPH 3
-            ================================================== */}
-
-            <p
-              className="
-                mt-5
-                text-base
-                leading-7
-                text-slate-600
-                sm:leading-8
-              "
-            >
-              {content.paragraphs[2]}
-            </p>
-
-            {/* ==================================================
-                WHAT WE PROVIDE
-            ================================================== */}
-
-            <h3
-              className="
-                mt-10
-                text-2xl
-                font-black
-                text-slate-900
-                sm:mt-12
-                sm:text-3xl
-              "
-            >
-              What We Provide
-            </h3>
-
-            <p
-              className="
-                mt-3
-                text-sm
-                leading-6
-                text-slate-600
-                sm:text-base
-              "
-            >
-              Our services are tailored to the requirements of your
-              project. Depending on your goals, we can provide the
-              following solutions:
-            </p>
-
-            {/* What We Provide Cards */}
-
-            <div
-              className="
-                mt-6
-                grid
-                gap-3
-                sm:grid-cols-2
-                sm:gap-4
-              "
-            >
-              {content.provides.map((item) => (
-                <div
-                  key={item}
-                  className="
-                    flex
-                    items-start
-                    gap-3
-                    rounded-xl
-                    border
-                    border-slate-200
-                    bg-white
-                    p-4
-                    transition-all
-                    duration-300
-                    hover:border-indigo-200
-                    hover:bg-indigo-50/40
-                  "
-                >
-                  <CheckCircle2
-                    size={20}
+                {content.paragraphs?.[0] && (
+                  <p
                     className="
-                      mt-0.5
-                      shrink-0
-                      text-indigo-600
-                    "
-                  />
-
-                  <span
-                    className="
-                      text-sm
-                      font-medium
-                      leading-6
-                      text-slate-700
-                      sm:text-base
+                      mt-5
+                      text-base
+                      leading-7
+                      text-slate-600
+                      sm:leading-8
                     "
                   >
-                    {item}
-                  </span>
-                </div>
-              ))}
-            </div>
+                    {content.paragraphs[0]}
+                  </p>
+                )}
+
+                {/* ==================================================
+                    BULLETS
+                ================================================== */}
+
+                {content.bullets?.length > 0 && (
+                  <div className="my-8 sm:my-10">
+
+                    <h3
+                      className="
+                        text-xl
+                        font-black
+                        text-slate-900
+                        sm:text-2xl
+                      "
+                    >
+                      {content.bulletTitle || "Our Approach"}
+                    </h3>
+
+                    <ul
+                      className="
+                        mt-5
+                        list-disc
+                        space-y-3
+                        pl-5
+                        marker:text-indigo-600
+                      "
+                    >
+                      {content.bullets.map((item, index) => (
+                        <li
+                          key={`${item}-${index}`}
+                          className="
+                            pl-1
+                            text-sm
+                            leading-6
+                            text-slate-700
+                            sm:text-base
+                            sm:leading-7
+                          "
+                        >
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+
+                  </div>
+                )}
+
+                {/* ==================================================
+                    PARAGRAPH 2
+                ================================================== */}
+
+                {content.paragraphs?.[1] && (
+                  <p
+                    className="
+                      text-base
+                      leading-7
+                      text-slate-600
+                      sm:text-lg
+                      sm:leading-8
+                    "
+                  >
+                    {content.paragraphs[1]}
+                  </p>
+                )}
+
+                {/* ==================================================
+                    PARAGRAPH 3
+                ================================================== */}
+
+                {content.paragraphs?.[2] && (
+                  <p
+                    className="
+                      mt-5
+                      text-base
+                      leading-7
+                      text-slate-600
+                      sm:leading-8
+                    "
+                  >
+                    {content.paragraphs[2]}
+                  </p>
+                )}
+
+                {/* ==================================================
+                    WHAT WE PROVIDE
+                ================================================== */}
+
+                {content.provides?.length > 0 && (
+                  <>
+                    <h3
+                      className="
+                        mt-10
+                        text-2xl
+                        font-black
+                        text-slate-900
+                        sm:mt-12
+                        sm:text-3xl
+                      "
+                    >
+                      What We Provide
+                    </h3>
+
+                    <p
+                      className="
+                        mt-3
+                        text-sm
+                        leading-6
+                        text-slate-600
+                        sm:text-base
+                      "
+                    >
+                      Our services are tailored to the requirements
+                      of your project. Depending on your goals, we
+                      can provide the following solutions:
+                    </p>
+
+                    {/* Cards */}
+
+                    <div
+                      className="
+                        mt-6
+                        grid
+                        gap-3
+                        sm:grid-cols-2
+                        sm:gap-4
+                      "
+                    >
+                      {content.provides.map((item, index) => (
+                        <div
+                          key={`${item}-${index}`}
+                          className="
+                            flex
+                            items-start
+                            gap-3
+                            rounded-xl
+                            border
+                            border-slate-200
+                            bg-white
+                            p-4
+                            transition-all
+                            duration-300
+                            hover:border-indigo-200
+                            hover:bg-indigo-50/40
+                          "
+                        >
+                          <CheckCircle2
+                            size={20}
+                            className="
+                              mt-0.5
+                              shrink-0
+                              text-indigo-600
+                            "
+                          />
+
+                          <span
+                            className="
+                              text-sm
+                              font-medium
+                              leading-6
+                              text-slate-700
+                              sm:text-base
+                            "
+                          >
+                            {item}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </>
+            )}
+
           </div>
 
           {/* ==================================================
@@ -706,6 +777,7 @@ function ServiceDetails({ services = [] }) {
               Contact Us
             </Link>
           </aside>
+
         </div>
       </section>
     </>
@@ -713,3 +785,4 @@ function ServiceDetails({ services = [] }) {
 }
 
 export default ServiceDetails;
+
