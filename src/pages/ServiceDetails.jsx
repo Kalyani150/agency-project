@@ -1,7 +1,6 @@
-
 import {
-  CheckCircle2,
   ArrowRight,
+  CheckCircle2,
 } from "lucide-react";
 
 import {
@@ -12,291 +11,281 @@ import {
 import PageHero from "../components/PageHero";
 
 // ======================================================
-// SERVICE CONTENT
+// PREDEFINED SERVICE CONTENT
 // ======================================================
 
 const serviceContent = {
-  // ====================================================
-  // WEB DEVELOPMENT
-  // ====================================================
-
   "web-development": {
     intro:
-      "We build modern, responsive and scalable websites that help businesses establish a strong digital presence and convert visitors into customers.",
+      "We create modern, responsive, secure, and high-performing websites that help businesses build a strong digital presence and achieve their business goals.",
 
-    paragraphs: [
-      "Our web development process combines clean design, reliable technology and business-focused functionality. We create websites that are fast, easy to navigate and optimized for different screen sizes, from mobile phones and tablets to large desktop displays.",
+    longDescription:
+      "Our web development services are focused on creating modern, responsive, secure, and high-performing websites that support your business goals. We develop websites that are designed to provide a seamless experience across desktops, tablets, and mobile devices. From business websites and corporate portals to custom web applications, we combine clean development practices, intuitive functionality, and responsive design to deliver reliable digital solutions. Our approach includes understanding your requirements, planning the website structure, developing the required features, testing functionality and performance, and ensuring the final website is easy to maintain and scalable for future growth.",
 
-      "Whether you need a corporate website, business website, landing page, customer portal or a custom web application, our team can develop a solution around your specific requirements. We focus on creating a strong technical foundation so your website can grow as your business grows.",
-
-      "From the initial planning stage to development, testing and deployment, we work closely with you to make sure the final product reflects your brand and supports your business objectives.",
-    ],
-
-    bulletTitle: "Our Web Development Approach",
+    bulletTitle:
+      "Our Web Development Process",
 
     bullets: [
-      "Understanding your business goals and target audience",
-      "Planning the website structure and user journey",
-      "Creating responsive and user-friendly interfaces",
-      "Developing secure and scalable web functionality",
-      "Optimizing performance, accessibility and SEO",
-      "Testing across browsers, devices and screen sizes",
+      "Understanding your business requirements and project objectives",
+      "Planning website structure, features, and user experience",
+      "Developing responsive and user-friendly website interfaces",
+      "Implementing required functionality and business features",
+      "Testing website performance, responsiveness, and functionality",
+      "Deploying and maintaining the website for long-term performance",
     ],
 
     provides: [
-      "Business & Corporate Websites",
       "Responsive Website Development",
+      "Corporate Website Development",
+      "Business Websites",
       "Custom Web Applications",
-      "Landing Pages",
-      "Frontend Development",
-      "Backend & API Integration",
-      "Website Performance Optimization",
-      "Deployment & Technical Support",
+      "Landing Page Development",
+      "Website Maintenance",
     ],
   },
-
-  // ====================================================
-  // MOBILE APP DEVELOPMENT
-  // ====================================================
-
-  "mobile-app-development": {
-    intro:
-      "We develop intuitive and reliable mobile applications designed to give your customers a seamless experience across modern mobile devices.",
-
-    paragraphs: [
-      "A successful mobile application needs more than an attractive interface. It needs thoughtful user experience, reliable performance, secure data handling and an architecture that can support future growth. Our team combines these elements to create mobile solutions that are practical and easy to use.",
-
-      "We work with businesses to understand their application requirements, define the important features and design user flows before development begins. This helps reduce unnecessary complexity and ensures that development remains focused on the actual needs of your users.",
-
-      "From an initial product concept to application development, testing and release, we can support the complete development lifecycle.",
-    ],
-
-    bulletTitle: "How We Build Mobile Applications",
-
-    bullets: [
-      "Understanding your application idea and business objectives",
-      "Defining features and user journeys",
-      "Designing simple and intuitive mobile interfaces",
-      "Developing reliable application functionality",
-      "Integrating APIs, databases and third-party services",
-      "Testing performance and usability across devices",
-    ],
-
-    provides: [
-      "Android Application Development",
-      "iOS Application Development",
-      "Cross-Platform Applications",
-      "UI/UX Design",
-      "API & Backend Integration",
-      "Database Integration",
-      "Application Testing",
-      "App Deployment & Maintenance",
-    ],
-  },
-
-  // ====================================================
-  // UI/UX DESIGN
-  // ====================================================
 
   "ui-ux-design": {
     intro:
-      "We design intuitive digital experiences that make websites and applications easier to understand, navigate and use.",
+      "We design intuitive and engaging digital experiences that combine visual appeal, usability, accessibility, and business objectives.",
 
-    paragraphs: [
-      "Good UI/UX design connects business objectives with user expectations. Our design process focuses on understanding what users need, simplifying complex interactions and creating interfaces that feel natural across different devices.",
+    longDescription:
+      "Our UI/UX design services focus on creating meaningful digital experiences that are visually appealing, intuitive, and easy to use. We begin by understanding your business objectives, target users, and product requirements before developing user flows, wireframes, and interface concepts. Our design process combines usability, visual consistency, accessibility, and responsive design principles to create experiences that users can navigate naturally. From initial concepts and prototypes to complete interface designs and design systems, we help transform ideas into engaging digital products that provide a smooth and consistent experience across different devices.",
 
-      "We begin by understanding your product, users and business requirements. Based on these insights, we create user flows, wireframes and interface designs that establish a clear structure before development begins.",
-
-      "The result is a consistent digital experience that combines visual quality with usability, accessibility and business functionality.",
-    ],
-
-    bulletTitle: "Our Design Process",
+    bulletTitle:
+      "Our UI/UX Design Process",
 
     bullets: [
-      "Understanding your users and business requirements",
-      "Creating user flows and information architecture",
-      "Developing wireframes and page structures",
-      "Designing modern and consistent interfaces",
-      "Creating responsive layouts for different devices",
-      "Preparing designs for smooth development handoff",
+      "Understanding business goals and target users",
+      "Researching user needs and product requirements",
+      "Creating user flows and wireframes",
+      "Designing modern and responsive user interfaces",
+      "Creating interactive prototypes for better visualization",
+      "Improving usability through testing and feedback",
     ],
 
     provides: [
-      "Website UI/UX Design",
-      "Mobile App UI/UX Design",
+      "User Experience Design",
+      "User Interface Design",
       "Wireframing",
-      "User Flow Design",
-      "Responsive Interface Design",
+      "Interactive Prototyping",
       "Design Systems",
-      "Prototype Creation",
-      "Developer Design Handoff",
+      "Responsive UI Design",
     ],
   },
 
-  // ====================================================
-  // DIGITAL MARKETING
-  // ====================================================
+  "mobile-app-development": {
+    intro:
+      "We build reliable, user-friendly, and high-performing mobile applications designed to provide seamless experiences across supported devices.",
+
+    longDescription:
+      "Our mobile app development services help businesses transform their ideas into reliable, user-friendly, and high-performing mobile applications. We focus on creating applications that provide smooth navigation, responsive interfaces, secure functionality, and consistent performance across supported devices. From understanding the initial concept and planning application features to designing the user experience, developing functionality, testing, and deployment, we follow a structured development process. Our solutions are designed to support business requirements while providing users with a convenient and engaging mobile experience.",
+
+    bulletTitle:
+      "Our Mobile App Development Process",
+
+    bullets: [
+      "Understanding the business idea and application requirements",
+      "Planning application features and user flows",
+      "Designing intuitive and responsive mobile interfaces",
+      "Developing core application functionality",
+      "Testing application performance and usability",
+      "Preparing the application for deployment and future updates",
+    ],
+
+    provides: [
+      "Business Mobile Applications",
+      "Android App Development",
+      "iOS App Development",
+      "Cross-Platform Applications",
+      "Custom Mobile Applications",
+      "Mobile App Maintenance",
+    ],
+  },
+
+  "seo-optimization": {
+    intro:
+      "We help businesses improve their online visibility, attract relevant visitors, and build a stronger presence in search engine results.",
+
+    longDescription:
+      "Our SEO Optimization services help businesses improve their online visibility, attract relevant visitors, and build a stronger presence in search engine results. We take a structured approach that begins with understanding your business, target audience, competitors, and existing website performance. Our strategy includes keyword research, on-page optimization, technical SEO, content optimization, website structure improvements, and performance monitoring. By continuously analyzing search performance and identifying areas for improvement, we work toward increasing organic visibility and helping your website reach potential customers who are actively searching for your products or services.",
+
+    bulletTitle:
+      "Our SEO Process",
+
+    bullets: [
+      "Understanding your business and target audience",
+      "Performing keyword and competitor research",
+      "Optimizing website content and page structure",
+      "Improving technical SEO and website performance",
+      "Optimizing metadata, headings, and internal links",
+      "Monitoring search performance and identifying improvements",
+    ],
+
+    provides: [
+      "Keyword Research",
+      "On-Page SEO",
+      "Technical SEO",
+      "Content Optimization",
+      "Website SEO Audit",
+      "SEO Performance Monitoring",
+    ],
+  },
+
+  branding: {
+    intro:
+      "We help businesses create strong, recognizable, and consistent brand identities that communicate their values and connect with their target audience.",
+
+    longDescription:
+      "Our branding services help businesses create a strong, consistent, and recognizable identity that communicates their values and connects with their target audience. We start by understanding your business, market, competitors, positioning, and brand objectives. Based on these insights, we develop visual elements such as logos, colors, typography, graphics, and other brand assets that create a consistent identity across different platforms. Our branding approach focuses on building a professional and memorable brand presence that can be effectively used across websites, social media, marketing materials, presentations, and other customer touchpoints.",
+
+    bulletTitle:
+      "Our Branding Process",
+
+    bullets: [
+      "Understanding your business, market, and target audience",
+      "Defining brand positioning and visual direction",
+      "Creating logo and visual identity concepts",
+      "Selecting colors, typography, and supporting graphics",
+      "Developing consistent brand guidelines",
+      "Applying the brand identity across digital and marketing platforms",
+    ],
+
+    provides: [
+      "Logo Design",
+      "Brand Identity",
+      "Color Palette",
+      "Typography Selection",
+      "Brand Guidelines",
+      "Marketing Brand Assets",
+    ],
+  },
 
   "digital-marketing": {
     intro:
-      "We help businesses improve their online visibility and connect with the right audience through focused digital marketing strategies.",
+      "We create digital marketing strategies that help businesses increase online visibility, reach the right audience, and strengthen their digital presence.",
 
-    paragraphs: [
-      "Digital marketing is most effective when it is connected to clear business objectives. Our approach focuses on understanding your audience, identifying opportunities and building campaigns that support measurable business outcomes.",
+    longDescription:
+      "Our digital marketing services help businesses connect with their target audiences through effective digital channels and strategies. We focus on understanding your business objectives, audience behavior, competitors, and market opportunities before developing a suitable marketing approach. Our services can include search engine optimization, social media marketing, content marketing, campaign planning, and performance analysis. By combining strategy, creative content, and continuous performance monitoring, we help businesses improve their online presence and build meaningful connections with potential customers.",
 
-      "We can help businesses improve their online presence through search optimization, content strategies, social media and other digital channels. Each activity is planned according to your industry, audience and growth goals.",
-
-      "Instead of using the same approach for every business, we focus on developing strategies that are relevant to your market and can be continuously improved using performance data.",
-    ],
-
-    bulletTitle: "Our Digital Marketing Approach",
+    bulletTitle:
+      "Our Digital Marketing Process",
 
     bullets: [
-      "Understanding your target audience and market",
-      "Researching relevant keywords and opportunities",
-      "Planning content and digital campaigns",
-      "Improving search engine visibility",
-      "Monitoring campaign and website performance",
-      "Using insights to continuously improve results",
+      "Understanding business goals and target audience",
+      "Researching market and competitor activity",
+      "Creating a suitable digital marketing strategy",
+      "Developing engaging marketing content",
+      "Managing digital campaigns and online channels",
+      "Monitoring performance and optimizing campaigns",
     ],
 
     provides: [
-      "Search Engine Optimization",
+      "Digital Marketing Strategy",
       "Social Media Marketing",
-      "Content Strategy",
-      "Digital Campaign Management",
-      "Keyword Research",
-      "Website SEO Optimization",
-      "Performance Reporting",
-      "Digital Growth Consulting",
+      "Content Marketing",
+      "Search Engine Optimization",
+      "Campaign Management",
+      "Marketing Analytics",
     ],
   },
-
-  // ====================================================
-  // SOFTWARE DEVELOPMENT
-  // ====================================================
 
   "software-development": {
     intro:
-      "We create custom software solutions that simplify business processes, improve productivity and solve specific operational challenges.",
+      "We develop customized software solutions designed to solve business challenges, improve operational efficiency, and support long-term growth.",
 
-    paragraphs: [
-      "Every business has different processes and requirements. Instead of forcing your workflow into an existing system, custom software can be designed around the way your organization actually operates.",
+    longDescription:
+      "Our software development services focus on creating customized solutions that address specific business requirements and operational challenges. We work closely with businesses to understand their processes, requirements, users, and expected outcomes before planning the solution. Our development approach focuses on building reliable, scalable, secure, and maintainable software applications. From requirement analysis and system design to development, testing, deployment, and ongoing improvements, we follow a structured process to deliver software that supports business operations and future growth.",
 
-      "Our team works with you to understand your current processes, identify areas that can be improved and translate those requirements into practical software solutions. We focus on building systems that are reliable, maintainable and capable of supporting future growth.",
-
-      "From internal business tools to customer-facing platforms, we can support the complete development lifecycle from planning and architecture to implementation, testing and deployment.",
-    ],
-
-    bulletTitle: "Our Software Development Process",
+    bulletTitle:
+      "Our Software Development Process",
 
     bullets: [
-      "Understanding business processes and requirements",
-      "Planning application architecture",
-      "Designing efficient user workflows",
-      "Developing modular and maintainable software",
-      "Integrating APIs and external systems",
-      "Testing, deployment and ongoing improvements",
+      "Understanding business requirements and objectives",
+      "Analyzing workflows and system requirements",
+      "Planning application architecture and functionality",
+      "Developing customized software solutions",
+      "Testing functionality, security, and performance",
+      "Deploying and maintaining the software solution",
     ],
 
     provides: [
-      "Custom Business Software",
-      "Enterprise Applications",
-      "Admin Dashboards",
+      "Custom Software Development",
+      "Business Applications",
+      "Enterprise Software",
       "Workflow Automation",
-      "API Development",
-      "Third-Party Integrations",
       "Database Solutions",
-      "Maintenance & Technical Support",
+      "Software Maintenance",
     ],
   },
-
-  // ====================================================
-  // CLOUD SOLUTIONS
-  // ====================================================
 
   "cloud-solutions": {
     intro:
-      "We help businesses use cloud technologies to build scalable, reliable and flexible digital infrastructure.",
+      "We provide cloud solutions that help businesses improve scalability, flexibility, availability, and operational efficiency.",
 
-    paragraphs: [
-      "Cloud infrastructure can help businesses improve scalability, reliability and operational flexibility. Our team helps organizations identify suitable cloud solutions based on their application requirements and business objectives.",
+    longDescription:
+      "Our cloud solutions help businesses adopt and manage modern cloud technologies according to their operational requirements. We focus on understanding existing infrastructure, business needs, application requirements, and future scalability before planning a suitable cloud approach. Our services can support cloud migration, infrastructure setup, application deployment, storage solutions, and cloud optimization. By following structured implementation and monitoring practices, we help businesses create flexible and reliable cloud environments that can support changing business requirements.",
 
-      "We can support the migration of existing applications and data to cloud environments while also helping teams establish deployment and infrastructure practices that make applications easier to manage.",
-
-      "Our focus is on creating cloud environments that are practical, secure and capable of supporting the changing requirements of your business.",
-    ],
-
-    bulletTitle: "Our Cloud Approach",
+    bulletTitle:
+      "Our Cloud Solutions Process",
 
     bullets: [
-      "Understanding existing infrastructure and requirements",
-      "Planning suitable cloud architecture",
-      "Migrating applications and services",
-      "Configuring scalable infrastructure",
-      "Improving deployment and monitoring processes",
-      "Supporting ongoing cloud optimization",
+      "Understanding existing infrastructure and business requirements",
+      "Assessing applications and workloads for cloud readiness",
+      "Planning the appropriate cloud architecture",
+      "Migrating applications and data when required",
+      "Configuring and optimizing cloud environments",
+      "Monitoring performance and supporting future improvements",
     ],
 
     provides: [
-      "Cloud Infrastructure Setup",
       "Cloud Migration",
-      "Application Deployment",
-      "Scalable Cloud Architecture",
-      "Cloud Database Solutions",
-      "Monitoring & Optimization",
-      "Backup & Recovery Solutions",
-      "Cloud Technical Support",
+      "Cloud Infrastructure",
+      "Cloud Application Deployment",
+      "Cloud Storage Solutions",
+      "Cloud Optimization",
+      "Cloud Support and Maintenance",
     ],
   },
 };
 
 // ======================================================
-// DEFAULT CONTENT
+// NORMALIZE
 // ======================================================
 
-const defaultContent = {
-  intro:
-    "We provide professional digital solutions designed around your business requirements, helping you create better customer experiences and improve the way your organization uses technology.",
+const normalizeContent = (data) => {
+  if (!data) {
+    return null;
+  }
 
-  paragraphs: [
-    "Our team works closely with you to understand your goals, challenges and target audience before recommending the right approach. This helps us create solutions that are aligned with your actual business requirements rather than using a one-size-fits-all approach.",
+  return {
+    intro: data.intro || "",
 
-    "We combine strategy, design and technology to create digital experiences that are reliable, responsive and easy to use. Every project is planned with scalability and long-term maintainability in mind.",
+    longDescription:
+      data.longDescription ||
+      (Array.isArray(data.paragraphs)
+        ? data.paragraphs.join("\n\n")
+        : ""),
 
-    "From the initial idea through planning, development, testing and launch, we provide support throughout the project lifecycle.",
-  ],
+    bulletTitle:
+      data.bulletTitle || "",
 
+    bullets: Array.isArray(data.bullets)
+      ? data.bullets.filter(Boolean)
+      : [],
 
-  
-  bulletTitle: "How We Work",
-
-  bullets: [
-    "Understanding your business requirements",
-    "Planning the right technical approach",
-    "Creating a clear and user-friendly experience",
-    "Developing and testing the solution",
-    "Optimizing performance and reliability",
-    "Supporting deployment and future improvements",
-  ],
-
-  provides: [
-    "Requirement Analysis",
-    "Strategy & Planning",
-    "UI/UX Design",
-    "Responsive Development",
-    "Testing & Quality Assurance",
-    "Performance Optimization",
-    "Deployment",
-    "Ongoing Support",
-  ],
+    provides: Array.isArray(data.provides)
+      ? data.provides.filter(Boolean)
+      : [],
+  };
 };
 
 // ======================================================
-// COMPONENT
+// SERVICE DETAILS
 // ======================================================
 
-function ServiceDetails({ services = [] }) {
+export default function ServiceDetails({
+  services = [],
+}) {
   const { id } = useParams();
 
   // ====================================================
@@ -304,487 +293,328 @@ function ServiceDetails({ services = [] }) {
   // ====================================================
 
   const service = services.find(
-    (item) => String(item.id) === String(id)
+    (item) =>
+      String(item.id) === String(id)
   );
 
   // ====================================================
-  // SERVICE NOT FOUND
+  // NOT FOUND
   // ====================================================
 
   if (!service) {
     return (
-      <div className="px-5 py-32 text-center">
-        <h1 className="text-3xl font-bold text-slate-900">
-          Service Not Found
-        </h1>
+      <div className="min-h-screen bg-white">
 
-        <Link
-          to="/services"
-          className="
-            mt-5
-            inline-block
-            font-semibold
-            text-indigo-600
-            transition-colors
-            hover:text-indigo-700
-          "
-        >
-          Back to Services
-        </Link>
+        <PageHero
+          title="Service Not Found"
+          subtitle="The service you are looking for does not exist."
+        />
+
+        <section className="px-6 py-20 text-center">
+
+          <h2 className="mb-4 text-2xl font-bold text-gray-900">
+            Service Not Found
+          </h2>
+
+          <p className="mb-8 text-gray-600">
+            The requested service could not be found.
+          </p>
+
+          <Link
+            to="/services"
+            className="inline-flex items-center gap-2 rounded-lg bg-black px-6 py-3 font-medium text-white transition hover:bg-gray-800"
+          >
+            Back to Services
+            <ArrowRight size={18} />
+          </Link>
+
+        </section>
+
       </div>
     );
   }
 
   // ====================================================
-  // CREATE SERVICE KEY
+  // SERVICE KEY
   // ====================================================
 
   const serviceKey = service.title
     ?.toLowerCase()
     .trim()
-    .replace(/&/g, "and")
-    .replace(/[^\w\s-]/g, "")
-    .replace(/\s+/g, "-");
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
 
   // ====================================================
-  // CHECK IF BACKEND HAS DETAILED CONTENT
+  // ADMIN CONTENT CHECK
   // ====================================================
 
-  const hasBackendContent =
-    Boolean(service.intro) ||
-    (Array.isArray(service.paragraphs) &&
-      service.paragraphs.length > 0) ||
-    Boolean(service.bulletTitle) ||
+  const hasAdminContent =
+    Boolean(service.intro?.trim()) ||
+    Boolean(
+      service.longDescription?.trim()
+    ) ||
+    Boolean(service.bulletTitle?.trim()) ||
     (Array.isArray(service.bullets) &&
       service.bullets.length > 0) ||
     (Array.isArray(service.provides) &&
       service.provides.length > 0);
 
   // ====================================================
-  // DETERMINE CONTENT SOURCE
+  // CONTENT PRIORITY
   // ====================================================
 
   let content = null;
 
-  /*
-    IMPORTANT:
-
-    If backend has detailed content:
-      → Use backend content.
-
-    If backend does NOT have detailed content:
-      → Check predefined frontend serviceContent.
-
-    If neither exists:
-      → content remains null.
-
-    defaultContent is NOT used here.
-  */
-
-  if (hasBackendContent) {
-    content = {
-      intro: service.intro || "",
-      paragraphs: Array.isArray(service.paragraphs)
-        ? service.paragraphs
-        : [],
-      bulletTitle: service.bulletTitle || "",
-      bullets: Array.isArray(service.bullets)
-        ? service.bullets
-        : [],
-      provides: Array.isArray(service.provides)
-        ? service.provides
-        : [],
-    };
+  if (hasAdminContent) {
+    content = normalizeContent(service);
   } else if (serviceContent[serviceKey]) {
-    content = serviceContent[serviceKey];
+    content = normalizeContent(
+      serviceContent[serviceKey]
+    );
   }
 
   // ====================================================
-  // RENDER
+  // UI
   // ====================================================
 
   return (
-    <>
-      {/* ==================================================
-          PAGE HERO
-      ================================================== */}
+    <div className="min-h-screen bg-white">
+
+      {/* HERO */}
 
       <PageHero
-        badge="Service Details"
         title={service.title}
-        description={service.description}
+        subtitle={
+          service.description ||
+          service.shortDescription ||
+          "Explore our professional services."
+        }
       />
 
-      {/* ==================================================
-          SERVICE DETAILS
-      ================================================== */}
+      {/* MAIN */}
 
-      <section className="bg-white py-12 sm:py-16 lg:py-20">
-        <div
-          className="
-            mx-auto
-            grid
-            max-w-7xl
-            gap-10
-            px-4
-            sm:px-6
-            lg:grid-cols-3
-            lg:gap-14
-            lg:px-8
-          "
-        >
-          {/* ==================================================
-              MAIN CONTENT
-          ================================================== */}
+      <section className="px-5 py-12 sm:px-6 lg:px-8 lg:py-20">
 
-          <div className="min-w-0 lg:col-span-2">
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[1fr_320px] lg:px-8">
 
-            {/* ==================================================
-                CATEGORY
-            ================================================== */}
+          {/* LEFT */}
 
-            <span
-              className="
-                text-xs
-                font-bold
-                uppercase
-                tracking-[0.15em]
-                text-indigo-600
-                sm:text-sm
-                sm:tracking-widest
-              "
-            >
-              {service.category}
-            </span>
+          <div>
 
-            {/* ==================================================
-                TITLE
-            ================================================== */}
+            {/* INTRO */}
 
-            <h2
-              className="
-                mt-3
-                text-3xl
-                font-black
-                leading-tight
-                text-slate-900
-                sm:mt-4
-                sm:text-4xl
-                lg:text-5xl
-              "
-            >
-              {service.title}
-            </h2>
+            {content?.intro && (
 
-            {/* ==================================================
-                ONLY SHOW DETAILED CONTENT IF AVAILABLE
-            ================================================== */}
+              <div className="mb-8">
 
-            {content && (
-              <>
-                {/* ==================================================
-                    INTRO
-                ================================================== */}
+                <p className="text-lg leading-8 text-gray-700">
+                  {content.intro}
+                </p>
 
-                {content.intro && (
-                  <p
-                    className="
-                      mt-5
-                      text-base
-                      leading-7
-                      text-slate-600
-                      sm:mt-6
-                      sm:text-lg
-                      sm:leading-8
-                    "
-                  >
-                    {content.intro}
-                  </p>
-                )}
+              </div>
 
-                {/* ==================================================
-                    PARAGRAPH 1
-                ================================================== */}
+            )}
 
-                {content.paragraphs?.[0] && (
-                  <p
-                    className="
-                      mt-5
-                      text-base
-                      leading-7
-                      text-slate-600
-                      sm:leading-8
-                    "
-                  >
-                    {content.paragraphs[0]}
-                  </p>
-                )}
+            {/* LONG DESCRIPTION */}
 
-                {/* ==================================================
-                    BULLETS
-                ================================================== */}
+            {content?.longDescription && (
 
-                {content.bullets?.length > 0 && (
-                  <div className="my-8 sm:my-10">
+              <div className="mb-10">
 
-                    <h3
-                      className="
-                        text-xl
-                        font-black
-                        text-slate-900
-                        sm:text-2xl
-                      "
-                    >
-                      {content.bulletTitle || "Our Approach"}
-                    </h3>
+                <h2 className="mb-5 text-2xl font-bold text-gray-900">
+                  About {service.title}
+                </h2>
 
-                    <ul
-                      className="
-                        mt-5
-                        list-disc
-                        space-y-3
-                        pl-5
-                        marker:text-indigo-600
-                      "
-                    >
-                      {content.bullets.map((item, index) => (
-                        <li
-                          key={`${item}-${index}`}
-                          className="
-                            pl-1
-                            text-sm
-                            leading-6
-                            text-slate-700
-                            sm:text-base
-                            sm:leading-7
-                          "
-                        >
+                {content.longDescription
+                  .split(/\n\s*\n/)
+                  .map(
+                    (
+                      paragraph,
+                      index
+                    ) => (
+
+                      <p
+                        key={index}
+                        className="mb-5 text-base leading-8 text-gray-600"
+                      >
+                        {paragraph}
+                      </p>
+
+                    )
+                  )}
+
+              </div>
+
+            )}
+
+            {/* BULLETS */}
+
+            {content?.bullets?.length > 0 && (
+
+              <div className="mb-12">
+
+                <h2 className="mb-6 text-2xl font-bold text-gray-900">
+                  {content.bulletTitle ||
+                    "How We Work"}
+                </h2>
+
+                <div className="space-y-4">
+
+                  {content.bullets.map(
+                    (
+                      item,
+                      index
+                    ) => (
+
+                      <div
+                        key={index}
+                        className="flex items-start gap-3"
+                      >
+
+                        <CheckCircle2
+                          size={22}
+                          className="mt-1 shrink-0 text-green-600"
+                        />
+
+                        <p className="text-base leading-7 text-gray-600">
                           {item}
-                        </li>
-                      ))}
-                    </ul>
+                        </p>
 
-                  </div>
-                )}
+                      </div>
 
-                {/* ==================================================
-                    PARAGRAPH 2
-                ================================================== */}
+                    )
+                  )}
 
-                {content.paragraphs?.[1] && (
-                  <p
-                    className="
-                      text-base
-                      leading-7
-                      text-slate-600
-                      sm:text-lg
-                      sm:leading-8
-                    "
-                  >
-                    {content.paragraphs[1]}
-                  </p>
-                )}
+                </div>
 
-                {/* ==================================================
-                    PARAGRAPH 3
-                ================================================== */}
+              </div>
 
-                {content.paragraphs?.[2] && (
-                  <p
-                    className="
-                      mt-5
-                      text-base
-                      leading-7
-                      text-slate-600
-                      sm:leading-8
-                    "
-                  >
-                    {content.paragraphs[2]}
-                  </p>
-                )}
+            )}
 
-                {/* ==================================================
-                    WHAT WE PROVIDE
-                ================================================== */}
+            {/* PROVIDES */}
 
-                {content.provides?.length > 0 && (
-                  <>
-                    <h3
-                      className="
-                        mt-10
-                        text-2xl
-                        font-black
-                        text-slate-900
-                        sm:mt-12
-                        sm:text-3xl
-                      "
-                    >
-                      What We Provide
-                    </h3>
+            {content?.provides?.length > 0 && (
 
-                    <p
-                      className="
-                        mt-3
-                        text-sm
-                        leading-6
-                        text-slate-600
-                        sm:text-base
-                      "
-                    >
-                      Our services are tailored to the requirements
-                      of your project. Depending on your goals, we
-                      can provide the following solutions:
-                    </p>
+              <div>
 
-                    {/* Cards */}
+                <h2 className="mb-6 text-2xl font-bold text-gray-900">
+                  What We Provide
+                </h2>
 
-                    <div
-                      className="
-                        mt-6
-                        grid
-                        gap-3
-                        sm:grid-cols-2
-                        sm:gap-4
-                      "
-                    >
-                      {content.provides.map((item, index) => (
-                        <div
-                          key={`${item}-${index}`}
-                          className="
-                            flex
-                            items-start
-                            gap-3
-                            rounded-xl
-                            border
-                            border-slate-200
-                            bg-white
-                            p-4
-                            transition-all
-                            duration-300
-                            hover:border-indigo-200
-                            hover:bg-indigo-50/40
-                          "
-                        >
+                <div className="grid gap-4 sm:grid-cols-2">
+
+                  {content.provides.map(
+                    (
+                      item,
+                      index
+                    ) => (
+
+                      <div
+                        key={index}
+                        className="rounded-xl border border-gray-200 bg-gray-50 p-5 transition hover:shadow-md"
+                      >
+
+                        <div className="flex items-start gap-3">
+
                           <CheckCircle2
                             size={20}
-                            className="
-                              mt-0.5
-                              shrink-0
-                              text-indigo-600
-                            "
+                            className="mt-0.5 shrink-0 text-green-600"
                           />
 
-                          <span
-                            className="
-                              text-sm
-                              font-medium
-                              leading-6
-                              text-slate-700
-                              sm:text-base
-                            "
-                          >
+                          <p className="font-medium text-gray-800">
                             {item}
-                          </span>
+                          </p>
+
                         </div>
-                      ))}
-                    </div>
-                  </>
-                )}
-              </>
+
+                      </div>
+
+                    )
+                  )}
+
+                </div>
+
+              </div>
+
+            )}
+
+            {/* NO CONTENT */}
+
+            {!content && (
+
+              <div className="rounded-xl bg-gray-50 p-6">
+
+                <p className="text-gray-600">
+                  Detailed content for this service
+                  has not been added yet.
+                </p>
+
+              </div>
+
             )}
 
           </div>
 
-          {/* ==================================================
-              SIDEBAR
-          ================================================== */}
+          {/* SIDEBAR */}
 
-          <aside
-            className="
-              h-fit
-              rounded-2xl
-              bg-slate-950
-              p-5
-              text-white
-              sm:p-7
-              lg:sticky
-              lg:top-24
-            "
-          >
-            <h3
-              className="
-                text-xl
-                font-bold
-                sm:text-2xl
-              "
-            >
-              Need This Service?
+          <aside className="h-fit rounded-2xl bg-gray-50 p-6">
+
+            <h3 className="mb-5 text-xl font-bold text-gray-900">
+              Service Information
             </h3>
 
-            <p
-              className="
-                mt-4
-                text-sm
-                leading-7
-                text-slate-400
-                sm:text-base
-              "
-            >
-              Tell us about your project requirements and our team
-              will help you plan the right digital solution.
-            </p>
+            {service.category && (
 
-            {/* Get Quote */}
+              <div className="mb-5">
 
-            <Link
-              to="/get-quote"
-              className="
-                mt-6
-                flex
-                items-center
-                justify-center
-                gap-2
-                rounded-lg
-                bg-indigo-600
-                px-5
-                py-3.5
-                text-sm
-                font-bold
-                transition-colors
-                hover:bg-indigo-700
-                sm:mt-7
-                sm:py-4
-                sm:text-base
-              "
-            >
-              Get A Quote
-              <ArrowRight size={17} />
-            </Link>
+                <p className="mb-1 text-sm text-gray-500">
+                  Category
+                </p>
 
-            {/* Contact */}
+                <p className="font-semibold text-gray-900">
+                  {service.category}
+                </p>
+
+              </div>
+
+            )}
+
+            {service.status && (
+
+              <div className="mb-5">
+
+                <p className="mb-1 text-sm text-gray-500">
+                  Status
+                </p>
+
+                <span
+                  className={`inline-flex rounded-full px-3 py-1 text-sm font-medium ${
+                    service.status === "Active"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-gray-200 text-gray-700"
+                  }`}
+                >
+                  {service.status}
+                </span>
+
+              </div>
+
+            )}
 
             <Link
-              to="/contact"
-              className="
-                mt-3
-                block
-                text-center
-                text-sm
-                font-semibold
-                text-indigo-400
-                transition-colors
-                hover:text-indigo-300
-              "
+              to="/services"
+              className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-black px-5 py-3 font-medium text-white transition hover:bg-gray-800"
             >
-              Contact Us
+              All Services
+              <ArrowRight size={18} />
             </Link>
+
           </aside>
 
         </div>
+
       </section>
-    </>
+
+    </div>
   );
 }
-
-export default ServiceDetails;
-

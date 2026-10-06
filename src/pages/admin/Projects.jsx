@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+
 import {
   Plus,
   Search,
@@ -24,7 +25,7 @@ const EMPTY_FORM = {
   title: "",
   category: "",
   description: "",
-  shortDescription: "",
+  longDescription: "",
   client: "",
   year: "",
   image: "",
@@ -201,48 +202,51 @@ function Projects({
   }, [projects]);
 
   // ======================================================
-  // FILTER PROJECTS
+  // FILTER + SORT PROJECTS
+  // NEWEST PROJECT FIRST
   // ======================================================
 
   const filteredProjects = useMemo(() => {
     const term = search.trim().toLowerCase();
 
-    return projects.filter((project) => {
-      const matchesSearch =
-        !term ||
-        project.title
-          ?.toLowerCase()
-          .includes(term) ||
-        project.category
-          ?.toLowerCase()
-          .includes(term) ||
-        project.client
-          ?.toLowerCase()
-          .includes(term) ||
-        project.description
-          ?.toLowerCase()
-          .includes(term) ||
-        project.shortDescription
-          ?.toLowerCase()
-          .includes(term) ||
-        project.status
-          ?.toLowerCase()
-          .includes(term);
+    return [...projects]
+      .reverse()
+      .filter((project) => {
+        const matchesSearch =
+          !term ||
+          project.title
+            ?.toLowerCase()
+            .includes(term) ||
+          project.category
+            ?.toLowerCase()
+            .includes(term) ||
+          project.client
+            ?.toLowerCase()
+            .includes(term) ||
+          project.description
+            ?.toLowerCase()
+            .includes(term) ||
+          project.longDescription
+            ?.toLowerCase()
+            .includes(term) ||
+          project.status
+            ?.toLowerCase()
+            .includes(term);
 
-      const matchesCategory =
-        !categoryFilter ||
-        project.category === categoryFilter;
+        const matchesCategory =
+          !categoryFilter ||
+          project.category === categoryFilter;
 
-      const matchesStatus =
-        !statusFilter ||
-        project.status === statusFilter;
+        const matchesStatus =
+          !statusFilter ||
+          project.status === statusFilter;
 
-      return (
-        matchesSearch &&
-        matchesCategory &&
-        matchesStatus
-      );
-    });
+        return (
+          matchesSearch &&
+          matchesCategory &&
+          matchesStatus
+        );
+      });
   }, [
     projects,
     search,
@@ -332,6 +336,39 @@ function Projects({
       return () => clearTimeout(timer);
     }
   }, [showModal]);
+
+  // ======================================================
+  // LOCK BACKGROUND SCROLL WHEN MODAL IS OPEN
+  // ======================================================
+
+  useEffect(() => {
+    if (showModal || viewingProject) {
+      const originalOverflow =
+        document.body.style.overflow;
+
+      const originalPaddingRight =
+        document.body.style.paddingRight;
+
+      const scrollbarWidth =
+        window.innerWidth -
+        document.documentElement.clientWidth;
+
+      document.body.style.overflow = "hidden";
+
+      if (scrollbarWidth > 0) {
+        document.body.style.paddingRight =
+          `${scrollbarWidth}px`;
+      }
+
+      return () => {
+        document.body.style.overflow =
+          originalOverflow;
+
+        document.body.style.paddingRight =
+          originalPaddingRight;
+      };
+    }
+  }, [showModal, viewingProject]);
 
   // ======================================================
   // KEYBOARD HELPERS
@@ -430,7 +467,7 @@ function Projects({
 
   const handleAdd = () => {
     setEditingProject(null);
-    setForm(EMPTY_FORM);
+    setForm({ ...EMPTY_FORM });
     setErrors({});
     setImageError("");
     setShowModal(true);
@@ -447,15 +484,14 @@ function Projects({
       title: project.title || "",
       category: project.category || "",
       description: project.description || "",
-      shortDescription:
-        project.shortDescription || "",
+      longDescription:
+        project.longDescription || "",
       client: project.client || "",
       year: project.year
         ? String(project.year)
         : "",
       image: project.image || "",
-      status:
-        project.status || "Completed",
+      status: project.status || "Completed",
     });
 
     setErrors({});
@@ -470,7 +506,7 @@ function Projects({
   const closeModal = () => {
     setShowModal(false);
     setEditingProject(null);
-    setForm(EMPTY_FORM);
+    setForm({ ...EMPTY_FORM });
     setErrors({});
     setImageError("");
   };
@@ -498,8 +534,6 @@ function Projects({
     const category = form.category.trim();
     const client = form.client.trim();
     const year = form.year.trim();
-    const shortDescription =
-      form.shortDescription.trim();
     const description =
       form.description.trim();
 
@@ -539,11 +573,6 @@ function Projects({
     } else if (!/^\d{4}$/.test(year)) {
       newErrors.year =
         "Year must contain exactly 4 numbers.";
-    }
-
-    if (!shortDescription) {
-      newErrors.shortDescription =
-        "Short description is required.";
     }
 
     if (!description) {
@@ -614,16 +643,31 @@ function Projects({
         : nextId(projects),
 
       title: form.title.trim(),
+
       category: form.category.trim(),
+
       description:
         form.description.trim(),
-      shortDescription:
-        form.shortDescription.trim(),
+
+      longDescription:
+        form.longDescription.trim(),
+
       client: form.client.trim(),
+
       year: form.year.trim(),
+
       image: form.image,
+
       status: form.status,
+
+      isAdminCreated: editingProject
+        ? editingProject.isAdminCreated === true
+        : true,
     };
+
+    // ====================================================
+    // EDIT EXISTING PROJECT
+    // ====================================================
 
     if (editingProject) {
       setProjects((prev) =>
@@ -633,7 +677,13 @@ function Projects({
             : project
         )
       );
-    } else {
+    }
+
+    // ====================================================
+    // ADD NEW PROJECT
+    // ====================================================
+
+    else {
       setProjects((prev) => [
         ...prev,
         projectData,
@@ -659,9 +709,15 @@ function Projects({
         (project) => project.id !== id
       )
     );
+
+    if (
+      viewingProject &&
+      viewingProject.id === id
+    ) {
+      setViewingProject(null);
+    }
   };
 
- 
   // ======================================================
   // VIEW MODAL OUTSIDE CLICK
   // ======================================================
@@ -675,16 +731,34 @@ function Projects({
   };
 
   // ======================================================
+  // STATUS CLASS
+  // ======================================================
+
+  const getStatusClass = (status) => {
+    if (status === "Completed") {
+      return "bg-emerald-50 text-emerald-600";
+    }
+
+    if (status === "In Progress") {
+      return "bg-blue-50 text-blue-600";
+    }
+
+    return "bg-amber-50 text-amber-600";
+  };
+
+  // ======================================================
   // RENDER
   // ======================================================
 
   return (
-    <div className="min-h-full space-y-6 bg-white text-slate-900">
+    <div className="min-h-full space-y-6">
+
       {/* ==================================================
           HEADER
       ================================================== */}
 
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+
         <div>
           <h1 className="text-2xl font-bold text-slate-900">
             Projects
@@ -703,20 +777,24 @@ function Projects({
           <Plus size={18} />
           Add Project
         </button>
+
       </div>
 
       {/* ==================================================
           SEARCH + FILTERS
       ================================================== */}
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <div>
+
         <div
           ref={filterDropdownRef}
           className="flex flex-col gap-3 lg:flex-row"
         >
+
           {/* SEARCH */}
 
           <div className="relative flex-1">
+
             <Search
               size={18}
               className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
@@ -731,11 +809,13 @@ function Projects({
               placeholder="Search projects..."
               className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
             />
+
           </div>
 
           {/* CATEGORY FILTER */}
 
           <div className="relative">
+
             <button
               type="button"
               onClick={() =>
@@ -760,6 +840,7 @@ function Projects({
 
             {openFilter === "category" && (
               <div className="absolute right-0 z-30 mt-2 max-h-64 w-full min-w-[220px] overflow-auto rounded-xl border border-slate-200 bg-white p-1 shadow-xl">
+
                 <button
                   type="button"
                   onClick={() => {
@@ -788,13 +869,16 @@ function Projects({
                     </button>
                   )
                 )}
+
               </div>
             )}
+
           </div>
 
           {/* STATUS FILTER */}
 
           <div className="relative">
+
             <button
               type="button"
               onClick={() =>
@@ -819,6 +903,7 @@ function Projects({
 
             {openFilter === "status" && (
               <div className="absolute right-0 z-30 mt-2 w-full min-w-[220px] rounded-xl border border-slate-200 bg-white p-1 shadow-xl">
+
                 <button
                   type="button"
                   onClick={() => {
@@ -847,12 +932,14 @@ function Projects({
                     </button>
                   )
                 )}
+
               </div>
             )}
+
           </div>
 
-          
         </div>
+
       </div>
 
       {/* ==================================================
@@ -860,10 +947,14 @@ function Projects({
       ================================================== */}
 
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
         <div className="overflow-x-auto">
-          <table className="min-w-[900px] w-full">
+
+          <table className="w-full min-w-[900px]">
+
             <thead>
               <tr className="border-b border-slate-200 bg-slate-50">
+
                 <th className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
                   Project
                 </th>
@@ -887,11 +978,14 @@ function Projects({
                 <th className="px-5 py-4 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
                   Actions
                 </th>
+
               </tr>
             </thead>
 
             <tbody>
+
               {filteredProjects.length === 0 ? (
+
                 <tr>
                   <td
                     colSpan={6}
@@ -900,44 +994,54 @@ function Projects({
                     No projects found.
                   </td>
                 </tr>
+
               ) : (
+
                 filteredProjects.map(
                   (project) => (
+
                     <tr
                       key={project.id}
                       className="border-b border-slate-100 transition hover:bg-slate-50"
                     >
+
                       {/* PROJECT */}
 
                       <td className="px-5 py-4">
+
                         <div className="flex items-center gap-3">
+
                           {project.image ? (
+
                             <img
                               src={project.image}
                               alt={project.title}
                               className="h-12 w-16 rounded-lg object-cover"
                             />
+
                           ) : (
+
                             <div className="flex h-12 w-16 items-center justify-center rounded-lg bg-slate-100">
+
                               <ImagePlus
                                 size={18}
                                 className="text-slate-400"
                               />
+
                             </div>
+
                           )}
 
                           <div className="min-w-0">
+
                             <p className="truncate font-semibold text-slate-900">
                               {project.title}
                             </p>
 
-                            <p className="mt-1 max-w-[260px] truncate text-xs text-slate-500">
-                              {
-                                project.shortDescription
-                              }
-                            </p>
                           </div>
+
                         </div>
+
                       </td>
 
                       {/* CATEGORY */}
@@ -961,25 +1065,23 @@ function Projects({
                       {/* STATUS */}
 
                       <td className="px-5 py-4">
+
                         <span
-                          className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${
-                            project.status ===
-                            "Completed"
-                              ? "bg-emerald-50 text-emerald-600"
-                              : project.status ===
-                                "In Progress"
-                              ? "bg-blue-50 text-blue-600"
-                              : "bg-amber-50 text-amber-600"
-                          }`}
+                          className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${getStatusClass(
+                            project.status
+                          )}`}
                         >
                           {project.status}
                         </span>
+
                       </td>
 
                       {/* ACTIONS */}
 
                       <td className="px-5 py-4">
+
                         <div className="flex justify-end gap-2">
+
                           <button
                             type="button"
                             title="View"
@@ -1018,15 +1120,24 @@ function Projects({
                           >
                             <Trash2 size={17} />
                           </button>
+
                         </div>
+
                       </td>
+
                     </tr>
+
                   )
                 )
+
               )}
+
             </tbody>
+
           </table>
+
         </div>
+
       </div>
 
       {/* ==================================================
@@ -1034,20 +1145,25 @@ function Projects({
       ================================================== */}
 
       {showModal && (
+
         <div
           onMouseDown={handleFormModalClick}
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
         >
+
           <div
             onMouseDown={(event) =>
               event.stopPropagation()
             }
             className="max-h-[95vh] w-full max-w-3xl overflow-y-auto rounded-2xl border border-slate-200 bg-white shadow-2xl"
           >
+
             {/* MODAL HEADER */}
 
             <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white px-6 py-5">
+
               <div>
+
                 <h2 className="text-xl font-bold text-slate-900">
                   {editingProject
                     ? "Edit Project"
@@ -1059,6 +1175,7 @@ function Projects({
                     ? "Update project information."
                     : "Add a new project to your portfolio."}
                 </p>
+
               </div>
 
               <button
@@ -1068,6 +1185,7 @@ function Projects({
               >
                 <X size={20} />
               </button>
+
             </div>
 
             {/* FORM */}
@@ -1076,15 +1194,15 @@ function Projects({
               onSubmit={handleSubmit}
               className="space-y-6 p-6"
             >
-              {/* ==================================================
-                  TITLE / CATEGORY
-                  TWO COLUMNS UNTIL 450PX
-              ================================================== */}
+
+              {/* TITLE / CATEGORY */}
 
               <div className="grid grid-cols-2 gap-5 max-[449px]:grid-cols-1">
-                {/* PROJECT TITLE */}
+
+                {/* TITLE */}
 
                 <div>
+
                   <label className="mb-2 block text-sm font-medium text-slate-700">
                     Project Title
                     <span className="ml-1 text-red-500">
@@ -1102,7 +1220,9 @@ function Projects({
                         event.target.value
                       )
                     }
-                    onKeyDown={handleTextKeyDown}
+                    onKeyDown={
+                      handleTextKeyDown
+                    }
                     placeholder="Enter project title"
                     className={`w-full rounded-xl border bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 ${
                       errors.title
@@ -1116,11 +1236,13 @@ function Projects({
                       {errors.title}
                     </p>
                   )}
+
                 </div>
 
                 {/* CATEGORY */}
 
                 <div>
+
                   <label className="mb-2 block text-sm font-medium text-slate-700">
                     Category
                     <span className="ml-1 text-red-500">
@@ -1137,7 +1259,9 @@ function Projects({
                         event.target.value
                       )
                     }
-                    onKeyDown={handleTextKeyDown}
+                    onKeyDown={
+                      handleTextKeyDown
+                    }
                     placeholder="e.g. Web Development"
                     className={`w-full rounded-xl border bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 ${
                       errors.category
@@ -1151,18 +1275,19 @@ function Projects({
                       {errors.category}
                     </p>
                   )}
+
                 </div>
+
               </div>
 
-              {/* ==================================================
-                  CLIENT / YEAR
-                  TWO COLUMNS UNTIL 450PX
-              ================================================== */}
+              {/* CLIENT / YEAR */}
 
               <div className="grid grid-cols-2 gap-5 max-[449px]:grid-cols-1">
+
                 {/* CLIENT */}
 
                 <div>
+
                   <label className="mb-2 block text-sm font-medium text-slate-700">
                     Client
                     <span className="ml-1 text-red-500">
@@ -1179,7 +1304,9 @@ function Projects({
                         event.target.value
                       )
                     }
-                    onKeyDown={handleTextKeyDown}
+                    onKeyDown={
+                      handleTextKeyDown
+                    }
                     placeholder="Enter client name"
                     className={`w-full rounded-xl border bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 ${
                       errors.client
@@ -1193,11 +1320,13 @@ function Projects({
                       {errors.client}
                     </p>
                   )}
+
                 </div>
 
                 {/* YEAR */}
 
                 <div>
+
                   <label className="mb-2 block text-sm font-medium text-slate-700">
                     Year
                     <span className="ml-1 text-red-500">
@@ -1216,7 +1345,9 @@ function Projects({
                         event.target.value
                       )
                     }
-                    onKeyDown={handleYearKeyDown}
+                    onKeyDown={
+                      handleYearKeyDown
+                    }
                     placeholder="e.g. 2026"
                     className={`w-full rounded-xl border bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 ${
                       errors.year
@@ -1230,14 +1361,15 @@ function Projects({
                       {errors.year}
                     </p>
                   )}
+
                 </div>
+
               </div>
 
-              {/* ==================================================
-                  STATUS
-              ================================================== */}
+              {/* STATUS */}
 
               <div>
+
                 <label className="mb-2 block text-sm font-medium text-slate-700">
                   Status
                 </label>
@@ -1250,8 +1382,9 @@ function Projects({
                       event.target.value
                     )
                   }
-                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                  className="w-full rounded-xl cursor-pointer border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                 >
+
                   {STATUS_OPTIONS.map(
                     (status) => (
                       <option
@@ -1262,50 +1395,15 @@ function Projects({
                       </option>
                     )
                   )}
+
                 </select>
+
               </div>
 
-              {/* ==================================================
-                  SHORT DESCRIPTION
-              ================================================== */}
+              {/* PROJECT DESCRIPTION */}
 
               <div>
-                <label className="mb-2 block text-sm font-medium text-slate-700">
-                  Short Description
-                  <span className="ml-1 text-red-500">
-                    *
-                  </span>
-                </label>
 
-                <textarea
-                  rows={3}
-                  value={form.shortDescription}
-                  onChange={(event) =>
-                    handleChange(
-                      "shortDescription",
-                      event.target.value
-                    )
-                  }
-                  placeholder="Enter a short project description"
-                  className={`w-full resize-none rounded-xl border bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 ${
-                    errors.shortDescription
-                      ? "border-red-500"
-                      : "border-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-                  }`}
-                />
-
-                {errors.shortDescription && (
-                  <p className="mt-1.5 text-xs text-red-500">
-                    {errors.shortDescription}
-                  </p>
-                )}
-              </div>
-
-              {/* ==================================================
-                  DESCRIPTION
-              ================================================== */}
-
-              <div>
                 <label className="mb-2 block text-sm font-medium text-slate-700">
                   Project Description
                   <span className="ml-1 text-red-500">
@@ -1335,13 +1433,42 @@ function Projects({
                     {errors.description}
                   </p>
                 )}
+
               </div>
 
-              {/* ==================================================
-                  PROJECT IMAGE
-              ================================================== */}
+              {/* LONG DESCRIPTION */}
 
               <div>
+
+                <label className="mb-2 block text-sm font-medium text-slate-700">
+                  Long Description
+                </label>
+
+                <textarea
+                  rows={12}
+                  value={form.longDescription}
+                  onChange={(event) =>
+                    handleChange(
+                      "longDescription",
+                      event.target.value
+                    )
+                  }
+                  placeholder="Enter detailed project description..."
+                  className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                />
+
+                <p className="mt-1.5 text-xs text-slate-500">
+                  Add the complete project details.
+                  You can use blank lines between
+                  paragraphs.
+                </p>
+
+              </div>
+
+              {/* PROJECT IMAGE */}
+
+              <div>
+
                 <label className="mb-2 block text-sm font-medium text-slate-700">
                   Project Image
                   <span className="ml-1 text-red-500">
@@ -1350,8 +1477,11 @@ function Projects({
                 </label>
 
                 <label className="flex min-h-[180px] cursor-pointer flex-col items-center justify-center overflow-hidden rounded-xl border border-dashed border-slate-300 bg-slate-50 transition hover:border-indigo-500 hover:bg-slate-100">
+
                   {form.image ? (
+
                     <div className="relative h-full min-h-[180px] w-full">
+
                       <img
                         src={form.image}
                         alt="Project preview"
@@ -1359,13 +1489,19 @@ function Projects({
                       />
 
                       <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition hover:opacity-100">
+
                         <span className="rounded-lg bg-white/90 px-4 py-2 text-sm font-medium text-slate-900">
                           Change Image
                         </span>
+
                       </div>
+
                     </div>
+
                   ) : (
+
                     <>
+
                       <ImagePlus
                         size={32}
                         className="mb-3 text-slate-400"
@@ -1378,15 +1514,20 @@ function Projects({
                       <span className="mt-1 text-xs text-slate-500">
                         PNG, JPG, JPEG up to 10 MB
                       </span>
+
                     </>
+
                   )}
 
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={handleImageChange}
+                    onChange={
+                      handleImageChange
+                    }
                     className="hidden"
                   />
+
                 </label>
 
                 {imageError && (
@@ -1401,13 +1542,13 @@ function Projects({
                       {errors.image}
                     </p>
                   )}
+
               </div>
 
-              {/* ==================================================
-                  BUTTONS
-              ================================================== */}
+              {/* BUTTONS */}
 
               <div className="flex flex-col-reverse gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:justify-end">
+
                 <button
                   type="button"
                   onClick={closeModal}
@@ -1424,10 +1565,15 @@ function Projects({
                     ? "Update Project"
                     : "Add Project"}
                 </button>
+
               </div>
+
             </form>
+
           </div>
+
         </div>
+
       )}
 
       {/* ==================================================
@@ -1435,16 +1581,21 @@ function Projects({
       ================================================== */}
 
       {viewingProject && (
+
         <div
           ref={viewModalRef}
           onMouseDown={handleViewModalClick}
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
         >
+
           <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl border border-slate-200 bg-white shadow-2xl">
+
             {/* HEADER */}
 
             <div className="flex items-center justify-between border-b border-slate-200 px-6 py-5">
+
               <div>
+
                 <h2 className="text-xl font-bold text-slate-900">
                   Project Details
                 </h2>
@@ -1452,6 +1603,7 @@ function Projects({
                 <p className="mt-1 text-sm text-slate-500">
                   View project information
                 </p>
+
               </div>
 
               <button
@@ -1463,22 +1615,31 @@ function Projects({
               >
                 <X size={20} />
               </button>
+
             </div>
 
             {/* CONTENT */}
 
             <div className="space-y-6 p-6">
+
               {viewingProject.image && (
+
                 <img
                   src={viewingProject.image}
                   alt={viewingProject.title}
                   className="h-[260px] w-full rounded-2xl object-cover sm:h-[340px]"
                 />
+
               )}
 
+              {/* TITLE */}
+
               <div>
+
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+
                   <div>
+
                     <h3 className="text-2xl font-bold text-slate-900">
                       {viewingProject.title}
                     </h3>
@@ -1486,28 +1647,27 @@ function Projects({
                     <p className="mt-1 text-sm text-indigo-600">
                       {viewingProject.category}
                     </p>
+
                   </div>
 
                   <span
-                    className={`w-fit rounded-full px-3 py-1 text-xs font-medium ${
-                      viewingProject.status ===
-                      "Completed"
-                        ? "bg-emerald-50 text-emerald-600"
-                        : viewingProject.status ===
-                          "In Progress"
-                        ? "bg-blue-50 text-blue-600"
-                        : "bg-amber-50 text-amber-600"
-                    }`}
+                    className={`w-fit rounded-full px-3 py-1 text-xs font-medium ${getStatusClass(
+                      viewingProject.status
+                    )}`}
                   >
                     {viewingProject.status}
                   </span>
+
                 </div>
+
               </div>
 
               {/* PROJECT INFO */}
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+
                 <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+
                   <p className="text-xs uppercase tracking-wide text-slate-500">
                     Client
                   </p>
@@ -1515,9 +1675,11 @@ function Projects({
                   <p className="mt-1 font-medium text-slate-900">
                     {viewingProject.client}
                   </p>
+
                 </div>
 
                 <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+
                   <p className="text-xs uppercase tracking-wide text-slate-500">
                     Year
                   </p>
@@ -1525,52 +1687,63 @@ function Projects({
                   <p className="mt-1 font-medium text-slate-900">
                     {viewingProject.year}
                   </p>
+
                 </div>
+
               </div>
 
-              {/* SHORT DESCRIPTION */}
+              {/* PROJECT DESCRIPTION */}
 
-              <div>
-                <h4 className="mb-2 text-sm font-semibold text-slate-900">
-                  Short Description
-                </h4>
+              {viewingProject.description && (
 
-                <p className="text-sm leading-7 text-slate-600">
-                  {
-                    viewingProject.shortDescription
-                  }
-                </p>
-              </div>
+                <div>
 
-              {/* DESCRIPTION */}
+                  <h4 className="mb-2 text-sm font-semibold text-slate-900">
+                    Project Description
+                  </h4>
 
-              <div>
-                <h4 className="mb-2 text-sm font-semibold text-slate-900">
-                  Project Description
-                </h4>
+                  <p className="whitespace-pre-line text-sm leading-7 text-slate-600">
+                    {viewingProject.description}
+                  </p>
 
-                <p className="whitespace-pre-line text-sm leading-7 text-slate-600">
-                  {viewingProject.description}
-                </p>
-              </div>
+                </div>
+
+              )}
+
+              {/* LONG DESCRIPTION */}
+
+              {viewingProject.longDescription && (
+
+                <div>
+
+                  <h4 className="mb-2 text-sm font-semibold text-slate-900">
+                    Long Description
+                  </h4>
+
+                  <p className="whitespace-pre-line text-sm leading-7 text-slate-600">
+                    {
+                      viewingProject.longDescription
+                    }
+                  </p>
+
+                </div>
+
+              )}
+
             </div>
 
             {/* FOOTER */}
 
             <div className="border-t border-slate-200 px-6 py-4">
-              <button
-                type="button"
-                onClick={() =>
-                  setViewingProject(null)
-                }
-                className="w-full rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50 sm:w-auto"
-              >
-                Close
-              </button>
+
             </div>
+
           </div>
+
         </div>
+
       )}
+
     </div>
   );
 }

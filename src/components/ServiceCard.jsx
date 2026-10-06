@@ -26,7 +26,7 @@ function ServiceCard({ service }) {
   return (
     <Link
       to={`/services/${service.id}`}
-      className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-7 transition-all duration-500 hover:-translate-y-3 hover:border-indigo-200 hover:shadow-2xl"
+      className="group relative overflow-hidden rounded-2xl border border-slate-300 bg-white p-7 transition-all duration-500 hover:-translate-y-3 hover:border-indigo-200 hover:shadow-2xl"
     >
 
       {/* Hover glow */}

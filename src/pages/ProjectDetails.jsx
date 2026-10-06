@@ -1,4 +1,6 @@
+
 import { Link, useParams } from "react-router-dom";
+
 import {
   ArrowLeft,
   ArrowRight,
@@ -9,11 +11,12 @@ function ProjectDetails({ projects = [] }) {
   const { id } = useParams();
 
   // ======================================================
-  // FIND CURRENT PROJECT
+  // FIND PROJECT
   // ======================================================
 
   const projectIndex = projects.findIndex(
-    (project) => String(project.id) === String(id)
+    (project) =>
+      String(project.id) === String(id)
   );
 
   // ======================================================
@@ -24,6 +27,7 @@ function ProjectDetails({ projects = [] }) {
     return (
       <section className="flex min-h-[60vh] items-center justify-center bg-white px-4 py-20">
         <div className="text-center">
+
           <h1 className="text-3xl font-black text-slate-900">
             Project Not Found
           </h1>
@@ -34,11 +38,25 @@ function ProjectDetails({ projects = [] }) {
 
           <Link
             to="/projects"
-            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-3 font-semibold text-white transition hover:bg-indigo-700"
+            className="
+              mt-6
+              inline-flex
+              items-center
+              gap-2
+              rounded-xl
+              bg-indigo-600
+              px-6
+              py-3
+              font-semibold
+              text-white
+              transition
+              hover:bg-indigo-700
+            "
           >
             <ArrowLeft size={18} />
             Back to Projects
           </Link>
+
         </div>
       </section>
     );
@@ -49,6 +67,13 @@ function ProjectDetails({ projects = [] }) {
   // ======================================================
 
   const project = projects[projectIndex];
+
+  // ======================================================
+  // ADMIN CREATED PROJECT
+  // ======================================================
+
+  const isAdminCreated =
+    project.isAdminCreated === true;
 
   // ======================================================
   // PREVIOUS PROJECT
@@ -69,22 +94,89 @@ function ProjectDetails({ projects = [] }) {
       : null;
 
   // ======================================================
+  // SHORT DESCRIPTION
+  // ======================================================
+
+  const shortDescription =
+    project.shortDescription?.trim() || "";
+
+  // ======================================================
+  // DESCRIPTION
+  // ======================================================
+
+  const description =
+    project.description?.trim() || "";
+
+  const descriptionParagraphs =
+    description
+      ? description
+          .split(/\n\s*\n/)
+          .filter(
+            (paragraph) =>
+              paragraph.trim()
+          )
+      : [];
+
+  // ======================================================
   // LONG DESCRIPTION
   // ======================================================
 
   const longDescription =
-    project.longDescription ||
-    project.description ||
-    "Project description is not available.";
+    project.longDescription?.trim() || "";
+
+  const longDescriptionParagraphs =
+    longDescription
+      ? longDescription
+          .split(/\n\s*\n/)
+          .filter(
+            (paragraph) =>
+              paragraph.trim()
+          )
+      : [];
 
   // ======================================================
-  // CONVERT LONG DESCRIPTION INTO PARAGRAPHS
+  // DEFAULT CONTENT
+  //
+  // Used ONLY for existing projects.
+  // Admin-created projects will NEVER use this.
   // ======================================================
 
-  const descriptionParagraphs = longDescription
-    .trim()
-    .split(/\n\s*\n/)
-    .filter((paragraph) => paragraph.trim());
+  const defaultOverview = [
+    "This project was developed to deliver a modern, reliable, and user-focused solution based on the client's requirements.",
+
+    "The project focused on creating a strong digital experience with attention to design, functionality, performance, and usability.",
+
+    "Our team worked through planning, design, development, testing, and final implementation to ensure the project met the expected requirements.",
+
+    "The final solution provides a scalable foundation that can support future improvements and business growth.",
+  ];
+
+  // ======================================================
+  // OVERVIEW CONTENT
+  // ======================================================
+
+  const overviewParagraphs = isAdminCreated
+    ? descriptionParagraphs
+    : descriptionParagraphs.length > 0
+      ? descriptionParagraphs
+      : defaultOverview;
+
+  // ======================================================
+  // LONG DESCRIPTION CONTENT
+  //
+  // Admin project:
+  // Use ONLY longDescription.
+  //
+  // Existing project:
+  // Use longDescription if available.
+  // Otherwise use description/default overview.
+  // ======================================================
+
+  const detailedParagraphs = isAdminCreated
+    ? longDescriptionParagraphs
+    : longDescriptionParagraphs.length > 0
+      ? longDescriptionParagraphs
+      : overviewParagraphs;
 
   return (
     <main className="bg-white">
@@ -101,10 +193,21 @@ function ProjectDetails({ projects = [] }) {
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
-          {/* Back */}
+          {/* BACK */}
+
           <Link
             to="/projects"
-            className="mb-8 inline-flex items-center gap-2 text-sm font-semibold text-slate-300 transition hover:text-white"
+            className="
+              mb-8
+              inline-flex
+              items-center
+              gap-2
+              text-sm
+              font-semibold
+              text-slate-300
+              transition
+              hover:text-white
+            "
           >
             <ArrowLeft size={17} />
             Back to Projects
@@ -112,29 +215,71 @@ function ProjectDetails({ projects = [] }) {
 
           <div className="max-w-4xl">
 
-            {/* Category */}
+            {/* CATEGORY */}
+
             {project.category && (
-              <span className="inline-flex rounded-full border border-indigo-400/30 bg-indigo-500/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-indigo-300">
+              <span
+                className="
+                  inline-flex
+                  rounded-full
+                  border
+                  border-indigo-400/30
+                  bg-indigo-500/10
+                  px-4
+                  py-2
+                  text-xs
+                  font-bold
+                  uppercase
+                  tracking-[0.18em]
+                  text-indigo-300
+                "
+              >
                 {project.category}
               </span>
             )}
 
-            {/* Title */}
-            <h1 className="mt-6 text-4xl font-black leading-tight text-white sm:text-5xl lg:text-6xl">
+            {/* TITLE */}
+
+            <h1
+              className="
+                mt-6
+                text-4xl
+                font-black
+                leading-tight
+                text-white
+                sm:text-5xl
+                lg:text-6xl
+              "
+            >
               {project.title}
             </h1>
 
-            {/* Description */}
-            <p className="mt-6 max-w-3xl text-base leading-8 text-slate-300 sm:text-lg">
-              {project.description ||
-                "Project description is not available."}
-            </p>
+            {/* SHORT DESCRIPTION */}
 
-            {/* Project meta */}
+            {shortDescription && (
+              <p
+                className="
+                  mt-6
+                  max-w-3xl
+                  text-base
+                  leading-8
+                  text-slate-300
+                  sm:text-lg
+                "
+              >
+                {shortDescription}
+              </p>
+            )}
+
+            {/* META */}
+
             <div className="mt-8 flex flex-wrap gap-3">
+
+              {/* CLIENT */}
 
               {project.client && (
                 <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+
                   <p className="text-xs uppercase tracking-wider text-slate-500">
                     Client
                   </p>
@@ -142,11 +287,31 @@ function ProjectDetails({ projects = [] }) {
                   <p className="mt-1 text-sm font-semibold text-white">
                     {project.client}
                   </p>
+
                 </div>
               )}
 
+              {/* LOCATION */}
+
+              {project.location && (
+                <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+
+                  <p className="text-xs uppercase tracking-wider text-slate-500">
+                    Location
+                  </p>
+
+                  <p className="mt-1 text-sm font-semibold text-white">
+                    {project.location}
+                  </p>
+
+                </div>
+              )}
+
+              {/* YEAR */}
+
               {project.year && (
                 <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+
                   <p className="text-xs uppercase tracking-wider text-slate-500">
                     Year
                   </p>
@@ -154,11 +319,15 @@ function ProjectDetails({ projects = [] }) {
                   <p className="mt-1 text-sm font-semibold text-white">
                     {project.year}
                   </p>
+
                 </div>
               )}
 
+              {/* STATUS */}
+
               {project.status && (
                 <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+
                   <p className="text-xs uppercase tracking-wider text-slate-500">
                     Status
                   </p>
@@ -166,6 +335,7 @@ function ProjectDetails({ projects = [] }) {
                   <p className="mt-1 text-sm font-semibold text-white">
                     {project.status}
                   </p>
+
                 </div>
               )}
 
@@ -175,291 +345,446 @@ function ProjectDetails({ projects = [] }) {
       </section>
 
       {/* ==================================================
-    PROJECT IMAGE
+    IMAGE
 ================================================== */}
 
 {project.image && (
   <section className="bg-white pt-10 sm:pt-14 lg:pt-16">
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 shadow-sm sm:rounded-3xl">
+      <div className="w-full overflow-hidden rounded-2xl bg-slate-100 sm:rounded-3xl">
         <img
           src={project.image}
-          alt={project.title}
-          className="block h-auto max-h-[650px] w-full object-cover"
+          alt={project.title || "Project"}
+          className="
+            block
+            h-[300px]
+            w-full
+            object-cover
+            object-center
+            sm:h-[450px]
+            lg:h-[600px]
+          "
         />
       </div>
     </div>
   </section>
 )}
       {/* ==================================================
-    PROJECT CONTENT
-================================================== */}
-
-<section className="bg-white py-16 sm:py-20 lg:py-24">
-
-  <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-
-    <div className="grid grid-cols-1 gap-10 lg:grid-cols-3 lg:gap-12">
-
-      {/* ==================================================
-          MAIN CONTENT - PROJECT HIGHLIGHTS
+          CONTENT
       ================================================== */}
 
-      <div className="min-w-0 lg:col-span-2">
+      <section className="bg-white py-16 sm:py-20 lg:py-24">
 
-        {/* Section Label */}
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
-        <span className="text-sm font-bold uppercase tracking-[0.18em] text-indigo-600">
-          About The Project
-        </span>
+          <div className="grid grid-cols-1 gap-10 lg:grid-cols-3 lg:gap-12">
 
-        {/* Heading */}
+            {/* ==================================================
+                MAIN CONTENT
+            ================================================== */}
 
-        <h2 className="mt-3 text-3xl font-black text-slate-900 sm:text-4xl">
-          Project Overview
-        </h2>
+            <div className="min-w-0 lg:col-span-2">
 
-        {/* Long Description */}
+              {/* ==================================================
+                  PROJECT OVERVIEW
+              ================================================== */}
 
-        <div className="mt-8 space-y-6">
+              {overviewParagraphs.length > 0 && (
+                <div>
 
-          {descriptionParagraphs.map((paragraph, index) => (
-            <p
-              key={index}
-              className="text-base leading-8 text-slate-600 sm:text-lg"
-            >
-              {paragraph.trim()}
-            </p>
-          ))}
-
-        </div>
-
-
-        {/* ==================================================
-            PROJECT HIGHLIGHTS
-        ================================================== */}
-
-        <div className="mt-12">
-
-          <h3 className="text-2xl font-bold text-slate-900">
-            Project Highlights
-          </h3>
-
-          <div className="mt-6 space-y-5">
-
-            {project.highlights?.length > 0 ? (
-              project.highlights.map((highlight, index) => (
-                <div
-                  key={index}
-                  className="flex items-start gap-3"
-                >
-                  <CheckCircle2
-                    size={21}
-                    className="mt-1 shrink-0 text-indigo-600"
-                  />
-
-                  <p className="text-base leading-7 text-slate-600">
-                    {highlight}
-                  </p>
-                </div>
-              ))
-            ) : (
-              <p className="text-base leading-7 text-slate-500">
-                Project highlights are not available.
-              </p>
-            )}
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-      {/* ==================================================
-          RIGHT SIDEBAR - PROJECT DETAILS
-      ================================================== */}
-
-      <aside className="min-w-0">
-
-        <div className="sticky top-24 rounded-2xl border border-slate-200 bg-slate-50 p-6 sm:p-7">
-
-          <h3 className="text-xl font-bold text-slate-900">
-            Project Details
-          </h3>
-
-          <div className="mt-6 divide-y divide-slate-200">
-
-            {/* Client */}
-
-            {project.client && (
-              <div className="py-4 first:pt-0">
-
-                <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                  Client
-                </p>
-
-                <p className="mt-2 text-base font-semibold text-slate-800">
-                  {project.client}
-                </p>
-
-              </div>
-            )}
-
-
-            {/* Category */}
-
-            {project.category && (
-              <div className="py-4">
-
-                <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                  Category
-                </p>
-
-                <p className="mt-2 text-base font-semibold text-slate-800">
-                  {project.category}
-                </p>
-
-              </div>
-            )}
-
-
-            {/* Year */}
-
-            {project.year && (
-              <div className="py-4">
-
-                <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                  Year
-                </p>
-
-                <p className="mt-2 text-base font-semibold text-slate-800">
-                  {project.year}
-                </p>
-
-              </div>
-            )}
-
-
-            {/* Status */}
-
-            {project.status && (
-              <div className="py-4 last:pb-0">
-
-                <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                  Status
-                </p>
-
-                <div className="mt-2">
-
-                  <span className="inline-flex rounded-full bg-emerald-100 px-3 py-1 text-sm font-semibold text-emerald-700">
-                    {project.status}
+                  <span className="text-sm font-bold uppercase tracking-[0.18em] text-indigo-600">
+                    About The Project
                   </span>
 
-                </div>
+                  <h2 className="mt-3 text-3xl font-black text-slate-900 sm:text-4xl">
+                    Project Overview
+                  </h2>
 
+                  <div className="mt-8 space-y-7">
+
+                    {overviewParagraphs.map(
+                      (paragraph, index) => (
+                        <p
+                          key={index}
+                          className="
+                            max-w-4xl
+                            text-base
+                            leading-8
+                            text-slate-600
+                            sm:text-lg
+                            sm:leading-9
+                          "
+                        >
+                          {paragraph.trim()}
+                        </p>
+                      )
+                    )}
+
+                  </div>
+
+                </div>
+              )}
+
+              {/* ==================================================
+                  LONG DESCRIPTION
+              ================================================== */}
+
+              {isAdminCreated &&
+                longDescriptionParagraphs.length > 0 && (
+                  <div className="mt-14">
+
+                    <span className="text-sm font-bold uppercase tracking-[0.18em] text-indigo-600">
+                      Detailed Information
+                    </span>
+
+                    <h2 className="mt-3 text-3xl font-black text-slate-900 sm:text-4xl">
+                      Project Details
+                    </h2>
+
+                    <div className="mt-8 space-y-7">
+
+                      {longDescriptionParagraphs.map(
+                        (paragraph, index) => (
+                          <p
+                            key={index}
+                            className="
+                              max-w-4xl
+                              text-base
+                              leading-8
+                              text-slate-600
+                              sm:text-lg
+                              sm:leading-9
+                            "
+                          >
+                            {paragraph.trim()}
+                          </p>
+                        )
+                      )}
+
+                    </div>
+
+                  </div>
+                )}
+
+              {/* ==================================================
+                  EXISTING PROJECT LONG DESCRIPTION
+              ================================================== */}
+
+              {!isAdminCreated &&
+                longDescriptionParagraphs.length > 0 && (
+                  <div className="mt-14">
+
+                    <span className="text-sm font-bold uppercase tracking-[0.18em] text-indigo-600">
+                      More Information
+                    </span>
+
+                    <h2 className="mt-3 text-3xl font-black text-slate-900 sm:text-4xl">
+                      Project Details
+                    </h2>
+
+                    <div className="mt-8 space-y-7">
+
+                      {longDescriptionParagraphs.map(
+                        (paragraph, index) => (
+                          <p
+                            key={index}
+                            className="
+                              max-w-4xl
+                              text-base
+                              leading-8
+                              text-slate-600
+                              sm:text-lg
+                              sm:leading-9
+                            "
+                          >
+                            {paragraph.trim()}
+                          </p>
+                        )
+                      )}
+
+                    </div>
+
+                  </div>
+                )}
+
+              {/* ==================================================
+                  HIGHLIGHTS
+              ================================================== */}
+
+              {project.highlights?.length > 0 && (
+                <div className="mt-12">
+
+                  <h3 className="text-2xl font-bold text-slate-900">
+                    Project Highlights
+                  </h3>
+
+                  <div className="mt-6 space-y-5">
+
+                    {project.highlights.map(
+                      (highlight, index) => (
+                        <div
+                          key={index}
+                          className="flex items-start gap-3"
+                        >
+
+                          <CheckCircle2
+                            size={21}
+                            className="mt-1 shrink-0 text-indigo-600"
+                          />
+
+                          <p className="text-base leading-7 text-slate-600">
+                            {highlight}
+                          </p>
+
+                        </div>
+                      )
+                    )}
+
+                  </div>
+
+                </div>
+              )}
+
+            </div>
+
+            {/* ==================================================
+                SIDEBAR
+            ================================================== */}
+
+            <aside className="min-w-0">
+
+              <div className="sticky top-24 rounded-2xl border border-slate-200 bg-slate-50 p-6 sm:p-7">
+
+                <h3 className="text-xl font-bold text-slate-900">
+                  Project Details
+                </h3>
+
+                <div className="mt-6 divide-y divide-slate-200">
+
+                  {/* CLIENT */}
+
+                  {project.client && (
+                    <div className="py-4 first:pt-0">
+
+                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                        Client
+                      </p>
+
+                      <p className="mt-2 text-base font-semibold text-slate-800">
+                        {project.client}
+                      </p>
+
+                    </div>
+                  )}
+
+                  {/* CATEGORY */}
+
+                  {project.category && (
+                    <div className="py-4">
+
+                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                        Category
+                      </p>
+
+                      <p className="mt-2 text-base font-semibold text-slate-800">
+                        {project.category}
+                      </p>
+
+                    </div>
+                  )}
+
+                  {/* LOCATION */}
+
+                  {project.location && (
+                    <div className="py-4">
+
+                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                        Location
+                      </p>
+
+                      <p className="mt-2 text-base font-semibold text-slate-800">
+                        {project.location}
+                      </p>
+
+                    </div>
+                  )}
+
+                  {/* YEAR */}
+
+                  {project.year && (
+                    <div className="py-4">
+
+                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                        Year
+                      </p>
+
+                      <p className="mt-2 text-base font-semibold text-slate-800">
+                        {project.year}
+                      </p>
+
+                    </div>
+                  )}
+
+                  {/* STATUS */}
+
+                  {project.status && (
+                    <div className="py-4 last:pb-0">
+
+                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                        Status
+                      </p>
+
+                      <div className="mt-2">
+
+                        <span className="inline-flex rounded-full bg-emerald-100 px-3 py-1 text-sm font-semibold text-emerald-700">
+                          {project.status}
+                        </span>
+
+                      </div>
+
+                    </div>
+                  )}
+
+                </div>
               </div>
-            )}
+            </aside>
 
           </div>
 
-        </div>
-
-      </aside>
-
-    </div>
-
-
-    {/* ==================================================
-        PREVIOUS / NEXT PROJECT
-    ================================================== */}
-
-    {(previousProject || nextProject) && (
-      <div className="mt-16 border-t border-slate-200 pt-8 sm:mt-20">
-
-        <div
-          className={`grid gap-4 ${
-            previousProject && nextProject
-              ? "sm:grid-cols-2"
-              : "sm:grid-cols-1"
-          }`}
-        >
-
           {/* ==================================================
-              PREVIOUS PROJECT
+              PREVIOUS / NEXT
           ================================================== */}
 
-          {previousProject && (
-            <Link
-              to={`/projects/${previousProject.id}`}
-              className="group flex min-h-[110px] items-center justify-between rounded-2xl border border-slate-200 bg-white p-5 transition hover:-translate-y-1 hover:border-indigo-200 hover:shadow-lg sm:p-6"
-            >
+          {(previousProject || nextProject) && (
+            <div className="mt-16 border-t border-slate-200 pt-8 sm:mt-20">
 
-              <div className="min-w-0">
+              <div
+                className={`grid gap-4 ${
+                  previousProject && nextProject
+                    ? "sm:grid-cols-2"
+                    : "sm:grid-cols-1"
+                }`}
+              >
 
-                <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
-                  <ArrowLeft size={15} />
-                  Previous Project
-                </span>
+                {/* PREVIOUS */}
 
-                <p className="mt-2 truncate text-base font-bold text-slate-900 transition group-hover:text-indigo-600 sm:text-lg">
-                  {previousProject.title}
-                </p>
+                {previousProject && (
+                  <Link
+                    to={`/projects/${previousProject.id}`}
+                    className="
+                      group
+                      flex
+                      min-h-[110px]
+                      items-center
+                      justify-between
+                      rounded-2xl
+                      border
+                      border-slate-200
+                      bg-white
+                      p-5
+                      transition
+                      hover:-translate-y-1
+                      hover:border-indigo-200
+                      hover:shadow-lg
+                      sm:p-6
+                    "
+                  >
+
+                    <div className="min-w-0">
+
+                      <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
+                        <ArrowLeft size={15} />
+                        Previous Project
+                      </span>
+
+                      <p className="mt-2 truncate text-base font-bold text-slate-900 transition group-hover:text-indigo-600 sm:text-lg">
+                        {previousProject.title}
+                      </p>
+
+                    </div>
+
+                    <ArrowLeft
+                      size={20}
+                      className="
+                        ml-4
+                        shrink-0
+                        text-slate-400
+                        transition
+                        group-hover:-translate-x-1
+                        group-hover:text-indigo-600
+                      "
+                    />
+
+                  </Link>
+                )}
+
+                {/* NEXT */}
+
+                {nextProject && (
+                  <Link
+                    to={`/projects/${nextProject.id}`}
+                    className={`
+                      group
+                      flex
+                      min-h-[110px]
+                      items-center
+                      justify-between
+                      rounded-2xl
+                      border
+                      border-slate-200
+                      bg-white
+                      p-5
+                      text-right
+                      transition
+                      hover:-translate-y-1
+                      hover:border-indigo-200
+                      hover:shadow-lg
+                      sm:p-6
+                      ${
+                        !previousProject
+                          ? "sm:col-start-2"
+                          : ""
+                      }
+                    `}
+                  >
+
+                    <div className="min-w-0 flex-1">
+
+                      <span className="flex items-center justify-end gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
+                        Next Project
+                        <ArrowRight size={15} />
+                      </span>
+
+                      <p className="mt-2 truncate text-base font-bold text-slate-900 transition group-hover:text-indigo-600 sm:text-lg">
+                        {nextProject.title}
+                      </p>
+
+                    </div>
+
+                    <ArrowRight
+                      size={20}
+                      className="
+                        ml-4
+                        shrink-0
+                        text-slate-400
+                        transition
+                        group-hover:translate-x-1
+                        group-hover:text-indigo-600
+                      "
+                    />
+
+                  </Link>
+                )}
 
               </div>
-
-              <ArrowLeft
-                size={20}
-                className="ml-4 shrink-0 text-slate-400 transition group-hover:-translate-x-1 group-hover:text-indigo-600"
-              />
-
-            </Link>
-          )}
-
-
-          {/* ==================================================
-              NEXT PROJECT
-          ================================================== */}
-
-          {nextProject && (
-            <Link
-              to={`/projects/${nextProject.id}`}
-              className={`group flex min-h-[110px] items-center justify-between rounded-2xl border border-slate-200 bg-white p-5 text-right transition hover:-translate-y-1 hover:border-indigo-200 hover:shadow-lg sm:p-6 ${
-                !previousProject ? "sm:col-start-2" : ""
-              }`}
-            >
-
-              <div className="min-w-0 flex-1">
-
-                <span className="flex items-center justify-end gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
-                  Next Project
-                  <ArrowRight size={15} />
-                </span>
-
-                <p className="mt-2 truncate text-base font-bold text-slate-900 transition group-hover:text-indigo-600 sm:text-lg">
-                  {nextProject.title}
-                </p>
-
-              </div>
-
-              <ArrowRight
-                size={20}
-                className="ml-4 shrink-0 text-slate-400 transition group-hover:translate-x-1 group-hover:text-indigo-600"
-              />
-
-            </Link>
+            </div>
           )}
 
         </div>
-
-      </div>
-    )}
-
-  </div>
-
-</section>
+      </section>
     </main>
   );
 }
 
 export default ProjectDetails;
+

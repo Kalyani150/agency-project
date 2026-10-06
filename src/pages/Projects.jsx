@@ -1,11 +1,22 @@
-
 import { useMemo, useState } from "react";
 
 import PageHero from "../components/PageHero";
 import ProjectCard from "../components/ProjectCard";
 
 function Projects({ projects = [] }) {
-  const [category, setCategory] = useState("All");
+  const [category, setCategory] =
+    useState("All");
+
+  // ======================================================
+  // ONLY SHOW COMPLETED PROJECTS PUBLICLY
+  // ======================================================
+
+  const publicProjects = useMemo(() => {
+    return projects.filter(
+      (project) =>
+        project.status === "Completed"
+    );
+  }, [projects]);
 
   // ======================================================
   // CREATE UNIQUE CATEGORIES
@@ -14,14 +25,16 @@ function Projects({ projects = [] }) {
   const categories = useMemo(() => {
     const uniqueCategories = [
       ...new Set(
-        projects
-          .map((project) => project.category)
+        publicProjects
+          .map(
+            (project) => project.category
+          )
           .filter(Boolean)
       ),
     ];
 
     return ["All", ...uniqueCategories];
-  }, [projects]);
+  }, [publicProjects]);
 
   // ======================================================
   // FILTER PROJECTS
@@ -29,19 +42,20 @@ function Projects({ projects = [] }) {
 
   const filteredProjects = useMemo(() => {
     if (category === "All") {
-      return projects;
+      return publicProjects;
     }
 
-    return projects.filter(
-      (project) => project.category === category
+    return publicProjects.filter(
+      (project) =>
+        project.category === category
     );
-  }, [projects, category]);
+  }, [publicProjects, category]);
 
   return (
     <>
-      {/* =====================================================
+      {/* ==================================================
           PAGE HERO
-      ====================================================== */}
+      ================================================== */}
 
       <PageHero
         badge="Our Projects"
@@ -49,41 +63,36 @@ function Projects({ projects = [] }) {
         description="Explore some of the digital products and experiences we have created for businesses."
       />
 
-      {/* =====================================================
+      {/* ==================================================
           PROJECTS SECTION
-      ===================================================== */}
+      ================================================== */}
 
       <section className="bg-white py-14 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
-          {/* =================================================
-              PROJECT COUNT + FILTER
+          {/* ==================================================
+              FILTER
           ================================================== */}
 
-          <div className="flex items-end justify-between gap-4">
-
-          
-
-            <div></div>
-              
-            
-
-            {/* FILTER */}
-
+          <div className="flex justify-end">
             <div className="w-48 sm:w-64">
+
               <label
                 htmlFor="project-category"
-                className="mb-2 block text-right text-m font-bold text-slate-800"
+                className="mb-2 block text-right text-sm font-bold text-slate-800"
               >
                 Filter by Category
               </label>
 
               <div className="relative">
+
                 <select
                   id="project-category"
                   value={category}
                   onChange={(event) =>
-                    setCategory(event.target.value)
+                    setCategory(
+                      event.target.value
+                    )
                   }
                   className="
                     w-full
@@ -106,14 +115,17 @@ function Projects({ projects = [] }) {
                     focus:ring-indigo-500/20
                   "
                 >
-                  {categories.map((item) => (
-                    <option key={item} value={item}>
-                      {item}
-                    </option>
-                  ))}
+                  {categories.map(
+                    (item) => (
+                      <option
+                        key={item}
+                        value={item}
+                      >
+                        {item}
+                      </option>
+                    )
+                  )}
                 </select>
-
-                {/* Dropdown Arrow */}
 
                 <div
                   className="
@@ -140,29 +152,38 @@ function Projects({ projects = [] }) {
                     <path d="m6 9 6 6 6-6" />
                   </svg>
                 </div>
+
               </div>
             </div>
           </div>
 
-          {/* =================================================
+          {/* ==================================================
               PROJECT GRID
           ================================================== */}
 
           {filteredProjects.length > 0 ? (
+
             <div className="mt-10 grid gap-7 sm:grid-cols-2 lg:mt-12 lg:grid-cols-3">
-              {filteredProjects.map((project) => (
-                <ProjectCard
-                  key={project.id}
-                  project={project}
-                />
-              ))}
+
+              {filteredProjects.map(
+                (project) => (
+                  <ProjectCard
+                    key={project.id}
+                    project={project}
+                  />
+                )
+              )}
+
             </div>
+
           ) : (
-            /* =================================================
+
+            /* ==================================================
                 EMPTY STATE
-            ================================================= */
+            ================================================== */
 
             <div className="py-20 text-center">
+
               <div className="mx-auto max-w-md">
 
                 <div
@@ -193,14 +214,17 @@ function Projects({ projects = [] }) {
                 </h3>
 
                 <p className="mt-2 text-slate-500">
-                  There are no projects available in this
+                  There are no completed
+                  projects available in this
                   category.
                 </p>
 
                 {category !== "All" && (
                   <button
                     type="button"
-                    onClick={() => setCategory("All")}
+                    onClick={() =>
+                      setCategory("All")
+                    }
                     className="
                       mt-6
                       rounded-xl
@@ -217,9 +241,11 @@ function Projects({ projects = [] }) {
                     View All Projects
                   </button>
                 )}
+
               </div>
             </div>
           )}
+
         </div>
       </section>
     </>
@@ -227,4 +253,3 @@ function Projects({ projects = [] }) {
 }
 
 export default Projects;
-
