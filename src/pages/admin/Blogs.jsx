@@ -1030,7 +1030,7 @@ function Blogs({ blogs = [], setBlogs }) {
                         name="status"
                         value={formData.status}
                         onChange={handleChange}
-                        className="h-11 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-700 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                        className="h-11 w-full rounded-xl cursor-pointer border border-slate-200 bg-white px-4 text-sm text-slate-700 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
                       >
                         <option value="Draft">
                           Draft
