@@ -636,58 +636,89 @@ function Enquiries({
               </button>
             </div>
 
-            {/* ==================================================
-                DETAILS
-            ================================================== */}
+        
+{/* ==================================================
+    DETAILS
+================================================== */}
 
-            <div className="space-y-5 p-5 sm:p-6">
-              <Detail
-                label="Name"
-                value={selected.name}
-              />
+<div className="space-y-5 p-5 sm:p-6">
 
-              <Detail
-                label="Email"
-                value={selected.email}
-              />
+  {/* NAME + EMAIL */}
 
-              <Detail
-                label="Phone"
-                value={selected.phone}
-              />
+  <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
 
-              <Detail
-                label="Service"
-                value={selected.service}
-              />
+    <Detail
+      label="Name"
+      value={selected.name}
+    />
 
-              <Detail
-                label="Budget"
-                value={selected.budget}
-              />
+    <Detail
+      label="Email"
+      value={selected.email}
+    />
 
-              <Detail
-                label="Date"
-                value={selected.date}
-              />
+  </div>
 
-              <Detail
-                label="Status"
-                value={selected.status}
-              />
 
-              {/* MESSAGE */}
+  {/* PHONE + SERVICE */}
 
-              <div>
-                <p className="text-sm font-semibold text-slate-700">
-                  Message
-                </p>
+  <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
 
-                <p className="mt-1 whitespace-pre-wrap break-words rounded-xl bg-slate-50 p-4 text-sm leading-6 text-slate-600">
-                  {selected.message || "-"}
-                </p>
-              </div>
-            </div>
+    <Detail
+      label="Phone"
+      value={selected.phone}
+    />
+
+    <Detail
+      label="Service"
+      value={selected.service}
+    />
+
+  </div>
+
+
+  {/* BUDGET + DATE */}
+
+  <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+
+    <Detail
+      label="Budget"
+      value={selected.budget}
+    />
+
+    <Detail
+      label="Date"
+      value={selected.date}
+    />
+
+  </div>
+
+
+  {/* STATUS */}
+
+  <Detail
+    label="Status"
+    value={selected.status}
+  />
+
+
+  {/* MESSAGE */}
+
+  <div>
+
+    <p className="text-sm font-semibold text-slate-700">
+      Message
+    </p>
+
+    <p className="mt-1 whitespace-pre-wrap break-words rounded-xl bg-slate-50 p-4 text-sm leading-6 text-slate-600">
+      {selected.message || "-"}
+    </p>
+
+  </div>
+
+</div>
+
+
           </div>
         </div>
       )}

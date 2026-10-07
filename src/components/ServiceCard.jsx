@@ -1,69 +1,178 @@
 import {
+  ArrowUpRight,
   Code2,
   Palette,
-  Smartphone,
   Megaphone,
   Search,
+  Smartphone,
   Sparkles,
-  ArrowUpRight,
 } from "lucide-react";
 
-import { Link } from "react-router-dom";
+// =========================================
+// ICON MAPPING
+// =========================================
 
 const icons = {
-  Code2,
-  Palette,
-  Smartphone,
-  Megaphone,
-  Search,
-  Sparkles,
+  development: Code2,
+  design: Palette,
+  marketing: Megaphone,
+  seo: Search,
+  mobile: Smartphone,
+  branding: Sparkles,
 };
 
+// =========================================
+// SERVICE CARD
+// =========================================
+
 function ServiceCard({ service }) {
-  const Icon =
-    icons[service.icon] || Code2;
+  const Icon = icons[service.icon] || Code2;
 
   return (
-    <Link
-      to={`/services/${service.id}`}
-      className="group relative overflow-hidden rounded-2xl border border-slate-300 bg-white p-7 transition-all duration-500 hover:-translate-y-3 hover:border-indigo-200 hover:shadow-2xl"
+    <div
+      className="
+        group
+        relative
+        flex
+        h-full
+        min-h-[318px]
+        flex-col
+        overflow-hidden
+        rounded-2xl
+        border
+        border-slate-300
+        bg-white
+        p-7
+        shadow-none
+        transition-all
+        duration-300
+        hover:-translate-y-1
+        hover:border-indigo-200
+        hover:shadow-xl
+      "
     >
+      {/* =====================================
+          ICON + ARROW
+      ====================================== */}
 
-      {/* Hover glow */}
+      <div className="flex items-start justify-between">
 
-      <div className="pointer-events-none absolute -right-16 -top-16 h-32 w-32 rounded-full bg-indigo-100 opacity-0 blur-3xl transition duration-500 group-hover:opacity-100" />
+        {/* Icon */}
 
-      <div className="relative flex items-center justify-between">
-
-        <div className="gratech-icon-flip flex h-14 w-14 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 transition-all duration-500 group-hover:rotate-6 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white">
-          <Icon size={27} />
+        <div
+          className="
+            flex
+            h-14
+            w-14
+            items-center
+            justify-center
+            rounded-xl
+            bg-indigo-50
+            text-indigo-600
+            transition-all
+            duration-300
+            group-hover:bg-indigo-600
+            group-hover:text-white
+          "
+        >
+          <Icon
+            size={28}
+            strokeWidth={2}
+          />
         </div>
 
-        <ArrowUpRight
-          size={21}
-          className="text-slate-300 transition-all duration-500 group-hover:translate-x-1 group-hover:-translate-y-1 group-hover:text-indigo-600"
-        />
+        {/* Arrow */}
 
+        <ArrowUpRight
+          size={20}
+          strokeWidth={1.8}
+          className="
+            text-slate-300
+            transition-all
+            duration-300
+            group-hover:translate-x-0.5
+            group-hover:-translate-y-0.5
+            group-hover:text-indigo-600
+          "
+        />
       </div>
 
-      <p className="relative mt-6 text-m font-bold uppercase tracking-widest text-indigo-600">
-        {service.category}
-      </p>
+      {/* =====================================
+          CATEGORY
+      ====================================== */}
 
-      <h3 className="relative mt-2 text-2xl font-bold text-slate-900 transition-colors duration-300 group-hover:text-indigo-600">
+      <span
+        className="
+          mt-7
+          text-sm
+          font-bold
+          uppercase
+          tracking-widest
+          text-indigo-600
+        "
+      >
+        {service.category}
+      </span>
+
+      {/* =====================================
+          TITLE
+      ====================================== */}
+
+      <h3
+        className="
+          mt-3
+          text-2xl
+          font-black
+          leading-tight
+          text-slate-950
+        "
+      >
         {service.title}
       </h3>
 
-      <p className="relative mt-3 leading-7 text-lg text-slate-600">
+      {/* =====================================
+          DESCRIPTION
+      ====================================== */}
+
+      <p
+        className="
+          mt-3
+          text-base
+          leading-7
+          text-slate-600
+        "
+      >
         {service.description}
       </p>
 
-      <span className="relative mt-6 inline-flex items-center gap-1 text-m font-bold text-indigo-600 transition-all duration-300 group-hover:gap-3">
-        Learn More
-        <ArrowUpRight size={15} />
-      </span>
+      {/* =====================================
+          LEARN MORE
+      ====================================== */}
 
-    </Link>
+      <div className="mt-auto pt-7">
+        <a
+          href={service.href || "#"}
+          className="
+            inline-flex
+            items-center
+            gap-2
+            text-base
+            font-bold
+            text-indigo-600
+            transition-colors
+            duration-200
+            hover:text-indigo-800
+          "
+        >
+          Learn More
+
+          <ArrowUpRight
+            size={17}
+            strokeWidth={2}
+          />
+        </a>
+      </div>
+    </div>
   );
 }
 
