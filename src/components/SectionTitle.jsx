@@ -1,3 +1,4 @@
+
 function SectionTitle({
   badge,
   title,
@@ -6,22 +7,65 @@ function SectionTitle({
 }) {
   return (
     <div
-      className={`mb-12 ${
-        center ? "mx-auto text-center" : ""
-      } max-w-3xl`}
+      className={`
+        mb-10
+        max-w-3xl
+        sm:mb-12
+        ${
+          center
+            ? "mx-0 text-left sm:mx-auto sm:text-center"
+            : "mx-0 text-left"
+        }
+      `}
     >
       {badge && (
-        <span className="mb-3 inline-block rounded-full bg-indigo-50 px-4 py-2 text-lg font-semibold text-indigo-600">
+        <span
+          className="
+            mb-3
+            inline-block
+            rounded-full
+            bg-indigo-50
+            px-3
+            py-1.5
+            text-sm
+            font-semibold
+            text-indigo-600
+            sm:px-4
+            sm:py-2
+            sm:text-lg
+          "
+        >
           {badge}
         </span>
       )}
 
-      <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+      <h2
+        className="
+          text-2xl
+          font-bold
+          leading-tight
+          tracking-tight
+          text-slate-900
+          sm:text-3xl
+          md:text-4xl
+        "
+      >
         {title}
       </h2>
 
       {description && (
-        <p className="mt-4 text-base leading-7 text-slate-600 sm:text-lg">
+        <p
+          className="
+            mt-3
+            text-sm
+            leading-6
+            text-slate-600
+            sm:mt-4
+            sm:text-base
+            sm:leading-7
+            md:text-lg
+          "
+        >
           {description}
         </p>
       )}

@@ -393,227 +393,155 @@ export default function ServiceDetails({
 
       {/* MAIN */}
 
-      <section className="px-5 py-12 sm:px-6 lg:px-8 lg:py-20">
-
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[1fr_320px] lg:px-8">
-
-          {/* LEFT */}
-
-          <div>
-
-            {/* INTRO */}
-
-            {content?.intro && (
-
-              <div className="mb-8">
-
-                <p className="text-lg leading-8 text-gray-700">
-                  {content.intro}
-                </p>
-
-              </div>
-
-            )}
-
-            {/* LONG DESCRIPTION */}
-
-            {content?.longDescription && (
-
-              <div className="mb-10">
-
-                <h2 className="mb-5 text-2xl font-bold text-gray-900">
-                  About {service.title}
-                </h2>
-
-                {content.longDescription
-                  .split(/\n\s*\n/)
-                  .map(
-                    (
-                      paragraph,
-                      index
-                    ) => (
-
-                      <p
-                        key={index}
-                        className="mb-5 text-base leading-8 text-gray-600"
-                      >
-                        {paragraph}
-                      </p>
-
-                    )
-                  )}
-
-              </div>
-
-            )}
-
-            {/* BULLETS */}
-
-            {content?.bullets?.length > 0 && (
-
-              <div className="mb-12">
-
-                <h2 className="mb-6 text-2xl font-bold text-gray-900">
-                  {content.bulletTitle ||
-                    "How We Work"}
-                </h2>
-
-                <div className="space-y-4">
-
-                  {content.bullets.map(
-                    (
-                      item,
-                      index
-                    ) => (
-
-                      <div
-                        key={index}
-                        className="flex items-start gap-3"
-                      >
-
-                        <CheckCircle2
-                          size={22}
-                          className="mt-1 shrink-0 text-green-600"
-                        />
-
-                        <p className="text-base leading-7 text-gray-600">
-                          {item}
-                        </p>
-
-                      </div>
-
-                    )
-                  )}
-
-                </div>
-
-              </div>
-
-            )}
-
-            {/* PROVIDES */}
-
-            {content?.provides?.length > 0 && (
-
-              <div>
-
-                <h2 className="mb-6 text-2xl font-bold text-gray-900">
-                  What We Provide
-                </h2>
-
-                <div className="grid gap-4 sm:grid-cols-2">
-
-                  {content.provides.map(
-                    (
-                      item,
-                      index
-                    ) => (
-
-                      <div
-                        key={index}
-                        className="rounded-xl border border-gray-200 bg-gray-50 p-5 transition hover:shadow-md"
-                      >
-
-                        <div className="flex items-start gap-3">
-
-                          <CheckCircle2
-                            size={20}
-                            className="mt-0.5 shrink-0 text-green-600"
-                          />
-
-                          <p className="font-medium text-gray-800">
-                            {item}
-                          </p>
-
-                        </div>
-
-                      </div>
-
-                    )
-                  )}
-
-                </div>
-
-              </div>
-
-            )}
-
-            {/* NO CONTENT */}
-
-            {!content && (
-
-              <div className="rounded-xl bg-gray-50 p-6">
-
-                <p className="text-gray-600">
-                  Detailed content for this service
-                  has not been added yet.
-                </p>
-
-              </div>
-
-            )}
-
-          </div>
-
-          {/* SIDEBAR */}
-
-          <aside className="h-fit rounded-2xl bg-gray-50 p-6">
-
-            <h3 className="mb-5 text-xl font-bold text-gray-900">
-              Service Information
-            </h3>
-
-            {service.category && (
-
-              <div className="mb-5">
-
-                <p className="mb-1 text-sm text-gray-500">
-                  Category
-                </p>
-
-                <p className="font-semibold text-gray-900">
-                  {service.category}
-                </p>
-
-              </div>
-
-            )}
-
-            {service.status && (
-
-              <div className="mb-5">
-
-                <p className="mb-1 text-sm text-gray-500">
-                  Status
-                </p>
-
-                <span
-                  className={`inline-flex rounded-full px-3 py-1 text-sm font-medium ${
-                    service.status === "Active"
-                      ? "bg-green-100 text-green-700"
-                      : "bg-gray-200 text-gray-700"
-                  }`}
-                >
-                  {service.status}
-                </span>
-
-              </div>
-
-            )}
-
-            <Link
-              to="/services"
-              className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-black px-5 py-3 font-medium text-white transition hover:bg-gray-800"
-            >
-              All Services
-              <ArrowRight size={18} />
-            </Link>
-
-          </aside>
-
+     <section className="px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-20">
+  <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 sm:gap-10 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-12">
+
+    {/* LEFT CONTENT */}
+    <div className="min-w-0">
+
+      {/* INTRO */}
+      {content?.intro && (
+        <div className="mb-8 sm:mb-10">
+          <p className="text-base leading-7 text-gray-700 sm:text-lg sm:leading-8">
+            {content.intro}
+          </p>
         </div>
+      )}
 
-      </section>
+      {/* LONG DESCRIPTION */}
+      {content?.longDescription && (
+        <div className="mb-10 sm:mb-12">
+          <h2 className="mb-4 text-xl font-bold leading-tight text-gray-900 sm:mb-5 sm:text-2xl">
+            About {service.title}
+          </h2>
+
+          {content.longDescription
+            .split(/\n\s*\n/)
+            .map((paragraph, index) => (
+              <p
+                key={index}
+                className="mb-4 text-sm leading-7 text-gray-600 sm:mb-5 sm:text-base sm:leading-8"
+              >
+                {paragraph}
+              </p>
+            ))}
+        </div>
+      )}
+
+      {/* BULLETS */}
+      {content?.bullets?.length > 0 && (
+        <div className="mb-10 sm:mb-12">
+          <h2 className="mb-5 text-xl font-bold leading-tight text-gray-900 sm:mb-6 sm:text-2xl">
+            {content.bulletTitle || "How We Work"}
+          </h2>
+
+          <div className="space-y-4">
+            {content.bullets.map((item, index) => (
+              <div
+                key={index}
+                className="flex items-start gap-3"
+              >
+                <CheckCircle2
+                  size={20}
+                  className="mt-1 shrink-0 text-green-600 sm:h-[22px] sm:w-[22px]"
+                />
+
+                <p className="text-sm leading-7 text-gray-600 sm:text-base">
+                  {item}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* PROVIDES */}
+      {content?.provides?.length > 0 && (
+        <div>
+          <h2 className="mb-5 text-xl font-bold leading-tight text-gray-900 sm:mb-6 sm:text-2xl">
+            What We Provide
+          </h2>
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+            {content.provides.map((item, index) => (
+              <div
+                key={index}
+                className="rounded-xl border border-gray-200 bg-gray-50 p-4 transition hover:shadow-md sm:p-5"
+              >
+                <div className="flex items-start gap-3">
+                  <CheckCircle2
+                    size={19}
+                    className="mt-0.5 shrink-0 text-green-600"
+                  />
+
+                  <p className="text-sm font-medium leading-6 text-gray-800 sm:text-base">
+                    {item}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* NO CONTENT */}
+      {!content && (
+        <div className="rounded-xl bg-gray-50 p-5 sm:p-6">
+          <p className="text-sm leading-6 text-gray-600 sm:text-base">
+            Detailed content for this service has not been added yet.
+          </p>
+        </div>
+      )}
+    </div>
+
+    {/* SIDEBAR */}
+    <aside className="h-fit w-full rounded-2xl bg-gray-50 p-5 sm:p-6 lg:sticky lg:top-6">
+      <h3 className="mb-5 text-lg font-bold text-gray-900 sm:text-xl">
+        Service Information
+      </h3>
+
+      {service.category && (
+        <div className="mb-5">
+          <p className="mb-1 text-sm text-gray-500">
+            Category
+          </p>
+
+          <p className="font-semibold text-gray-900">
+            {service.category}
+          </p>
+        </div>
+      )}
+
+      {service.status && (
+        <div className="mb-5">
+          <p className="mb-1 text-sm text-gray-500">
+            Status
+          </p>
+
+          <span
+            className={`inline-flex rounded-full px-3 py-1 text-sm font-medium ${
+              service.status === "Active"
+                ? "bg-green-100 text-green-700"
+                : "bg-gray-200 text-gray-700"
+            }`}
+          >
+            {service.status}
+          </span>
+        </div>
+      )}
+
+      <Link
+        to="/services"
+        className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-black px-5 py-3 text-sm font-medium text-white transition hover:bg-gray-800 sm:text-base"
+      >
+        All Services
+        <ArrowRight size={18} />
+      </Link>
+    </aside>
+
+  </div>
+</section>
+
 
     </div>
   );

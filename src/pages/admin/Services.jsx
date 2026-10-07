@@ -265,8 +265,7 @@ const normalizeContent = (data) => {
         ? data.paragraphs.join("\n\n")
         : ""),
 
-    bulletTitle:
-      data.bulletTitle || "",
+    bulletTitle: data.bulletTitle || "",
 
     bullets: Array.isArray(data.bullets)
       ? data.bullets.filter(Boolean)
@@ -422,7 +421,6 @@ function Services({
 
   // ======================================================
   // OPEN EDIT MODAL
-  // IMPORTANT FIX
   // ======================================================
 
   const openEditModal = (service) => {
@@ -443,8 +441,6 @@ function Services({
       (Array.isArray(service.provides) &&
         service.provides.length > 0);
 
-    // First use content saved by Admin.
-    // Otherwise use predefined public page content.
     const content = hasAdminContent
       ? normalizeContent(service)
       : serviceContent[serviceKey]
@@ -497,12 +493,13 @@ function Services({
   };
 
   // ======================================================
-  // CLOSE EDIT/ADD MODAL
+  // CLOSE MODAL
   // ======================================================
 
   const closeModal = () => {
     setShowModal(false);
     setEditingService(null);
+
     setFormData({
       ...emptyForm,
     });
@@ -817,7 +814,7 @@ function Services({
   // ======================================================
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen w-full min-w-0 bg-gray-50 p-3 sm:p-6 lg:p-8">
 
       {/* ==================================================
           HEADER
@@ -825,7 +822,7 @@ function Services({
 
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 
-        <div>
+        <div className="min-w-0">
           <h1 className="text-2xl font-bold text-gray-900">
             Services
           </h1>
@@ -838,7 +835,7 @@ function Services({
         <button
           type="button"
           onClick={openAddModal}
-          className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
+          className="inline-flex w-fit cursor-pointer items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
         >
           <Plus size={18} />
           Add Service
@@ -849,13 +846,14 @@ function Services({
           FILTERS
       ================================================== */}
 
-      <div>
+      <div className="mb-5 w-full min-w-0">
 
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-5">
+        <div className="grid grid-cols-1 gap-3 min-[350px]:grid-cols-2 lg:grid-cols-5">
 
           {/* SEARCH */}
 
-          <div className="relative md:grid-cols-3">
+          <div className="relative min-w-0 min-[350px]:col-span-2 lg:col-span-3">
+
             <Search
               size={18}
               className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -868,8 +866,9 @@ function Services({
                 setSearch(event.target.value)
               }
               placeholder="Search services..."
-              className="w-full rounded-lg border border-gray-200 py-2.5 pl-10 pr-3 text-sm outline-none transition focus:border-slate-500"
+              className="w-full min-w-0 rounded-lg border border-gray-200 py-2.5 pl-10 pr-3 text-sm outline-none transition focus:border-slate-500 focus:ring-1 focus:ring-slate-200"
             />
+
           </div>
 
           {/* STATUS */}
@@ -879,7 +878,7 @@ function Services({
             onChange={(event) =>
               setStatusFilter(event.target.value)
             }
-            className="cursor-pointer rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-slate-500"
+            className="min-w-0 w-full cursor-pointer rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-200"
           >
             <option value="All">
               All Status
@@ -901,7 +900,7 @@ function Services({
             onChange={(event) =>
               setCategoryFilter(event.target.value)
             }
-            className="cursor-pointer rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-slate-500"
+            className="min-w-0 w-full cursor-pointer rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-200"
           >
             {categories.map((category) => (
               <option
@@ -914,6 +913,7 @@ function Services({
               </option>
             ))}
           </select>
+
         </div>
       </div>
 
@@ -930,6 +930,7 @@ function Services({
             <thead className="bg-gray-50 text-xs uppercase text-gray-500">
 
               <tr>
+
                 <th className="px-5 py-4">
                   ID
                 </th>
@@ -949,6 +950,7 @@ function Services({
                 <th className="px-5 py-4 text-right">
                   Actions
                 </th>
+
               </tr>
 
             </thead>
@@ -971,11 +973,13 @@ function Services({
                       key={service.id}
                       className="transition hover:bg-gray-50"
                     >
+
                       <td className="px-5 py-4 text-sm font-medium text-gray-600">
                         {service.id}
                       </td>
 
                       <td className="px-5 py-4">
+
                         <div className="font-semibold text-gray-900">
                           {service.title}
                         </div>
@@ -984,6 +988,7 @@ function Services({
                           {service.description ||
                             "No description"}
                         </div>
+
                       </td>
 
                       <td className="px-5 py-4 text-sm text-gray-600">
@@ -991,6 +996,7 @@ function Services({
                       </td>
 
                       <td className="px-5 py-4">
+
                         <span
                           className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${getStatusClass(
                             service.status
@@ -998,6 +1004,7 @@ function Services({
                         >
                           {service.status}
                         </span>
+
                       </td>
 
                       <td className="px-5 py-4">
@@ -1027,9 +1034,7 @@ function Services({
                             className="cursor-pointer rounded-lg p-2 text-blue-600 transition hover:bg-blue-50"
                             title="Edit"
                           >
-                            <Pencil
-                              size={17}
-                            />
+                            <Pencil size={17} />
                           </button>
 
                           <button
@@ -1042,21 +1047,24 @@ function Services({
                             className="cursor-pointer rounded-lg p-2 text-red-600 transition hover:bg-red-50"
                             title="Delete"
                           >
-                            <Trash2
-                              size={17}
-                            />
+                            <Trash2 size={17} />
                           </button>
 
                         </div>
+
                       </td>
+
                     </tr>
                   )
                 )
               )}
 
             </tbody>
+
           </table>
+
         </div>
+
       </div>
 
       {/* ==================================================
@@ -1074,12 +1082,13 @@ function Services({
             (service) => (
               <div
                 key={service.id}
-                className="rounded-xl bg-white p-4 shadow-sm"
+                className="min-w-0 rounded-xl bg-white p-4 shadow-sm"
               >
 
-                <div className="flex items-start justify-between gap-3">
+                <div className="flex min-w-0 items-start justify-between gap-3">
 
                   <div className="min-w-0">
+
                     <div className="text-xs font-medium text-gray-400">
                       {service.id}
                     </div>
@@ -1088,9 +1097,10 @@ function Services({
                       {service.title}
                     </h3>
 
-                    <p className="mt-1 text-sm text-gray-500">
+                    <p className="mt-1 truncate text-sm text-gray-500">
                       {service.category}
                     </p>
+
                   </div>
 
                   <span
@@ -1100,6 +1110,7 @@ function Services({
                   >
                     {service.status}
                   </span>
+
                 </div>
 
                 <p className="mt-4 text-sm leading-6 text-gray-600">
@@ -1114,7 +1125,7 @@ function Services({
                     onClick={() =>
                       openViewModal(service)
                     }
-                    className="cursor-pointer rounded-lg p-2 text-gray-500 hover:bg-gray-100"
+                    className="cursor-pointer rounded-lg p-2 text-gray-500 transition hover:bg-gray-100"
                   >
                     <Eye size={17} />
                   </button>
@@ -1124,7 +1135,7 @@ function Services({
                     onClick={() =>
                       openEditModal(service)
                     }
-                    className="cursor-pointer rounded-lg p-2 text-blue-600 hover:bg-blue-50"
+                    className="cursor-pointer rounded-lg p-2 text-blue-600 transition hover:bg-blue-50"
                   >
                     <Pencil size={17} />
                   </button>
@@ -1136,12 +1147,13 @@ function Services({
                         service.id
                       )
                     }
-                    className="cursor-pointer rounded-lg p-2 text-red-600 hover:bg-red-50"
+                    className="cursor-pointer rounded-lg p-2 text-red-600 transition hover:bg-red-50"
                   >
                     <Trash2 size={17} />
                   </button>
 
                 </div>
+
               </div>
             )
           )
@@ -1155,7 +1167,7 @@ function Services({
 
       {showModal && (
         <div
-          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-3 backdrop-blur-sm sm:p-5"
+          className="fixed inset-0 z-[9999] flex items-start justify-center overflow-y-auto bg-black/60 p-3 pt-3 backdrop-blur-sm sm:p-5 sm:pt-5"
           onMouseDown={(event) => {
             if (
               event.target ===
@@ -1169,7 +1181,7 @@ function Services({
           <div
             ref={modalRef}
             tabIndex="-1"
-            className="flex max-h-[90vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl outline-none"
+            className="mt-0 flex max-h-[calc(100vh-1.5rem)] w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl outline-none sm:max-h-[calc(100vh-2.5rem)]"
             onMouseDown={(event) =>
               event.stopPropagation()
             }
@@ -1177,9 +1189,10 @@ function Services({
 
             {/* MODAL HEADER */}
 
-            <div className="flex shrink-0 items-center justify-between border-b border-gray-200 px-5 py-4 sm:px-6">
+            <div className="flex shrink-0 items-center justify-between border-b border-gray-200 px-4 py-3 sm:px-6 sm:py-4">
 
-              <div>
+              <div className="min-w-0">
+
                 <h2 className="text-lg font-bold text-gray-900">
                   {editingService
                     ? "Edit Service"
@@ -1191,12 +1204,13 @@ function Services({
                     ? "Update the service details and content."
                     : "Add a new service to your website."}
                 </p>
+
               </div>
 
               <button
                 type="button"
                 onClick={closeModal}
-                className="cursor-pointer rounded-lg p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-900"
+                className="ml-3 shrink-0 cursor-pointer rounded-lg p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-900"
               >
                 <X size={20} />
               </button>
@@ -1212,13 +1226,14 @@ function Services({
 
               {/* SCROLLABLE CONTENT */}
 
-              <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-6">
+              <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-6 sm:py-5">
 
-                <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 min-[350px]:grid-cols-2 min-[350px]:gap-5">
 
                   {/* SERVICE TITLE */}
 
-                  <div>
+                  <div className="min-w-0">
+
                     <label className="mb-2 block text-sm font-semibold text-gray-700">
                       Service Title
                     </label>
@@ -1234,13 +1249,15 @@ function Services({
                         })
                       }
                       placeholder="Enter service title"
-                      className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-slate-500"
+                      className="w-full min-w-0 rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-slate-500"
                     />
+
                   </div>
 
                   {/* CATEGORY */}
 
-                  <div>
+                  <div className="min-w-0">
+
                     <label className="mb-2 block text-sm font-semibold text-gray-700">
                       Category
                     </label>
@@ -1256,13 +1273,15 @@ function Services({
                         })
                       }
                       placeholder="Enter category"
-                      className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-slate-500"
+                      className="w-full min-w-0 rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-slate-500"
                     />
+
                   </div>
 
                   {/* STATUS */}
 
-                  <div>
+                  <div className="min-w-0">
+
                     <label className="mb-2 block text-sm font-semibold text-gray-700">
                       Status
                     </label>
@@ -1276,8 +1295,9 @@ function Services({
                             event.target.value,
                         })
                       }
-                      className="w-full cursor-pointer rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-slate-500"
+                      className="w-full min-w-0 cursor-pointer rounded-lg border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-slate-500"
                     >
+
                       <option value="Active">
                         Active
                       </option>
@@ -1285,12 +1305,14 @@ function Services({
                       <option value="Inactive">
                         Inactive
                       </option>
+
                     </select>
+
                   </div>
 
                   {/* DESCRIPTION */}
 
-                  <div className="md:col-span-2">
+                  <div className="min-w-0 min-[350px]:col-span-2">
 
                     <label className="mb-2 block text-sm font-semibold text-gray-700">
                       Description
@@ -1314,7 +1336,7 @@ function Services({
 
                   {/* INTRODUCTION */}
 
-                  <div className="md:col-span-2">
+                  <div className="min-w-0 min-[350px]:col-span-2">
 
                     <label className="mb-2 block text-sm font-semibold text-gray-700">
                       Introduction
@@ -1338,7 +1360,7 @@ function Services({
 
                   {/* LONG DESCRIPTION */}
 
-                  <div className="md:col-span-2">
+                  <div className="min-w-0 min-[350px]:col-span-2">
 
                     <label className="mb-2 block text-sm font-semibold text-gray-700">
                       Long Description
@@ -1364,7 +1386,7 @@ function Services({
 
                   {/* BULLET TITLE */}
 
-                  <div className="md:col-span-2">
+                  <div className="min-w-0 min-[350px]:col-span-2">
 
                     <label className="mb-2 block text-sm font-semibold text-gray-700">
                       Process / Bullet Section Title
@@ -1390,7 +1412,7 @@ function Services({
 
                   {/* PROCESS POINTS */}
 
-                  <div>
+                  <div className="min-w-0">
 
                     <label className="mb-2 block text-sm font-semibold text-gray-700">
                       Process Points
@@ -1408,9 +1430,7 @@ function Services({
                             event.target.value,
                         })
                       }
-                      placeholder={
-                        "Enter one point per line"
-                      }
+                      placeholder="Enter one point per line"
                       className="w-full resize-y rounded-lg border border-gray-200 px-3 py-2.5 text-sm leading-6 outline-none focus:border-slate-500"
                     />
 
@@ -1422,7 +1442,7 @@ function Services({
 
                   {/* WHAT WE PROVIDE */}
 
-                  <div>
+                  <div className="min-w-0">
 
                     <label className="mb-2 block text-sm font-semibold text-gray-700">
                       What We Provide
@@ -1440,9 +1460,7 @@ function Services({
                             event.target.value,
                         })
                       }
-                      placeholder={
-                        "Enter one service per line"
-                      }
+                      placeholder="Enter one service per line"
                       className="w-full resize-y rounded-lg border border-gray-200 px-3 py-2.5 text-sm leading-6 outline-none focus:border-slate-500"
                     />
 
@@ -1453,23 +1471,24 @@ function Services({
                   </div>
 
                 </div>
+
               </div>
 
               {/* FOOTER */}
 
-              <div className="flex shrink-0 flex-col-reverse gap-3 border-t border-gray-200 bg-white px-5 py-4 sm:flex-row sm:justify-end sm:px-6">
+              <div className="flex shrink-0 flex-col-reverse gap-2 border-t border-gray-200 bg-white px-4 py-3 sm:flex-row sm:justify-end sm:px-6 sm:py-4">
 
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="cursor-pointer rounded-lg border border-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+                  className="w-full cursor-pointer rounded-lg border border-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 sm:w-auto"
                 >
                   Cancel
                 </button>
 
                 <button
                   type="submit"
-                  className="cursor-pointer rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
+                  className="w-full cursor-pointer rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 sm:w-auto"
                 >
                   {editingService
                     ? "Update Service"
@@ -1479,7 +1498,9 @@ function Services({
               </div>
 
             </form>
+
           </div>
+
         </div>
       )}
 
@@ -1489,7 +1510,7 @@ function Services({
 
       {viewingService && (
         <div
-          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-3 backdrop-blur-sm sm:p-5"
+          className="fixed inset-0 z-[9999] flex items-start justify-center overflow-y-auto bg-black/60 p-3 pt-3 backdrop-blur-sm sm:p-5 sm:pt-5"
           onMouseDown={(event) => {
             if (
               event.target ===
@@ -1503,7 +1524,7 @@ function Services({
           <div
             ref={viewModalRef}
             tabIndex="-1"
-            className="flex max-h-[90vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl outline-none"
+            className="mt-0 flex max-h-[calc(100vh-1.5rem)] w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl outline-none sm:max-h-[calc(100vh-2.5rem)]"
             onMouseDown={(event) =>
               event.stopPropagation()
             }
@@ -1511,7 +1532,7 @@ function Services({
 
             {/* VIEW HEADER */}
 
-            <div className="flex shrink-0 items-center justify-between border-b border-gray-200 px-5 py-4 sm:px-6">
+            <div className="flex shrink-0 items-center justify-between border-b border-gray-200 px-4 py-3 sm:px-6 sm:py-4">
 
               <div className="min-w-0">
 
@@ -1528,7 +1549,7 @@ function Services({
               <button
                 type="button"
                 onClick={closeViewModal}
-                className="cursor-pointer rounded-lg p-2 text-gray-500 hover:bg-gray-100"
+                className="ml-3 shrink-0 cursor-pointer rounded-lg p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-900"
               >
                 <X size={20} />
               </button>
@@ -1537,13 +1558,14 @@ function Services({
 
             {/* VIEW CONTENT */}
 
-            <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-6">
+            <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-6 sm:py-5">
 
               {/* BASIC INFO */}
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <div className="grid grid-cols-1 gap-3 min-[350px]:grid-cols-2 sm:grid-cols-3 sm:gap-4">
 
                 <div className="rounded-xl bg-gray-50 p-4">
+
                   <p className="text-xs font-medium uppercase text-gray-400">
                     Service ID
                   </p>
@@ -1551,9 +1573,11 @@ function Services({
                   <p className="mt-1 font-semibold text-gray-900">
                     {viewingService.id}
                   </p>
+
                 </div>
 
                 <div className="rounded-xl bg-gray-50 p-4">
+
                   <p className="text-xs font-medium uppercase text-gray-400">
                     Category
                   </p>
@@ -1561,9 +1585,11 @@ function Services({
                   <p className="mt-1 font-semibold text-gray-900">
                     {viewingService.category}
                   </p>
+
                 </div>
 
                 <div className="rounded-xl bg-gray-50 p-4">
+
                   <p className="text-xs font-medium uppercase text-gray-400">
                     Status
                   </p>
@@ -1575,6 +1601,7 @@ function Services({
                   >
                     {viewingService.status}
                   </span>
+
                 </div>
 
               </div>
@@ -1582,7 +1609,7 @@ function Services({
               {/* DESCRIPTION */}
 
               {viewingService.description && (
-                <section className="mt-7">
+                <section className="mt-6">
 
                   <h3 className="text-base font-bold text-gray-900">
                     Description
@@ -1603,7 +1630,7 @@ function Services({
                   {/* INTRO */}
 
                   {viewContent.intro && (
-                    <section className="mt-7">
+                    <section className="mt-6">
 
                       <h3 className="text-base font-bold text-gray-900">
                         Introduction
@@ -1619,7 +1646,7 @@ function Services({
                   {/* LONG DESCRIPTION */}
 
                   {viewContent.longDescription && (
-                    <section className="mt-7">
+                    <section className="mt-6">
 
                       <h3 className="text-base font-bold text-gray-900">
                         About{" "}
@@ -1653,7 +1680,7 @@ function Services({
 
                   {viewContent.bullets
                     .length > 0 && (
-                    <section className="mt-7">
+                    <section className="mt-6">
 
                       <h3 className="text-base font-bold text-gray-900">
                         {viewContent.bulletTitle ||
@@ -1669,7 +1696,7 @@ function Services({
                           ) => (
                             <div
                               key={index}
-                              className="flex gap-3 rounded-xl bg-gray-50 p-4"
+                              className="flex min-w-0 gap-3 rounded-xl bg-gray-50 p-4"
                             >
 
                               <CheckCircle2
@@ -1677,7 +1704,7 @@ function Services({
                                 className="mt-0.5 shrink-0 text-green-600"
                               />
 
-                              <p className="text-sm leading-6 text-gray-600">
+                              <p className="min-w-0 text-sm leading-6 text-gray-600">
                                 {bullet}
                               </p>
 
@@ -1694,13 +1721,13 @@ function Services({
 
                   {viewContent.provides
                     .length > 0 && (
-                    <section className="mt-7">
+                    <section className="mt-6">
 
                       <h3 className="text-base font-bold text-gray-900">
                         What We Provide
                       </h3>
 
-                      <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                      <div className="mt-4 grid grid-cols-1 gap-3 min-[350px]:grid-cols-2 lg:grid-cols-3">
 
                         {viewContent.provides.map(
                           (
@@ -1709,7 +1736,7 @@ function Services({
                           ) => (
                             <div
                               key={index}
-                              className="rounded-xl border border-gray-100 bg-gray-50 p-4 text-sm font-medium text-gray-700"
+                              className="min-w-0 rounded-xl border border-gray-100 bg-gray-50 p-4 text-sm font-medium text-gray-700"
                             >
                               {item}
                             </div>
@@ -1723,7 +1750,7 @@ function Services({
 
                 </>
               ) : (
-                <div className="mt-7 rounded-xl bg-gray-50 p-6 text-center">
+                <div className="mt-6 rounded-xl bg-gray-50 p-6 text-center">
 
                   <p className="text-sm text-gray-500">
                     No detailed content is available for this service.
@@ -1736,13 +1763,14 @@ function Services({
 
             {/* VIEW FOOTER */}
 
-            <div className="flex shrink-0 justify-end border-t border-gray-200 bg-white px-5 py-4 sm:px-6">
+            <div className="flex shrink-0 justify-end border-t border-gray-200 bg-white px-4 py-3 sm:px-6 sm:py-4">
 
-              
+             
 
             </div>
 
           </div>
+
         </div>
       )}
 

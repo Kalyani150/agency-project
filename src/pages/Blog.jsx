@@ -55,10 +55,7 @@ function Blog({
               </h2>
             </div>
 
-            <p className="max-w-xl text-sm leading-6 text-slate-500">
-              Discover helpful articles and ideas
-              to improve your digital presence.
-            </p>
+            
           </div>
 
           {/* ==================================================

@@ -5,8 +5,8 @@ import {
   Mail,
   Users,
   ArrowUpRight,
-  ExternalLink,
 } from "lucide-react";
+
 import { Link } from "react-router-dom";
 
 function Dashboard({
@@ -62,54 +62,57 @@ function Dashboard({
         </p>
       </div>
 
-    
-{/* ==================================================
-    STATISTICS
-================================================== */}
+      {/* ==================================================
+          STATISTICS
+      ================================================== */}
 
-<div className="grid min-[400px]:grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
+      <div className="grid gap-3 min-[350px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 
-  {stats.map((stat) => {
-    const Icon = stat.icon;
+        {stats.map((stat) => {
+          const Icon = stat.icon;
 
-    return (
-      <Link
-        key={stat.title}
-        to={stat.link}
-        className="group min-w-0 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg sm:p-4"
-      >
+          return (
+            <Link
+              key={stat.title}
+              to={stat.link}
+              className="group min-w-0 rounded-2xl border border-slate-200 bg-white p-2.5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg min-[350px]:p-3"
+            >
 
-        <div className="flex items-center justify-between gap-2">
+              {/* Top Row */}
 
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 sm:h-10 sm:w-10">
-            <Icon
-              size={18}
-              strokeWidth={2}
-            />
-          </div>
+              <div className="flex items-center justify-between gap-2">
 
-          <ArrowUpRight
-            size={17}
-            className="shrink-0 text-slate-400 transition group-hover:text-indigo-600"
-          />
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 min-[350px]:h-9 min-[350px]:w-9">
+                  <Icon
+                    size={17}
+                    strokeWidth={2}
+                  />
+                </div>
 
-        </div>
+                <ArrowUpRight
+                  size={16}
+                  className="shrink-0 text-slate-400 transition group-hover:text-indigo-600"
+                />
 
-        <p className="mt-2 text-xs font-medium text-slate-600 sm:mt-3 sm:text-sm">
-          {stat.title}
-        </p>
+              </div>
 
-        <h2 className="mt-0.5 text-xl font-bold text-slate-900 sm:text-2xl">
-          {stat.value}
-        </h2>
+              {/* Title */}
 
-      </Link>
-    );
-  })}
+              <p className="mt-1.5 text-xs font-medium text-slate-600 min-[350px]:mt-2">
+                {stat.title}
+              </p>
 
-</div>
+              {/* Value */}
 
+              <h2 className="mt-0 text-lg font-bold leading-tight text-slate-900 min-[350px]:text-xl">
+                {stat.value}
+              </h2>
 
+            </Link>
+          );
+        })}
+
+      </div>
 
       {/* ==================================================
           CONTENT
@@ -143,6 +146,7 @@ function Dashboard({
             >
               View All
             </Link>
+
           </div>
 
           {/* Enquiries */}
@@ -186,7 +190,7 @@ function Dashboard({
         </div>
 
         {/* ==================================================
-            QUICK OVERVIEW
+            AGENCY OVERVIEW
         ================================================== */}
 
         <div className="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
@@ -201,6 +205,7 @@ function Dashboard({
 
             <div className="flex items-center justify-between gap-4">
               <span className="flex min-w-0 items-center gap-2 text-sm text-slate-500 sm:text-base">
+
                 <Users
                   size={18}
                   className="shrink-0"
@@ -209,6 +214,7 @@ function Dashboard({
                 <span className="truncate">
                   Team Members
                 </span>
+
               </span>
 
               <span className="shrink-0 text-sm font-bold text-slate-900 sm:text-base">
@@ -253,10 +259,6 @@ function Dashboard({
             </div>
 
           </div>
-
-          {/* Website button */}
-
-          
 
         </div>
 

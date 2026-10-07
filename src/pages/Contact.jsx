@@ -15,22 +15,220 @@ function Contact({
   setEnquiries,
   addEnquiry,
 }) {
-  const initialForm = {
+  // ======================================================
+  // FORM STATE
+  // ======================================================
+
+  const [form, setForm] = useState({
     name: "",
     email: "",
     phone: "",
     service: "Web Development",
     budget: "",
     message: "",
-  };
+  });
 
-  const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
 
-  /* =========================================================
-     SCROLL TO TOP AFTER SUCCESSFUL SUBMISSION
-  ========================================================= */
+  // ======================================================
+  // INPUT CHANGE
+  // ======================================================
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    let newValue = value;
+
+    // Name: allow only letters, spaces, apostrophes, dots and hyphens
+    if (name === "name") {
+      newValue = value.replace(/[^A-Za-z\s.'-]/g, "");
+    }
+
+    // Email: remove spaces and invalid characters
+    if (name === "email") {
+      newValue = value
+        .replace(/\s/g, "")
+        .replace(/[^A-Za-z0-9._%+\-@]/g, "");
+    }
+
+    // Phone: numbers only and maximum 10 digits
+    if (name === "phone") {
+      newValue = value.replace(/\D/g, "").slice(0, 10);
+    }
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: newValue,
+    }));
+
+    // Clear error when user starts correcting field
+    if (errors[name]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
+    }
+  };
+
+  // ======================================================
+  // VALIDATION
+  // ======================================================
+
+  const validateField = (name, value) => {
+    switch (name) {
+      case "name":
+        if (!value.trim()) {
+          return "Name is required.";
+        }
+
+        if (!/^[A-Za-z\s.'-]+$/.test(value)) {
+          return "Please enter a valid name.";
+        }
+
+        if (value.trim().length < 2) {
+          return "Name must be at least 2 characters.";
+        }
+
+        return "";
+
+      case "email":
+        if (!value.trim()) {
+          return "Email is required.";
+        }
+
+        if (
+          !/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(
+            value
+          )
+        ) {
+          return "Please enter a valid email.";
+        }
+
+        return "";
+
+      case "phone":
+        if (!value.trim()) {
+          return "Phone number is required.";
+        }
+
+        if (!/^\d{10}$/.test(value)) {
+          return "Phone number must be 10 digits.";
+        }
+
+        return "";
+
+      case "service":
+        if (!value.trim()) {
+          return "Please select a service.";
+        }
+
+        return "";
+
+      case "budget":
+        if (!value.trim()) {
+          return "Please select your budget.";
+        }
+
+        return "";
+
+      case "message":
+        if (!value.trim()) {
+          return "Project details are required.";
+        }
+
+        if (value.trim().length < 10) {
+          return "Please enter at least 10 characters.";
+        }
+
+        return "";
+
+      default:
+        return "";
+    }
+  };
+
+  // ======================================================
+  // BLUR VALIDATION
+  // ======================================================
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+
+    const error = validateField(name, value);
+
+    setErrors((prev) => ({
+      ...prev,
+      [name]: error,
+    }));
+  };
+
+  // ======================================================
+  // SUBMIT
+  // ======================================================
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const newErrors = {};
+
+    Object.keys(form).forEach((field) => {
+      const error = validateField(field, form[field]);
+
+      if (error) {
+        newErrors[field] = error;
+      }
+    });
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) {
+      return;
+    }
+
+    const enquiry = {
+      id: nextId(enquiries),
+      name: form.name.trim(),
+      email: form.email.trim(),
+      phone: form.phone.trim(),
+      service: form.service,
+      budget: form.budget,
+      message: form.message.trim(),
+      date: new Date().toISOString(),
+      status: "New",
+    };
+
+    if (typeof addEnquiry === "function") {
+      addEnquiry(enquiry);
+    } else if (typeof setEnquiries === "function") {
+      setEnquiries((prev) => [...prev, enquiry]);
+    }
+
+    setForm({
+      name: "",
+      email: "",
+      phone: "",
+      service: "Web Development",
+      budget: "",
+      message: "",
+    });
+
+    setErrors({});
+    setSubmitted(true);
+
+    setTimeout(() => {
+      setSubmitted(false);
+    }, 4000);
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  // ======================================================
+  // SCROLL TOP
+  // ======================================================
 
   useEffect(() => {
     if (submitted) {
@@ -41,613 +239,413 @@ function Contact({
     }
   }, [submitted]);
 
-  /* =========================================================
-     VALIDATE FORM
-  ========================================================= */
+  // ======================================================
+  // INPUT CLASS
+  // ======================================================
 
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!form.name.trim()) {
-      newErrors.name = "Name is required.";
-    } else if (!/^[A-Za-z\s.'-]+$/.test(form.name.trim())) {
-      newErrors.name =
-        "Name can contain letters, spaces, apostrophes, dots and hyphens only.";
-    } else if (form.name.trim().length < 2) {
-      newErrors.name = "Please enter a valid name.";
+  const inputClass = (field) => `
+    w-full
+    min-w-0
+    rounded-xl
+    border
+    ${
+      errors[field]
+        ? "border-red-400 focus:border-red-500 focus:ring-red-100"
+        : "border-slate-200 focus:border-indigo-500 focus:ring-indigo-100"
     }
-
-    if (!form.email.trim()) {
-      newErrors.email = "Email address is required.";
-    } else if (
-      !/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(
-        form.email.trim()
-      )
-    ) {
-      newErrors.email = "Please enter a valid email address.";
-    }
-
-    if (!form.phone.trim()) {
-      newErrors.phone = "Phone number is required.";
-    } else if (!/^\d{10}$/.test(form.phone)) {
-      newErrors.phone =
-        "Phone number must contain exactly 10 digits.";
-    }
-
-    if (!form.service) {
-      newErrors.service = "Please select a service.";
-    }
-
-    if (!form.budget) {
-      newErrors.budget = "Please select your budget.";
-    }
-
-    if (!form.message.trim()) {
-      newErrors.message = "Please tell us about your project.";
-    } else if (form.message.trim().length < 10) {
-      newErrors.message =
-        "Message should contain at least 10 characters.";
-    }
-
-    setErrors(newErrors);
-
-    return Object.keys(newErrors).length === 0;
-  };
-
-  /* =========================================================
-     HANDLE INPUT CHANGE
-  ========================================================= */
-
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-
-    let newValue = value;
-
-    if (name === "name") {
-      newValue = value.replace(/[^A-Za-z\s.'-]/g, "");
-    }
-
-    if (name === "email") {
-      newValue = value.replace(/[^A-Za-z0-9@._+-]/g, "");
-
-      const firstAtIndex = newValue.indexOf("@");
-
-      if (firstAtIndex !== -1) {
-        const beforeAt = newValue.slice(0, firstAtIndex);
-
-        const afterAt = newValue
-          .slice(firstAtIndex + 1)
-          .replace(/@/g, "");
-
-        newValue = `${beforeAt}@${afterAt}`;
-      }
-    }
-
-    if (name === "phone") {
-      newValue = value.replace(/\D/g, "").slice(0, 10);
-    }
-
-    setForm((previousForm) => ({
-      ...previousForm,
-      [name]: newValue,
-    }));
-
-    if (errors[name]) {
-      setErrors((previousErrors) => ({
-        ...previousErrors,
-        [name]: "",
-      }));
-    }
-
-    if (submitted) {
-      setSubmitted(false);
-    }
-  };
-
-  /* =========================================================
-     HANDLE BLUR
-  ========================================================= */
-
-  const handleBlur = (event) => {
-    const { name } = event.target;
-
-    const fieldErrors = {};
-
-    if (name === "name") {
-      if (!form.name.trim()) {
-        fieldErrors.name = "Name is required.";
-      } else if (!/^[A-Za-z\s.'-]+$/.test(form.name.trim())) {
-        fieldErrors.name = "Please enter a valid name.";
-      } else if (form.name.trim().length < 2) {
-        fieldErrors.name = "Please enter a valid name.";
-      }
-    }
-
-    if (name === "email") {
-      if (!form.email.trim()) {
-        fieldErrors.email = "Email address is required.";
-      } else if (
-        !/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(
-          form.email.trim()
-        )
-      ) {
-        fieldErrors.email =
-          "Please enter a valid email address.";
-      }
-    }
-
-    if (name === "phone") {
-      if (!form.phone.trim()) {
-        fieldErrors.phone = "Phone number is required.";
-      } else if (!/^\d{10}$/.test(form.phone)) {
-        fieldErrors.phone =
-          "Phone number must contain exactly 10 digits.";
-      }
-    }
-
-    if (name === "service" && !form.service) {
-      fieldErrors.service = "Please select a service.";
-    }
-
-    if (name === "budget" && !form.budget) {
-      fieldErrors.budget = "Please select your budget.";
-    }
-
-    if (name === "message") {
-      if (!form.message.trim()) {
-        fieldErrors.message =
-          "Please tell us about your project.";
-      } else if (form.message.trim().length < 10) {
-        fieldErrors.message =
-          "Message should contain at least 10 characters.";
-      }
-    }
-
-    setErrors((previousErrors) => ({
-      ...previousErrors,
-      ...fieldErrors,
-    }));
-  };
-
-  /* =========================================================
-     HANDLE SUBMIT
-  ========================================================= */
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
-    const isValid = validateForm();
-
-    if (!isValid) {
-      return;
-    }
-
-    const enquiry = {
-      id: nextId(enquiries),
-
-      name: form.name.trim(),
-
-      email: form.email.trim(),
-
-      phone: form.phone.trim(),
-
-      service: form.service,
-
-      budget: form.budget,
-
-      message: form.message.trim(),
-
-      date: new Date()
-        .toISOString()
-        .split("T")[0],
-
-      status: "New",
-    };
-
-    if (typeof addEnquiry === "function") {
-      addEnquiry(enquiry);
-    } else if (typeof setEnquiries === "function") {
-      setEnquiries((previousEnquiries) => [
-        enquiry,
-        ...previousEnquiries,
-      ]);
-    }
-
-    setForm(initialForm);
-
-    setErrors({});
-
-    setSubmitted(true);
-
-    setTimeout(() => {
-      setSubmitted(false);
-    }, 4000);
-  };
-
-  /* =========================================================
-     RETURN
-  ========================================================= */
+    bg-white
+    px-3
+    py-2.5
+    text-sm
+    text-slate-800
+    outline-none
+    transition
+    focus:ring-4
+    min-[350px]:px-4
+    min-[350px]:py-3
+    sm:text-base
+  `;
 
   return (
     <>
+      {/* ==================================================
+          PAGE HERO
+      ================================================== */}
+
       <PageHero
         badge="Contact Us"
-        title="Let's Talk About Your Project"
-        description="Tell us about your project and our team will get back to you."
+        title="Let's Build Something Great Together"
+        description="Have a project in mind? Tell us about it and our team will get back to you."
       />
 
-      <section className="bg-white py-12 sm:py-16 lg:py-20">
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-5 lg:gap-12 lg:px-8">
+      {/* ==================================================
+          SUCCESS MESSAGE
+      ================================================== */}
 
-          {/* CONTACT INFORMATION */}
+      {submitted && (
+        <div className="mx-auto mt-6 w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="rounded-2xl border border-green-200 bg-green-50 px-4 py-4 text-center text-sm font-medium text-green-700 sm:text-base">
+            Message sent successfully! We'll get back to you soon.
+          </div>
+        </div>
+      )}
 
-          <div className="lg:col-span-2">
+      {/* ==================================================
+          CONTACT SECTION
+      ================================================== */}
 
-            <span className="text-sm font-bold uppercase tracking-widest text-indigo-600">
-              Get In Touch
-            </span>
+      <section className="px-3 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-20">
+        <div className="mx-auto grid w-full max-w-7xl gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-12">
 
-            <h2 className="mt-4 text-3xl font-black text-slate-900 sm:text-5xl">
-              We would love to hear from you.
-            </h2>
+          {/* ==================================================
+              CONTACT INFORMATION
+          ================================================== */}
 
-            <p className="mt-5 text-lg leading-8 text-slate-600">
-              Have an idea, project or question?
-              Send us a message and we'll be happy
-              to discuss it with you.
-            </p>
+          <div className="min-w-0">
+            <div className="mb-7">
+              <span className="mb-3 inline-block rounded-full bg-indigo-50 px-3 py-1.5 text-xs font-semibold text-indigo-600 min-[350px]:px-4 min-[350px]:py-2 sm:text-sm">
+                Get In Touch
+              </span>
 
-            <div className="mt-9 space-y-6">
+              <h2 className="text-2xl font-bold leading-tight text-slate-900 min-[350px]:text-3xl sm:text-4xl">
+                We'd Love To Hear From You
+              </h2>
 
-              <div className="flex gap-4">
-                <div className="gratech-icon-flip flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
-                  <Mail size={21} />
+              <p className="mt-4 text-sm leading-6 text-slate-600 min-[350px]:text-base sm:leading-7">
+                Whether you have a question, need a quote, or want to discuss
+                your next project, feel free to reach out to us.
+              </p>
+            </div>
+
+            {/* Contact Details */}
+
+            <div className="space-y-4 sm:space-y-5">
+
+              {/* Email */}
+
+              <a
+                href="mailto:hello@novaagency.com"
+                className="flex min-w-0 items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4 transition hover:border-indigo-200 hover:shadow-sm min-[350px]:gap-4 sm:p-5"
+              >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 min-[350px]:h-11 min-[350px]:w-11">
+                  <Mail size={20} />
                 </div>
 
-                {/* EMAIL */}
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                    Email
+                  </p>
 
+                  <p className="mt-1 break-all text-sm font-semibold text-slate-800 min-[350px]:text-base">
+                    hello@novaagency.com
+                  </p>
+                </div>
+              </a>
 
+              {/* Phone */}
 
-  <div className="min-w-0">
-    <p className="font-bold text-slate-900">
-      Email
-    </p>
-
-    <a
-      href="mailto:hello@novaagency.com"
-      className="mt-1 block break-all text-slate-600 transition hover:text-indigo-600"
-    >
-      hello@novaagency.com
-    </a>
-  </div>
-</div>
-
-
-{/* PHONE */}
-
-<div className="flex gap-4">
-  <div className="gratech-icon-flip flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
-    <Phone size={21} />
-  </div>
-
-  <div>
-    <p className="font-bold text-slate-900">
-      Phone
-    </p>
-
-    <a
-      href="tel:+919876543210"
-      className="mt-1 block text-slate-600 transition hover:text-indigo-600"
-    >
-      +91 98765 43210
-    </a>
-  </div>
-
-              </div>
-
-              <div className="flex gap-4">
-                <div className="gratech-icon-flip flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
-                  <MapPin size={21} />
+              <a
+                href="tel:+919876543210"
+                className="flex min-w-0 items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4 transition hover:border-indigo-200 hover:shadow-sm min-[350px]:gap-4 sm:p-5"
+              >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 min-[350px]:h-11 min-[350px]:w-11">
+                  <Phone size={20} />
                 </div>
 
-                <div>
-                  <p className="font-bold text-slate-900">
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                    Phone
+                  </p>
+
+                  <p className="mt-1 text-sm font-semibold text-slate-800 min-[350px]:text-base">
+                    +91 98765 43210
+                  </p>
+                </div>
+              </a>
+
+              {/* Location */}
+
+              <div className="flex min-w-0 items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4 min-[350px]:gap-4 sm:p-5">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 min-[350px]:h-11 min-[350px]:w-11">
+                  <MapPin size={20} />
+                </div>
+
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
                     Location
                   </p>
 
-                  <p className="mt-1 text-slate-600">
+                  <p className="mt-1 text-sm font-semibold leading-5 text-slate-800 min-[350px]:text-base">
                     Hyderabad, Telangana, India
                   </p>
                 </div>
               </div>
-
             </div>
           </div>
 
-          {/* FORM */}
+          {/* ==================================================
+              CONTACT FORM
+          ================================================== */}
 
-          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5 sm:p-8 lg:col-span-3">
+          <div className="min-w-0">
+            <div className="rounded-3xl border border-slate-200 bg-slate-50 p-3 min-[350px]:p-4 sm:p-6 lg:p-8">
 
-            {submitted && (
-              <div className="mb-6 rounded-xl border border-green-200 bg-green-50 px-5 py-4 text-sm font-semibold text-green-700">
-                Thank you! Your enquiry has been submitted
-                successfully and has been added to the dashboard.
-              </div>
-            )}
+              <div className="mb-6">
+                <h2 className="text-xl font-bold text-slate-900 min-[350px]:text-2xl sm:text-3xl">
+                  Send Us a Message
+                </h2>
 
-            <form
-              onSubmit={handleSubmit}
-              noValidate
-              className="space-y-5"
-            >
-
-              {/* NAME + EMAIL */}
-
-              <div className="grid gap-5 sm:grid-cols-2">
-
-                <div>
-                  <label
-                    htmlFor="name"
-                    className="mb-2 block text-sm font-semibold text-slate-700"
-                  >
-                    Your Name
-                  </label>
-
-                  <input
-                    id="name"
-                    required
-                    type="text"
-                    name="name"
-                    value={form.name}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    placeholder="Your Name"
-                    autoComplete="name"
-                    inputMode="text"
-                    className={`w-full rounded-xl border bg-white px-5 py-4 outline-none transition ${
-                      errors.name
-                        ? "border-red-400 focus:border-red-500"
-                        : "border-slate-200 focus:border-indigo-500"
-                    }`}
-                  />
-
-                  {errors.name && (
-                    <p className="mt-2 text-xs font-medium text-red-600">
-                      {errors.name}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="mb-2 block text-sm font-semibold text-slate-700"
-                  >
-                    Email Address
-                  </label>
-
-                  <input
-                    id="email"
-                    required
-                    type="email"
-                    name="email"
-                    value={form.email}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    placeholder="Email Address"
-                    autoComplete="email"
-                    inputMode="email"
-                    spellCheck={false}
-                    autoCapitalize="none"
-                    autoCorrect="off"
-                    className={`w-full rounded-xl border bg-white px-5 py-4 outline-none transition ${
-                      errors.email
-                        ? "border-red-400 focus:border-red-500"
-                        : "border-slate-200 focus:border-indigo-500"
-                    }`}
-                  />
-
-                  {errors.email && (
-                    <p className="mt-1 text-xs font-medium text-red-600">
-                      {errors.email}
-                    </p>
-                  )}
-                </div>
-
+                <p className="mt-2 text-sm leading-6 text-slate-500">
+                  Fill out the form below and we'll get in touch with you.
+                </p>
               </div>
 
-              {/* PHONE + SERVICE */}
+              <form
+                onSubmit={handleSubmit}
+                noValidate
+                className="space-y-4 sm:space-y-5"
+              >
 
-              <div className="grid gap-5 sm:grid-cols-2">
+                {/* ==================================================
+                    NAME + EMAIL
+                    BELOW 350px = 1 COLUMN
+                    350px+ = 2 COLUMNS
+                ================================================== */}
 
-                <div>
-                  <label
-                    htmlFor="phone"
-                    className="mb-2 block text-sm font-semibold text-slate-700"
-                  >
-                    Phone Number
-                  </label>
+                <div className="grid gap-3 min-[350px]:grid-cols-2 sm:gap-5">
 
-                  <input
-                    id="phone"
-                    required
-                    type="tel"
-                    name="phone"
-                    value={form.phone}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    placeholder="10 digit phone number"
-                    autoComplete="tel"
-                    inputMode="numeric"
-                    pattern="[0-9]{10}"
-                    maxLength={10}
-                    className={`w-full rounded-xl border bg-white px-5 py-4 outline-none transition ${
-                      errors.phone
-                        ? "border-red-400 focus:border-red-500"
-                        : "border-slate-200 focus:border-indigo-500"
-                    }`}
-                  />
+                  {/* Name */}
 
-                  <p className="mt-1 text-xs text-slate-400">
-                    Enter 10 digits
-                  </p>
+                  <div className="min-w-0">
+                    <label
+                      htmlFor="name"
+                      className="mb-1.5 block text-xs font-semibold text-slate-700 min-[350px]:text-sm"
+                    >
+                      Name
+                    </label>
 
-                  {errors.phone && (
-                    <p className="mt-1 text-xs font-medium text-red-600">
-                      {errors.phone}
-                    </p>
-                  )}
+                    <input
+                      id="name"
+                      name="name"
+                      type="text"
+                      value={form.name}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      placeholder="Your name"
+                      className={inputClass("name")}
+                    />
+
+                    {errors.name && (
+                      <p className="mt-1 text-xs text-red-500">
+                        {errors.name}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Email */}
+
+                  <div className="min-w-0">
+                    <label
+                      htmlFor="email"
+                      className="mb-1.5 block text-xs font-semibold text-slate-700 min-[350px]:text-sm"
+                    >
+                      Email
+                    </label>
+
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={form.email}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      placeholder="you@example.com"
+                      className={inputClass("email")}
+                    />
+
+                    {errors.email && (
+                      <p className="mt-1 text-xs text-red-500">
+                        {errors.email}
+                      </p>
+                    )}
+                  </div>
                 </div>
 
-                <div>
+                {/* ==================================================
+                    PHONE + SERVICE
+                    BELOW 350px = 1 COLUMN
+                    350px+ = 2 COLUMNS
+                ================================================== */}
+
+                <div className="grid gap-3 min-[350px]:grid-cols-2 sm:gap-5">
+
+                  {/* Phone */}
+
+                  <div className="min-w-0">
+                    <label
+                      htmlFor="phone"
+                      className="mb-1.5 block text-xs font-semibold text-slate-700 min-[350px]:text-sm"
+                    >
+                      Phone
+                    </label>
+
+                    <input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      inputMode="numeric"
+                      maxLength={10}
+                      value={form.phone}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      placeholder="10 digit number"
+                      className={inputClass("phone")}
+                    />
+
+                    {errors.phone && (
+                      <p className="mt-1 text-xs text-red-500">
+                        {errors.phone}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Service */}
+
+                  <div className="min-w-0">
+                    <label
+                      htmlFor="service"
+                      className="mb-1.5 block text-xs font-semibold text-slate-700 min-[350px]:text-sm"
+                    >
+                      Service
+                    </label>
+
+                    <select
+                      id="service"
+                      name="service"
+                      value={form.service}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      className={inputClass("service")}
+                    >
+                      <option value="">Select service</option>
+                      <option value="Web Development">
+                        Web Development
+                      </option>
+                      <option value="UI/UX Design">
+                        UI/UX Design
+                      </option>
+                      <option value="Mobile App Development">
+                        Mobile App Development
+                      </option>
+                      <option value="Digital Marketing">
+                        Digital Marketing
+                      </option>
+                      <option value="SEO">
+                        SEO
+                      </option>
+                      <option value="Other">
+                        Other
+                      </option>
+                    </select>
+
+                    {errors.service && (
+                      <p className="mt-1 text-xs text-red-500">
+                        {errors.service}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* ==================================================
+                    BUDGET
+                ================================================== */}
+
+                <div className="min-w-0">
                   <label
-                    htmlFor="service"
-                    className="mb-2 block text-sm font-semibold text-slate-700"
+                    htmlFor="budget"
+                    className="mb-1.5 block text-xs font-semibold text-slate-700 min-[350px]:text-sm"
                   >
-                    Service
+                    Budget
                   </label>
 
                   <select
-                    id="service"
-                    name="service"
-                    value={form.service}
+                    id="budget"
+                    name="budget"
+                    value={form.budget}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    className={`w-full rounded-xl border bg-white px-5 py-4 outline-none transition ${
-                      errors.service
-                        ? "border-red-400"
-                        : "border-slate-200 focus:border-indigo-500"
-                    }`}
+                    className={inputClass("budget")}
                   >
-                    <option value="Web Development">
-                      Web Development
+                    <option value="">Select your budget</option>
+                    <option value="Below ₹50,000">
+                      Below ₹50,000
                     </option>
-
-                    <option value="UI/UX Design">
-                      UI/UX Design
+                    <option value="₹50,000 - ₹1,00,000">
+                      ₹50,000 - ₹1,00,000
                     </option>
-
-                    <option value="Mobile App Development">
-                      Mobile App Development
+                    <option value="₹1,00,000 - ₹2,00,000">
+                      ₹1,00,000 - ₹2,00,000
                     </option>
-
-                    <option value="Digital Marketing">
-                      Digital Marketing
+                    <option value="₹2,00,000 - ₹5,00,000">
+                      ₹2,00,000 - ₹5,00,000
                     </option>
-
-                    <option value="SEO Optimization">
-                      SEO Optimization
-                    </option>
-
-                    <option value="Branding">
-                      Branding
+                    <option value="Above ₹5,00,000">
+                      Above ₹5,00,000
                     </option>
                   </select>
 
-                  {errors.service && (
-                    <p className="mt-2 text-xs font-medium text-red-600">
-                      {errors.service}
+                  {errors.budget && (
+                    <p className="mt-1 text-xs text-red-500">
+                      {errors.budget}
                     </p>
                   )}
                 </div>
 
-              </div>
+                {/* ==================================================
+                    PROJECT DETAILS
+                ================================================== */}
 
-              {/* BUDGET */}
+                <div className="min-w-0">
+                  <label
+                    htmlFor="message"
+                    className="mb-1.5 block text-xs font-semibold text-slate-700 min-[350px]:text-sm"
+                  >
+                    Project Details
+                  </label>
 
-              <div>
-                <label
-                  htmlFor="budget"
-                  className="mb-2 block text-sm font-semibold text-slate-700"
-                >
-                  Budget
-                </label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    rows={5}
+                    value={form.message}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    placeholder="Tell us about your project..."
+                    className={`${inputClass(
+                      "message"
+                    )} resize-none`}
+                  />
 
-                <select
-                  id="budget"
-                  required
-                  name="budget"
-                  value={form.budget}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  className={`w-full rounded-xl border bg-white px-5 py-4 outline-none transition ${
-                    errors.budget
-                      ? "border-red-400"
-                      : "border-slate-200 focus:border-indigo-500"
-                  }`}
-                >
-                  <option value="">
-                    Select Budget
-                  </option>
+                  {errors.message && (
+                    <p className="mt-1 text-xs text-red-500">
+                      {errors.message}
+                    </p>
+                  )}
+                </div>
 
-                  <option value="$1,000 - $3,000">
-                    $1,000 - $3,000
-                  </option>
+                {/* ==================================================
+                    SUBMIT BUTTON
+                ================================================== */}
 
-                  <option value="$3,000 - $5,000">
-                    $3,000 - $5,000
-                  </option>
-
-                  <option value="$5,000 - $10,000">
-                    $5,000 - $10,000
-                  </option>
-
-                  <option value="$10,000+">
-                    $10,000+
-                  </option>
-                </select>
-
-                {errors.budget && (
-                  <p className="mt-2 text-xs font-medium text-red-600">
-                    {errors.budget}
-                  </p>
-                )}
-              </div>
-
-              {/* MESSAGE */}
-
-              <div>
-                <label
-                  htmlFor="message"
-                  className="mb-2 block text-sm font-semibold text-slate-700"
-                >
-                  Project Details
-                </label>
-
-                <textarea
-                  id="message"
-                  required
-                  name="message"
-                  value={form.message}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  rows={6}
-                  placeholder="Tell us about your project..."
-                  className={`w-full resize-none rounded-xl border bg-white px-5 py-4 outline-none transition ${
-                    errors.message
-                      ? "border-red-400 focus:border-red-500"
-                      : "border-slate-200 focus:border-indigo-500"
-                  }`}
-                />
-
-                {errors.message && (
-                  <p className="mt-2 text-xs font-medium text-red-600">
-                    {errors.message}
-                  </p>
-                )}
-              </div>
-
-              {/* SEND BUTTON */}
-
-              <button
-                type="submit"
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-7 py-4 font-bold text-white transition hover:bg-indigo-700 sm:w-auto"
-              >
-                Send Message
-                <Send size={17} />
-              </button>
-
-            </form>
+                <button
+  type="submit"
+  className="flex w-auto cursor-pointer items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700 active:scale-[0.99] min-[350px]:px-6 min-[350px]:py-3.5 sm:text-base"
+>
+  <Send size={18} />
+  Send Message
+</button>
+              </form>
+            </div>
           </div>
         </div>
       </section>

@@ -15,8 +15,7 @@ function ProjectDetails({ projects = [] }) {
   // ======================================================
 
   const projectIndex = projects.findIndex(
-    (project) =>
-      String(project.id) === String(id)
+    (project) => String(project.id) === String(id)
   );
 
   // ======================================================
@@ -25,14 +24,13 @@ function ProjectDetails({ projects = [] }) {
 
   if (projectIndex === -1) {
     return (
-      <section className="flex min-h-[60vh] items-center justify-center bg-white px-4 py-20">
-        <div className="text-center">
-
-          <h1 className="text-3xl font-black text-slate-900">
+      <section className="flex min-h-[60vh] items-center justify-center bg-white px-4 py-16 sm:py-20">
+        <div className="w-full max-w-md text-center">
+          <h1 className="text-2xl font-black text-slate-900 sm:text-3xl">
             Project Not Found
           </h1>
 
-          <p className="mt-3 text-slate-500">
+          <p className="mt-3 text-sm leading-6 text-slate-500 sm:text-base">
             The project you are looking for does not exist.
           </p>
 
@@ -42,21 +40,23 @@ function ProjectDetails({ projects = [] }) {
               mt-6
               inline-flex
               items-center
+              justify-center
               gap-2
               rounded-xl
               bg-indigo-600
-              px-6
+              px-5
               py-3
+              text-sm
               font-semibold
               text-white
               transition
               hover:bg-indigo-700
+              sm:px-6
             "
           >
             <ArrowLeft size={18} />
             Back to Projects
           </Link>
-
         </div>
       </section>
     );
@@ -72,8 +72,7 @@ function ProjectDetails({ projects = [] }) {
   // ADMIN CREATED PROJECT
   // ======================================================
 
-  const isAdminCreated =
-    project.isAdminCreated === true;
+  const isAdminCreated = project.isAdminCreated === true;
 
   // ======================================================
   // PREVIOUS PROJECT
@@ -107,15 +106,11 @@ function ProjectDetails({ projects = [] }) {
   const description =
     project.description?.trim() || "";
 
-  const descriptionParagraphs =
-    description
-      ? description
-          .split(/\n\s*\n/)
-          .filter(
-            (paragraph) =>
-              paragraph.trim()
-          )
-      : [];
+  const descriptionParagraphs = description
+    ? description
+        .split(/\n\s*\n/)
+        .filter((paragraph) => paragraph.trim())
+    : [];
 
   // ======================================================
   // LONG DESCRIPTION
@@ -124,15 +119,11 @@ function ProjectDetails({ projects = [] }) {
   const longDescription =
     project.longDescription?.trim() || "";
 
-  const longDescriptionParagraphs =
-    longDescription
-      ? longDescription
-          .split(/\n\s*\n/)
-          .filter(
-            (paragraph) =>
-              paragraph.trim()
-          )
-      : [];
+  const longDescriptionParagraphs = longDescription
+    ? longDescription
+        .split(/\n\s*\n/)
+        .filter((paragraph) => paragraph.trim())
+    : [];
 
   // ======================================================
   // DEFAULT CONTENT
@@ -179,17 +170,19 @@ function ProjectDetails({ projects = [] }) {
       : overviewParagraphs;
 
   return (
-    <main className="bg-white">
+    <main className="overflow-hidden bg-white">
 
       {/* ==================================================
           HERO
       ================================================== */}
 
-      <section className="relative overflow-hidden bg-slate-950 py-16 sm:py-20 lg:py-24">
+      <section className="relative overflow-hidden bg-slate-950 py-12 sm:py-20 lg:py-24">
 
-        <div className="pointer-events-none absolute -left-32 -top-32 h-80 w-80 rounded-full bg-indigo-600/20 blur-3xl" />
+        {/* Background decorations */}
 
-        <div className="pointer-events-none absolute -bottom-40 -right-32 h-96 w-96 rounded-full bg-purple-600/20 blur-3xl" />
+        <div className="pointer-events-none absolute -left-32 -top-32 h-64 w-64 rounded-full bg-indigo-600/20 blur-3xl sm:h-80 sm:w-80" />
+
+        <div className="pointer-events-none absolute -bottom-40 -right-32 h-80 w-80 rounded-full bg-purple-600/20 blur-3xl sm:h-96 sm:w-96" />
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
@@ -198,7 +191,7 @@ function ProjectDetails({ projects = [] }) {
           <Link
             to="/projects"
             className="
-              mb-8
+              mb-7
               inline-flex
               items-center
               gap-2
@@ -207,6 +200,7 @@ function ProjectDetails({ projects = [] }) {
               text-slate-300
               transition
               hover:text-white
+              sm:mb-8
             "
           >
             <ArrowLeft size={17} />
@@ -221,17 +215,22 @@ function ProjectDetails({ projects = [] }) {
               <span
                 className="
                   inline-flex
+                  max-w-full
                   rounded-full
                   border
                   border-indigo-400/30
                   bg-indigo-500/10
-                  px-4
-                  py-2
-                  text-xs
+                  px-3
+                  py-1.5
+                  text-[10px]
                   font-bold
                   uppercase
-                  tracking-[0.18em]
+                  tracking-[0.16em]
                   text-indigo-300
+                  sm:px-4
+                  sm:py-2
+                  sm:text-xs
+                  sm:tracking-[0.18em]
                 "
               >
                 {project.category}
@@ -242,11 +241,13 @@ function ProjectDetails({ projects = [] }) {
 
             <h1
               className="
-                mt-6
-                text-4xl
+                mt-5
+                break-words
+                text-3xl
                 font-black
                 leading-tight
                 text-white
+                sm:mt-6
                 sm:text-5xl
                 lg:text-6xl
               "
@@ -259,12 +260,14 @@ function ProjectDetails({ projects = [] }) {
             {shortDescription && (
               <p
                 className="
-                  mt-6
+                  mt-5
                   max-w-3xl
-                  text-base
-                  leading-8
+                  text-sm
+                  leading-7
                   text-slate-300
+                  sm:mt-6
                   sm:text-lg
+                  sm:leading-8
                 "
               >
                 {shortDescription}
@@ -273,69 +276,61 @@ function ProjectDetails({ projects = [] }) {
 
             {/* META */}
 
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-7 grid grid-cols-2 gap-3 sm:mt-8 sm:flex sm:flex-wrap">
 
               {/* CLIENT */}
 
               {project.client && (
-                <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
-
-                  <p className="text-xs uppercase tracking-wider text-slate-500">
+                <div className="min-w-0 rounded-xl border border-white/10 bg-white/5 px-3 py-3 sm:px-4">
+                  <p className="text-[10px] uppercase tracking-wider text-slate-500 sm:text-xs">
                     Client
                   </p>
 
-                  <p className="mt-1 text-sm font-semibold text-white">
+                  <p className="mt-1 break-words text-xs font-semibold text-white sm:text-sm">
                     {project.client}
                   </p>
-
                 </div>
               )}
 
               {/* LOCATION */}
 
               {project.location && (
-                <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
-
-                  <p className="text-xs uppercase tracking-wider text-slate-500">
+                <div className="min-w-0 rounded-xl border border-white/10 bg-white/5 px-3 py-3 sm:px-4">
+                  <p className="text-[10px] uppercase tracking-wider text-slate-500 sm:text-xs">
                     Location
                   </p>
 
-                  <p className="mt-1 text-sm font-semibold text-white">
+                  <p className="mt-1 break-words text-xs font-semibold text-white sm:text-sm">
                     {project.location}
                   </p>
-
                 </div>
               )}
 
               {/* YEAR */}
 
               {project.year && (
-                <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
-
-                  <p className="text-xs uppercase tracking-wider text-slate-500">
+                <div className="min-w-0 rounded-xl border border-white/10 bg-white/5 px-3 py-3 sm:px-4">
+                  <p className="text-[10px] uppercase tracking-wider text-slate-500 sm:text-xs">
                     Year
                   </p>
 
-                  <p className="mt-1 text-sm font-semibold text-white">
+                  <p className="mt-1 break-words text-xs font-semibold text-white sm:text-sm">
                     {project.year}
                   </p>
-
                 </div>
               )}
 
               {/* STATUS */}
 
               {project.status && (
-                <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
-
-                  <p className="text-xs uppercase tracking-wider text-slate-500">
+                <div className="min-w-0 rounded-xl border border-white/10 bg-white/5 px-3 py-3 sm:px-4">
+                  <p className="text-[10px] uppercase tracking-wider text-slate-500 sm:text-xs">
                     Status
                   </p>
 
-                  <p className="mt-1 text-sm font-semibold text-white">
+                  <p className="mt-1 break-words text-xs font-semibold text-white sm:text-sm">
                     {project.status}
                   </p>
-
                 </div>
               )}
 
@@ -345,39 +340,44 @@ function ProjectDetails({ projects = [] }) {
       </section>
 
       {/* ==================================================
-    IMAGE
-================================================== */}
+          IMAGE
+      ================================================== */}
 
-{project.image && (
-  <section className="bg-white pt-10 sm:pt-14 lg:pt-16">
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div className="w-full overflow-hidden rounded-2xl bg-slate-100 sm:rounded-3xl">
-        <img
-          src={project.image}
-          alt={project.title || "Project"}
-          className="
-            block
-            h-[300px]
-            w-full
-            object-cover
-            object-center
-            sm:h-[450px]
-            lg:h-[600px]
-          "
-        />
-      </div>
-    </div>
-  </section>
-)}
+      {project.image && (
+        <section className="bg-white pt-8 sm:pt-14 lg:pt-16">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+
+            <div className="w-full overflow-hidden rounded-xl bg-slate-100 sm:rounded-3xl">
+
+              <img
+                src={project.image}
+                alt={project.title || "Project"}
+                className="
+                  block
+                  h-auto
+                  max-h-[420px]
+                  w-full
+                  object-cover
+                  object-center
+                  sm:max-h-[500px]
+                  lg:max-h-[600px]
+                "
+              />
+
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ==================================================
           CONTENT
       ================================================== */}
 
-      <section className="bg-white py-16 sm:py-20 lg:py-24">
+      <section className="bg-white py-12 sm:py-20 lg:py-24">
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
-          <div className="grid grid-cols-1 gap-10 lg:grid-cols-3 lg:gap-12">
+          <div className="grid grid-cols-1 gap-10 md:gap-12 lg:grid-cols-3">
 
             {/* ==================================================
                 MAIN CONTENT
@@ -392,15 +392,15 @@ function ProjectDetails({ projects = [] }) {
               {overviewParagraphs.length > 0 && (
                 <div>
 
-                  <span className="text-sm font-bold uppercase tracking-[0.18em] text-indigo-600">
+                  <span className="text-xs font-bold uppercase tracking-[0.16em] text-indigo-600 sm:text-sm sm:tracking-[0.18em]">
                     About The Project
                   </span>
 
-                  <h2 className="mt-3 text-3xl font-black text-slate-900 sm:text-4xl">
+                  <h2 className="mt-3 text-2xl font-black text-slate-900 sm:text-4xl">
                     Project Overview
                   </h2>
 
-                  <div className="mt-8 space-y-7">
+                  <div className="mt-6 space-y-6 sm:mt-8 sm:space-y-7">
 
                     {overviewParagraphs.map(
                       (paragraph, index) => (
@@ -408,8 +408,8 @@ function ProjectDetails({ projects = [] }) {
                           key={index}
                           className="
                             max-w-4xl
-                            text-base
-                            leading-8
+                            text-sm
+                            leading-7
                             text-slate-600
                             sm:text-lg
                             sm:leading-9
@@ -431,17 +431,17 @@ function ProjectDetails({ projects = [] }) {
 
               {isAdminCreated &&
                 longDescriptionParagraphs.length > 0 && (
-                  <div className="mt-14">
+                  <div className="mt-12 sm:mt-14">
 
-                    <span className="text-sm font-bold uppercase tracking-[0.18em] text-indigo-600">
+                    <span className="text-xs font-bold uppercase tracking-[0.16em] text-indigo-600 sm:text-sm sm:tracking-[0.18em]">
                       Detailed Information
                     </span>
 
-                    <h2 className="mt-3 text-3xl font-black text-slate-900 sm:text-4xl">
+                    <h2 className="mt-3 text-2xl font-black text-slate-900 sm:text-4xl">
                       Project Details
                     </h2>
 
-                    <div className="mt-8 space-y-7">
+                    <div className="mt-6 space-y-6 sm:mt-8 sm:space-y-7">
 
                       {longDescriptionParagraphs.map(
                         (paragraph, index) => (
@@ -449,8 +449,8 @@ function ProjectDetails({ projects = [] }) {
                             key={index}
                             className="
                               max-w-4xl
-                              text-base
-                              leading-8
+                              text-sm
+                              leading-7
                               text-slate-600
                               sm:text-lg
                               sm:leading-9
@@ -472,17 +472,17 @@ function ProjectDetails({ projects = [] }) {
 
               {!isAdminCreated &&
                 longDescriptionParagraphs.length > 0 && (
-                  <div className="mt-14">
+                  <div className="mt-12 sm:mt-14">
 
-                    <span className="text-sm font-bold uppercase tracking-[0.18em] text-indigo-600">
+                    <span className="text-xs font-bold uppercase tracking-[0.16em] text-indigo-600 sm:text-sm sm:tracking-[0.18em]">
                       More Information
                     </span>
 
-                    <h2 className="mt-3 text-3xl font-black text-slate-900 sm:text-4xl">
+                    <h2 className="mt-3 text-2xl font-black text-slate-900 sm:text-4xl">
                       Project Details
                     </h2>
 
-                    <div className="mt-8 space-y-7">
+                    <div className="mt-6 space-y-6 sm:mt-8 sm:space-y-7">
 
                       {longDescriptionParagraphs.map(
                         (paragraph, index) => (
@@ -490,8 +490,8 @@ function ProjectDetails({ projects = [] }) {
                             key={index}
                             className="
                               max-w-4xl
-                              text-base
-                              leading-8
+                              text-sm
+                              leading-7
                               text-slate-600
                               sm:text-lg
                               sm:leading-9
@@ -512,13 +512,13 @@ function ProjectDetails({ projects = [] }) {
               ================================================== */}
 
               {project.highlights?.length > 0 && (
-                <div className="mt-12">
+                <div className="mt-10 sm:mt-12">
 
-                  <h3 className="text-2xl font-bold text-slate-900">
+                  <h3 className="text-xl font-bold text-slate-900 sm:text-2xl">
                     Project Highlights
                   </h3>
 
-                  <div className="mt-6 space-y-5">
+                  <div className="mt-5 space-y-4 sm:mt-6 sm:space-y-5">
 
                     {project.highlights.map(
                       (highlight, index) => (
@@ -528,11 +528,11 @@ function ProjectDetails({ projects = [] }) {
                         >
 
                           <CheckCircle2
-                            size={21}
-                            className="mt-1 shrink-0 text-indigo-600"
+                            size={20}
+                            className="mt-1 shrink-0 text-indigo-600 sm:h-[21px] sm:w-[21px]"
                           />
 
-                          <p className="text-base leading-7 text-slate-600">
+                          <p className="min-w-0 text-sm leading-7 text-slate-600 sm:text-base">
                             {highlight}
                           </p>
 
@@ -553,24 +553,24 @@ function ProjectDetails({ projects = [] }) {
 
             <aside className="min-w-0">
 
-              <div className="sticky top-24 rounded-2xl border border-slate-200 bg-slate-50 p-6 sm:p-7">
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5 sm:p-7 lg:sticky lg:top-24">
 
                 <h3 className="text-xl font-bold text-slate-900">
                   Project Details
                 </h3>
 
-                <div className="mt-6 divide-y divide-slate-200">
+                <div className="mt-5 divide-y divide-slate-200 sm:mt-6">
 
                   {/* CLIENT */}
 
                   {project.client && (
                     <div className="py-4 first:pt-0">
 
-                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 sm:text-xs">
                         Client
                       </p>
 
-                      <p className="mt-2 text-base font-semibold text-slate-800">
+                      <p className="mt-2 break-words text-sm font-semibold text-slate-800 sm:text-base">
                         {project.client}
                       </p>
 
@@ -582,11 +582,11 @@ function ProjectDetails({ projects = [] }) {
                   {project.category && (
                     <div className="py-4">
 
-                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 sm:text-xs">
                         Category
                       </p>
 
-                      <p className="mt-2 text-base font-semibold text-slate-800">
+                      <p className="mt-2 break-words text-sm font-semibold text-slate-800 sm:text-base">
                         {project.category}
                       </p>
 
@@ -598,11 +598,11 @@ function ProjectDetails({ projects = [] }) {
                   {project.location && (
                     <div className="py-4">
 
-                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 sm:text-xs">
                         Location
                       </p>
 
-                      <p className="mt-2 text-base font-semibold text-slate-800">
+                      <p className="mt-2 break-words text-sm font-semibold text-slate-800 sm:text-base">
                         {project.location}
                       </p>
 
@@ -614,11 +614,11 @@ function ProjectDetails({ projects = [] }) {
                   {project.year && (
                     <div className="py-4">
 
-                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 sm:text-xs">
                         Year
                       </p>
 
-                      <p className="mt-2 text-base font-semibold text-slate-800">
+                      <p className="mt-2 break-words text-sm font-semibold text-slate-800 sm:text-base">
                         {project.year}
                       </p>
 
@@ -630,16 +630,14 @@ function ProjectDetails({ projects = [] }) {
                   {project.status && (
                     <div className="py-4 last:pb-0">
 
-                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 sm:text-xs">
                         Status
                       </p>
 
                       <div className="mt-2">
-
-                        <span className="inline-flex rounded-full bg-emerald-100 px-3 py-1 text-sm font-semibold text-emerald-700">
+                        <span className="inline-flex max-w-full rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700 sm:text-sm">
                           {project.status}
                         </span>
-
                       </div>
 
                     </div>
@@ -647,6 +645,7 @@ function ProjectDetails({ projects = [] }) {
 
                 </div>
               </div>
+
             </aside>
 
           </div>
@@ -656,14 +655,19 @@ function ProjectDetails({ projects = [] }) {
           ================================================== */}
 
           {(previousProject || nextProject) && (
-            <div className="mt-16 border-t border-slate-200 pt-8 sm:mt-20">
+            <div className="mt-12 border-t border-slate-200 pt-7 sm:mt-20 sm:pt-8">
 
               <div
-                className={`grid gap-4 ${
-                  previousProject && nextProject
-                    ? "sm:grid-cols-2"
-                    : "sm:grid-cols-1"
-                }`}
+                className={`
+                  grid
+                  grid-cols-1
+                  gap-4
+                  ${
+                    previousProject && nextProject
+                      ? "sm:grid-cols-2"
+                      : "sm:grid-cols-1"
+                  }
+                `}
               >
 
                 {/* PREVIOUS */}
@@ -674,44 +678,50 @@ function ProjectDetails({ projects = [] }) {
                     className="
                       group
                       flex
-                      min-h-[110px]
+                      min-h-[100px]
+                      w-full
+                      min-w-0
                       items-center
                       justify-between
                       rounded-2xl
                       border
                       border-slate-200
                       bg-white
-                      p-5
+                      p-4
                       transition
                       hover:-translate-y-1
                       hover:border-indigo-200
                       hover:shadow-lg
+                      sm:min-h-[110px]
                       sm:p-6
                     "
                   >
 
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
 
-                      <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
-                        <ArrowLeft size={15} />
+                      <span className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 sm:text-xs">
+                        <ArrowLeft size={14} />
                         Previous Project
                       </span>
 
-                      <p className="mt-2 truncate text-base font-bold text-slate-900 transition group-hover:text-indigo-600 sm:text-lg">
+                      <p className="mt-2 line-clamp-2 break-words text-sm font-bold leading-6 text-slate-900 transition group-hover:text-indigo-600 sm:text-lg">
                         {previousProject.title}
                       </p>
 
                     </div>
 
                     <ArrowLeft
-                      size={20}
+                      size={19}
                       className="
-                        ml-4
+                        ml-3
                         shrink-0
                         text-slate-400
                         transition
                         group-hover:-translate-x-1
                         group-hover:text-indigo-600
+                        sm:ml-4
+                        sm:h-5
+                        sm:w-5
                       "
                     />
 
@@ -726,19 +736,22 @@ function ProjectDetails({ projects = [] }) {
                     className={`
                       group
                       flex
-                      min-h-[110px]
+                      min-h-[100px]
+                      w-full
+                      min-w-0
                       items-center
                       justify-between
                       rounded-2xl
                       border
                       border-slate-200
                       bg-white
-                      p-5
+                      p-4
                       text-right
                       transition
                       hover:-translate-y-1
                       hover:border-indigo-200
                       hover:shadow-lg
+                      sm:min-h-[110px]
                       sm:p-6
                       ${
                         !previousProject
@@ -750,26 +763,29 @@ function ProjectDetails({ projects = [] }) {
 
                     <div className="min-w-0 flex-1">
 
-                      <span className="flex items-center justify-end gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
+                      <span className="flex items-center justify-end gap-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 sm:text-xs">
                         Next Project
-                        <ArrowRight size={15} />
+                        <ArrowRight size={14} />
                       </span>
 
-                      <p className="mt-2 truncate text-base font-bold text-slate-900 transition group-hover:text-indigo-600 sm:text-lg">
+                      <p className="mt-2 line-clamp-2 break-words text-sm font-bold leading-6 text-slate-900 transition group-hover:text-indigo-600 sm:text-lg">
                         {nextProject.title}
                       </p>
 
                     </div>
 
                     <ArrowRight
-                      size={20}
+                      size={19}
                       className="
-                        ml-4
+                        ml-3
                         shrink-0
                         text-slate-400
                         transition
                         group-hover:translate-x-1
                         group-hover:text-indigo-600
+                        sm:ml-4
+                        sm:h-5
+                        sm:w-5
                       "
                     />
 
@@ -782,6 +798,7 @@ function ProjectDetails({ projects = [] }) {
 
         </div>
       </section>
+
     </main>
   );
 }

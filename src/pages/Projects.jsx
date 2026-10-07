@@ -4,8 +4,8 @@ import PageHero from "../components/PageHero";
 import ProjectCard from "../components/ProjectCard";
 
 function Projects({ projects = [] }) {
-  const [category, setCategory] =
-    useState("All");
+  const [category, setCategory] = useState("All");
+  const [search, setSearch] = useState("");
 
   // ======================================================
   // ONLY SHOW COMPLETED PROJECTS PUBLICLY
@@ -26,9 +26,7 @@ function Projects({ projects = [] }) {
     const uniqueCategories = [
       ...new Set(
         publicProjects
-          .map(
-            (project) => project.category
-          )
+          .map((project) => project.category)
           .filter(Boolean)
       ),
     ];
@@ -41,15 +39,55 @@ function Projects({ projects = [] }) {
   // ======================================================
 
   const filteredProjects = useMemo(() => {
-    if (category === "All") {
-      return publicProjects;
-    }
+    const searchTerm = search
+      .trim()
+      .toLowerCase();
 
-    return publicProjects.filter(
-      (project) =>
-        project.category === category
-    );
-  }, [publicProjects, category]);
+    return publicProjects.filter((project) => {
+      // Category filter
+      const matchesCategory =
+        category === "All" ||
+        project.category === category;
+
+      // Search filter
+      const matchesSearch =
+        !searchTerm ||
+        project.title
+          ?.toLowerCase()
+          .includes(searchTerm) ||
+        project.name
+          ?.toLowerCase()
+          .includes(searchTerm) ||
+        project.description
+          ?.toLowerCase()
+          .includes(searchTerm) ||
+        project.category
+          ?.toLowerCase()
+          .includes(searchTerm);
+
+      return (
+        matchesCategory &&
+        matchesSearch
+      );
+    });
+  }, [publicProjects, category, search]);
+
+  // ======================================================
+  // CLEAR SEARCH
+  // ======================================================
+
+  const clearSearch = () => {
+    setSearch("");
+  };
+
+  // ======================================================
+  // CLEAR ALL FILTERS
+  // ======================================================
+
+  const clearFilters = () => {
+    setSearch("");
+    setCategory("All");
+  };
 
   return (
     <>
@@ -71,15 +109,147 @@ function Projects({ projects = [] }) {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
           {/* ==================================================
-              FILTER
+              SEARCH + FILTER
           ================================================== */}
 
-          <div className="flex justify-end">
-            <div className="w-48 sm:w-64">
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+
+            {/* ==================================================
+                SEARCH
+            ================================================== */}
+
+            <div className="w-full sm:max-w-2xl">
+
+              <label
+                htmlFor="project-search"
+                className="mb-2 block text-sm font-bold text-slate-800"
+              >
+                Search Projects
+              </label>
+
+              <div className="relative">
+
+                {/* Search Icon */}
+
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="
+                    pointer-events-none
+                    absolute
+                    left-3
+                    top-1/2
+                    -translate-y-1/2
+                    text-slate-400
+                  "
+                >
+                  <circle
+                    cx="11"
+                    cy="11"
+                    r="8"
+                  />
+
+                  <path d="m21 21-4.3-4.3" />
+                </svg>
+
+                {/* Search Input */}
+
+                <input
+                  id="project-search"
+                  type="search"
+                  value={search}
+                  onChange={(event) =>
+                    setSearch(
+                      event.target.value
+                    )
+                  }
+                  placeholder="Search projects..."
+                  className="
+                    w-full
+                    rounded-xl
+                    border
+                    border-slate-200
+                    bg-white
+                    py-3
+                    pl-10
+                    pr-10
+                    text-sm
+                    font-medium
+                    text-slate-700
+                    shadow-sm
+                    outline-none
+                    transition
+                    placeholder:text-slate-400
+                    focus:border-indigo-500
+                    focus:ring-2
+                    focus:ring-indigo-500/20
+                  "
+                />
+
+                {/* Clear Search */}
+
+                {search && (
+                  <button
+                    type="button"
+                    onClick={clearSearch}
+                    aria-label="Clear search"
+                    className="
+                      absolute
+                      right-3
+                      top-1/2
+                      flex
+                      -translate-y-1/2
+                      items-center
+                      justify-center
+                      text-slate-400
+                      transition
+                      hover:text-slate-700
+                    "
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M18 6 6 18" />
+                      <path d="m6 6 12 12" />
+                    </svg>
+                  </button>
+                )}
+
+              </div>
+            </div>
+
+            {/* ==================================================
+                CATEGORY FILTER
+            ================================================== */}
+
+            <div className="w-full sm:w-64">
 
               <label
                 htmlFor="project-category"
-                className="mb-2 block text-right text-sm font-bold text-slate-800"
+                className="
+                  mb-2
+                  block
+                  text-left
+                  text-sm
+                  font-bold
+                  text-slate-800
+                  sm:text-right
+                "
               >
                 Filter by Category
               </label>
@@ -127,6 +297,8 @@ function Projects({ projects = [] }) {
                   )}
                 </select>
 
+                {/* Dropdown Icon */}
+
                 <div
                   className="
                     pointer-events-none
@@ -155,7 +327,51 @@ function Projects({ projects = [] }) {
 
               </div>
             </div>
+
           </div>
+
+          {/* ==================================================
+              RESULTS COUNT
+          ================================================== */}
+
+          {(search || category !== "All") && (
+            <div
+              className="
+                mt-6
+                flex
+                flex-wrap
+                items-center
+                justify-between
+                gap-3
+              "
+            >
+
+              <p className="text-sm text-slate-500">
+                Showing{" "}
+                <span className="font-semibold text-slate-800">
+                  {filteredProjects.length}
+                </span>{" "}
+                {filteredProjects.length === 1
+                  ? "project"
+                  : "projects"}
+              </p>
+
+              <button
+                type="button"
+                onClick={clearFilters}
+                className="
+                  text-sm
+                  font-semibold
+                  text-indigo-600
+                  transition
+                  hover:text-indigo-700
+                "
+              >
+                Clear Filters
+              </button>
+
+            </div>
+          )}
 
           {/* ==================================================
               PROJECT GRID
@@ -163,7 +379,16 @@ function Projects({ projects = [] }) {
 
           {filteredProjects.length > 0 ? (
 
-            <div className="mt-10 grid gap-7 sm:grid-cols-2 lg:mt-12 lg:grid-cols-3">
+            <div
+              className="
+                mt-10
+                grid
+                gap-7
+                sm:grid-cols-2
+                lg:mt-12
+                lg:grid-cols-3
+              "
+            >
 
               {filteredProjects.map(
                 (project) => (
@@ -186,6 +411,8 @@ function Projects({ projects = [] }) {
 
               <div className="mx-auto max-w-md">
 
+                {/* Empty Icon */}
+
                 <div
                   className="
                     mx-auto
@@ -202,6 +429,8 @@ function Projects({ projects = [] }) {
                   📁
                 </div>
 
+                {/* Empty Heading */}
+
                 <h3
                   className="
                     mt-5
@@ -213,18 +442,20 @@ function Projects({ projects = [] }) {
                   No Projects Found
                 </h3>
 
+                {/* Empty Description */}
+
                 <p className="mt-2 text-slate-500">
-                  There are no completed
-                  projects available in this
-                  category.
+                  {search
+                    ? `No completed projects match "${search}".`
+                    : "There are no completed projects available in this category."}
                 </p>
 
-                {category !== "All" && (
+                {/* Reset Button */}
+
+                {(category !== "All" || search) && (
                   <button
                     type="button"
-                    onClick={() =>
-                      setCategory("All")
-                    }
+                    onClick={clearFilters}
                     className="
                       mt-6
                       rounded-xl
@@ -236,6 +467,10 @@ function Projects({ projects = [] }) {
                       text-white
                       transition
                       hover:bg-indigo-700
+                      focus:outline-none
+                      focus:ring-2
+                      focus:ring-indigo-500
+                      focus:ring-offset-2
                     "
                   >
                     View All Projects
@@ -253,3 +488,4 @@ function Projects({ projects = [] }) {
 }
 
 export default Projects;
+

@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 
 import {
@@ -13,17 +14,17 @@ import {
   FolderKanban,
   MessageSquare,
   FileText,
-  Users,
-  Star,
-  Settings,
   Menu,
   X,
   LogOut,
-  Bell,
+  AlertTriangle,
 } from "lucide-react";
 
 function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Logout popup state
+  const [showLogoutPopup, setShowLogoutPopup] = useState(false);
 
   const navigate = useNavigate();
 
@@ -53,18 +54,27 @@ function AdminLayout() {
       path: "/admin/blogs",
       icon: FileText,
     },
-    
   ];
 
-  const handleLogout = () => {
+  // Open logout confirmation popup
+  const handleLogoutClick = () => {
+    setShowLogoutPopup(true);
+  };
+
+  // Confirm logout
+  const handleConfirmLogout = () => {
     localStorage.removeItem("agency_admin_logged_in");
     localStorage.removeItem("adminLoggedIn");
+
+    setShowLogoutPopup(false);
 
     navigate("/login", { replace: true });
   };
 
-  // Bell click
- 
+  // Cancel logout
+  const handleCancelLogout = () => {
+    setShowLogoutPopup(false);
+  };
 
   // Admin user click
   const handleUserClick = () => {
@@ -81,7 +91,10 @@ function AdminLayout() {
   return (
     <div className="min-h-screen bg-slate-100">
 
-      {/* Mobile Overlay */}
+      {/* ==================================================
+          MOBILE OVERLAY
+      ================================================== */}
+
       {sidebarOpen && (
         <div
           className="fixed inset-0 z-40 bg-slate-950/50 lg:hidden"
@@ -89,7 +102,10 @@ function AdminLayout() {
         />
       )}
 
-      {/* Sidebar */}
+      {/* ==================================================
+          SIDEBAR
+      ================================================== */}
+
       <aside
         className={`fixed inset-y-0 left-0 z-50 flex w-72 flex-col bg-slate-950 transition-transform duration-300 ${
           sidebarOpen
@@ -99,6 +115,7 @@ function AdminLayout() {
       >
 
         {/* Logo */}
+
         <div className="flex h-20 items-center justify-between border-b border-white/10 px-6">
 
           <Link
@@ -122,6 +139,7 @@ function AdminLayout() {
           </Link>
 
           {/* Close mobile sidebar */}
+
           <button
             type="button"
             onClick={() => setSidebarOpen(false)}
@@ -133,6 +151,7 @@ function AdminLayout() {
         </div>
 
         {/* Navigation */}
+
         <nav className="flex-1 overflow-y-auto px-4 py-6">
 
           <p className="mb-3 px-4 text-xs font-semibold uppercase tracking-wider text-slate-400">
@@ -168,12 +187,15 @@ function AdminLayout() {
 
         </nav>
 
-        {/* Sidebar Bottom */}
+        {/* ==================================================
+            SIDEBAR BOTTOM
+        ================================================== */}
+
         <div className="border-t border-white/10 p-4">
 
           <button
             type="button"
-            onClick={handleLogout}
+            onClick={handleLogoutClick}
             className="mt-1 flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-red-400 transition hover:bg-red-500/10 hover:text-red-300"
           >
             <LogOut size={18} />
@@ -187,15 +209,22 @@ function AdminLayout() {
 
       </aside>
 
-      {/* Main Area */}
+      {/* ==================================================
+          MAIN AREA
+      ================================================== */}
+
       <div className="lg:pl-72">
 
-        {/* Topbar */}
+        {/* ==================================================
+            TOPBAR
+        ================================================== */}
+
         <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
 
           <div className="flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
 
             {/* Left */}
+
             <div className="flex items-center gap-4">
 
               <button
@@ -219,15 +248,15 @@ function AdminLayout() {
             </div>
 
             {/* Right */}
+
             <div className="flex items-center gap-3">
 
-              {/* Notification */}
-              
-
               {/* Divider */}
+
               <div className="hidden h-8 w-px bg-slate-200 sm:block" />
 
               {/* User */}
+
               <button
                 type="button"
                 onClick={handleUserClick}
@@ -259,12 +288,88 @@ function AdminLayout() {
 
         </header>
 
-        {/* Page Content */}
+        {/* ==================================================
+            PAGE CONTENT
+        ================================================== */}
+
         <main className="min-h-[calc(100vh-80px)] p-4 sm:p-6 lg:p-8">
           <Outlet />
         </main>
 
       </div>
+
+      {/* ==================================================
+          LOGOUT CONFIRMATION POPUP
+      ================================================== */}
+
+      {showLogoutPopup && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/50 p-4 backdrop-blur-sm"
+          onClick={handleCancelLogout}
+        >
+
+          {/* Popup */}
+
+          <div
+            className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl sm:p-7"
+            onClick={(e) => e.stopPropagation()}
+          >
+
+            {/* Icon */}
+
+            <div className="flex justify-center">
+
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-red-50 text-red-600">
+                <AlertTriangle size={28} />
+              </div>
+
+            </div>
+
+            {/* Content */}
+
+            <div className="mt-5 text-center">
+
+              <h2 className="text-xl font-bold text-slate-900">
+                Logout?
+              </h2>
+
+              <p className="mt-2 text-sm leading-6 text-slate-500">
+                Are you sure you want to logout from the admin panel?
+              </p>
+
+            </div>
+
+            {/* Buttons */}
+
+            <div className="mt-6 grid grid-cols-2 gap-3">
+
+              {/* Cancel */}
+
+              <button
+                type="button"
+                onClick={handleCancelLogout}
+                className="h-11 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              >
+                Cancel
+              </button>
+
+              {/* Logout */}
+
+              <button
+                type="button"
+                onClick={handleConfirmLogout}
+                className="flex h-11 items-center justify-center gap-2 rounded-xl bg-red-600 px-4 text-sm font-semibold text-white transition hover:bg-red-700"
+              >
+                <LogOut size={17} />
+                Logout
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+      )}
 
     </div>
   );
