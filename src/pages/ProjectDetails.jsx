@@ -650,151 +650,110 @@ function ProjectDetails({ projects = [] }) {
 
           </div>
 
-          {/* ==================================================
-              PREVIOUS / NEXT
-          ================================================== */}
+{/* ==================================================
+    PREVIOUS / NEXT PROJECTS
+================================================== */}
 
-          {(previousProject || nextProject) && (
-            <div className="mt-12 border-t border-slate-200 pt-7 sm:mt-20 sm:pt-8">
+{(previousProject || nextProject) && (
+  <div className="mt-12 border-t border-slate-200 pt-7 sm:mt-16 sm:pt-8">
+    <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-stretch sm:justify-between">
 
-              <div
-                className={`
-                  grid
-                  grid-cols-1
-                  gap-4
-                  ${
-                    previousProject && nextProject
-                      ? "sm:grid-cols-2"
-                      : "sm:grid-cols-1"
-                  }
-                `}
-              >
+      {/* PREVIOUS PROJECT */}
+      {previousProject && (
+        <Link
+          to={`/projects/${previousProject.id}`}
+          className="
+            group
+            flex
+            min-h-[85px]
+            w-full
+            max-w-md
+            min-w-0
+            items-center
+            justify-between
+            gap-3
+            rounded-xl
+            border
+            border-slate-200
+            bg-white
+            p-4
+            transition
+            hover:-translate-y-1
+            hover:border-indigo-200
+            hover:shadow-lg
+            sm:w-[48%]
+            sm:p-5
+          "
+        >
+          <div className="min-w-0 flex-1">
+            <span className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 sm:text-xs">
+              <ArrowLeft size={14} />
+              Previous Project
+            </span>
 
-                {/* PREVIOUS */}
+            <p className="mt-2 line-clamp-2 break-words text-sm font-bold leading-5 text-slate-900 transition group-hover:text-indigo-600 sm:text-base">
+              {previousProject.title}
+            </p>
+          </div>
 
-                {previousProject && (
-                  <Link
-                    to={`/projects/${previousProject.id}`}
-                    className="
-                      group
-                      flex
-                      min-h-[100px]
-                      w-full
-                      min-w-0
-                      items-center
-                      justify-between
-                      rounded-2xl
-                      border
-                      border-slate-200
-                      bg-white
-                      p-4
-                      transition
-                      hover:-translate-y-1
-                      hover:border-indigo-200
-                      hover:shadow-lg
-                      sm:min-h-[110px]
-                      sm:p-6
-                    "
-                  >
+          <ArrowLeft
+            size={18}
+            className="shrink-0 text-slate-400 transition group-hover:-translate-x-1 group-hover:text-indigo-600"
+          />
+        </Link>
+      )}
 
-                    <div className="min-w-0 flex-1">
+      {/* NEXT PROJECT */}
+      {nextProject && (
+        <Link
+          to={`/projects/${nextProject.id}`}
+          className="
+            group
+            flex
+            min-h-[85px]
+            w-full
+            max-w-md
+            min-w-0
+            items-center
+            justify-between
+            gap-3
+            rounded-xl
+            border
+            border-slate-200
+            bg-white
+            p-4
+            transition
+            hover:-translate-y-1
+            hover:border-indigo-200
+            hover:shadow-lg
+            sm:ml-auto
+            sm:w-[48%]
+            sm:p-5
+          "
+        >
+          <div className="min-w-0 flex-1 text-right">
+            <span className="flex items-center justify-end gap-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 sm:text-xs">
+              Next Project
+              <ArrowRight size={14} />
+            </span>
 
-                      <span className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 sm:text-xs">
-                        <ArrowLeft size={14} />
-                        Previous Project
-                      </span>
+            <p className="mt-2 line-clamp-2 break-words text-sm font-bold leading-5 text-slate-900 transition group-hover:text-indigo-600 sm:text-base">
+              {nextProject.title}
+            </p>
+          </div>
 
-                      <p className="mt-2 line-clamp-2 break-words text-sm font-bold leading-6 text-slate-900 transition group-hover:text-indigo-600 sm:text-lg">
-                        {previousProject.title}
-                      </p>
+          <ArrowRight
+            size={18}
+            className="shrink-0 text-slate-400 transition group-hover:translate-x-1 group-hover:text-indigo-600"
+          />
+        </Link>
+      )}
 
-                    </div>
+    </div>
+  </div>
+)}
 
-                    <ArrowLeft
-                      size={19}
-                      className="
-                        ml-3
-                        shrink-0
-                        text-slate-400
-                        transition
-                        group-hover:-translate-x-1
-                        group-hover:text-indigo-600
-                        sm:ml-4
-                        sm:h-5
-                        sm:w-5
-                      "
-                    />
 
-                  </Link>
-                )}
-
-                {/* NEXT */}
-
-                {nextProject && (
-                  <Link
-                    to={`/projects/${nextProject.id}`}
-                    className={`
-                      group
-                      flex
-                      min-h-[100px]
-                      w-full
-                      min-w-0
-                      items-center
-                      justify-between
-                      rounded-2xl
-                      border
-                      border-slate-200
-                      bg-white
-                      p-4
-                      text-right
-                      transition
-                      hover:-translate-y-1
-                      hover:border-indigo-200
-                      hover:shadow-lg
-                      sm:min-h-[110px]
-                      sm:p-6
-                      ${
-                        !previousProject
-                          ? "sm:col-start-2"
-                          : ""
-                      }
-                    `}
-                  >
-
-                    <div className="min-w-0 flex-1">
-
-                      <span className="flex items-center justify-end gap-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 sm:text-xs">
-                        Next Project
-                        <ArrowRight size={14} />
-                      </span>
-
-                      <p className="mt-2 line-clamp-2 break-words text-sm font-bold leading-6 text-slate-900 transition group-hover:text-indigo-600 sm:text-lg">
-                        {nextProject.title}
-                      </p>
-
-                    </div>
-
-                    <ArrowRight
-                      size={19}
-                      className="
-                        ml-3
-                        shrink-0
-                        text-slate-400
-                        transition
-                        group-hover:translate-x-1
-                        group-hover:text-indigo-600
-                        sm:ml-4
-                        sm:h-5
-                        sm:w-5
-                      "
-                    />
-
-                  </Link>
-                )}
-
-              </div>
-            </div>
-          )}
 
         </div>
       </section>
